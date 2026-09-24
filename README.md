@@ -3,7 +3,8 @@ URL: citizensbankfund.com
 ## Official Website of ETSU's Citizen's Bank & Laporte Fund
 Created by Robert Bishop & Riley Murray
 
-Todo:
+**Todo:**
+```
 About Us
 Partnerships
 Portfolio
@@ -12,3 +13,4 @@ Join Us
 Members
 Blog / Updates
 Achievements
+```
