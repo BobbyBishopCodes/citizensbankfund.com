@@ -1,2 +1,4 @@
-# citizensbankfund.com
-Official website of ETSU's CBF website.
+URL: citizensbankfund.com
+
+## Official Website of ETSU's Citizen's Bank & Laporte Fund
+Created by Robert Bishop & Riley Murray
