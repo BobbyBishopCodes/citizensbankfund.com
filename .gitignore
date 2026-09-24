@@ -1,0 +1,29 @@
+# Local notes
+*.[mM][dD]
+*.[mM][aA][rR][kK][dD][oO][wW][nN]
+
+# Local workspace tools
+.agents/
+.codex/
+.claude/
+.cursor/
+.windsurf/
+.aider*
+.clinerules/
+.roo/
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.next/
+out/
+coverage/
+*.log
+
+# Local configuration
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
