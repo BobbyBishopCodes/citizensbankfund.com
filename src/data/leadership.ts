@@ -21,6 +21,6 @@ export const leadership: { id: string; title: string; members: Leader[] }[] = [
     { name: 'Grey Fisher', role: 'Macro Team Lead' },
   ] },
   { id: 'commodities-leadership', title: 'Commodities Team', members: [
-    { name: 'Dennis Pham', role: 'Commodities Team Lead' },
+    { name: 'Denis Pham', role: 'Commodities Team Lead', photo: '/assets/leadership/denis-pham.png' },
   ] },
 ];
