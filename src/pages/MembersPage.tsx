@@ -9,7 +9,7 @@ export function MembersPage() {
       <div className="members-introduction">
         <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">Members</span></nav>
         <h1>Our Members</h1>
-        <p>The Citizen’s Bank Fund gives East Tennessee State University students hands-on experience in investment research and portfolio decisions. Many of our members have gone on to work at major financial firms, building on the experience they gained here.</p>
+        <p>The Citizens Bank Fund gives East Tennessee State University students hands-on experience in investment research and portfolio decisions. Many of our members have gone on to work at major financial firms, building on the experience they gained here.</p>
       </div>
       <MemberDistribution />
     </div>

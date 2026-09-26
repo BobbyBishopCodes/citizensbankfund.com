@@ -7,7 +7,7 @@ export function ScholarshipsPage() {
       <div className="scholarships-copy">
         <h1>Scholarships</h1>
         <h2>A possible way to support future Buccaneers.</h2>
-        <p>The Citizen’s Bank Fund may offer scholarships in the future to support East Tennessee State University students interested in finance and investing.</p>
+        <p>The Citizens Bank Fund may offer scholarships in the future to support East Tennessee State University students interested in finance and investing.</p>
         <p>This is a potential future initiative. No fund scholarship is currently available, and we have not announced eligibility requirements or an application timeline.</p>
         <p>If a scholarship program is established, we’ll share details here. You can <Link to="/contact">contact us</Link> with questions in the meantime.</p>
       </div>

@@ -9,7 +9,7 @@ export function RouteEffects() {
   useLayoutEffect(() => {
     const article = articles.find(item => pathname === `/blog/${item.id}`);
     const title = pathname === '/' ? 'East Tennessee State University' : pathname === '/blog' ? 'Blog' : pathname === '/contact' ? 'Contact' : pathname === '/apply' ? 'Apply' : pathname === '/fund-history' ? 'Fund History' : pathname === '/scholarships' ? 'Scholarships' : pathname === '/leadership' ? 'Leadership' : pathname === '/legacy' ? 'Legacy' : pathname === '/partnerships' ? 'Partnerships' : pathname === '/investors' ? 'Investors' : pathname === '/members' ? 'Members' : pathname === '/portfolio' ? 'Portfolio' : article?.title ?? 'Page not found';
-    document.title = `${title} | Citizen’s Bank Fund`;
+    document.title = `${title} | Citizens Bank Fund`;
     const frame = requestAnimationFrame(() => {
       const target = hash ? document.getElementById(hash.slice(1)) : null;
       if (target) target.scrollIntoView({ behavior: 'instant' });

@@ -1,6 +1,6 @@
 URL: citizensbankfund.com
 
-## Official Website of ETSU's Citizen's Bank & Laporte Fund
+## Official Website of ETSU's Citizens Bank & Laporte Fund
 
 - Created by Robert Bishop
 

@@ -38,13 +38,13 @@ export function ContactPage() {
     <h1>Contact</h1>
     <div className="contact-grid">
       <aside className="contact-details">
-        <h2>Citizen’s Bank Fund</h2>
+        <h2>Citizens Bank Fund</h2>
         <p>East Tennessee State University<br />Johnson City, Tennessee</p>
         <h3>Email</h3>
         <a href="mailto:robertbishoptn@gmail.com">robertbishoptn@gmail.com</a>
       </aside>
       <div className="contact-form-panel">
-        {status === 'sent' ? <div className="contact-success" role="status"><span className="contact-check" aria-hidden="true">✓</span><h2>Message sent</h2><p>Thank you for contacting Citizen’s Bank Fund.</p><button className="button" onClick={() => setStatus('idle')}>Send another message</button></div> :
+        {status === 'sent' ? <div className="contact-success" role="status"><span className="contact-check" aria-hidden="true">✓</span><h2>Message sent</h2><p>Thank you for contacting Citizens Bank Fund.</p><button className="button" onClick={() => setStatus('idle')}>Send another message</button></div> :
           <form onSubmit={submit} aria-label="Contact form" aria-busy={status === 'sending'}>
             <h2>Send a message</h2>
             <fieldset disabled={status === 'sending'}>

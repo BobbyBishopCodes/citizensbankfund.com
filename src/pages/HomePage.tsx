@@ -35,15 +35,15 @@ export function HomePage() {
   const gainRatio = portfolio?.summary.gainVsStartingCapitalRatio ?? null;
   return (<>
         <NewsCarousel onArticle={openArticle} />
-        <section className="introduction" aria-label="Introduction"><div className="content-width"><p>The Citizen’s Bank Fund, is a student managed investment fund that manages capital provided by Citizen’s Bank and is under the governance of East Tennessee State University. The portfolio itself has a wide variety of equities and derivatives providing students real world experience with investing and wealth preservation.</p></div></section>
+        <section className="introduction" aria-label="Introduction"><div className="content-width"><p>The Citizens Bank Fund, is a student managed investment fund that manages capital provided by Citizens Bank and is under the governance of East Tennessee State University. The portfolio itself has a wide variety of equities and derivatives providing students real world experience with investing and wealth preservation.</p></div></section>
 
         <section className="about section-space" id="information" aria-labelledby="about-title">
           <div className="content-width">
-            <div className="section-heading"><span className="section-label">About Citizen’s Bank Fund</span></div>
+            <div className="section-heading"><span className="section-label">About Citizens Bank Fund</span></div>
             <div className="about-grid">
-              <figure className="about-photo"><div className="photo-mat"><img src="/assets/site/fund-members.webp" alt="Citizen’s Bank Fund students together at a university event" width="654" height="489" loading="lazy" /></div></figure>
+              <figure className="about-photo"><div className="photo-mat"><img src="/assets/site/fund-members.webp" alt="Citizens Bank Fund students together at a university event" width="654" height="489" loading="lazy" /></div></figure>
               <div className="about-copy"><h2 id="about-title">Curious about CBF?<br />Here you have it.</h2>
-                <p>The Citizen’s Bank Fund is a student-managed investment fund. We manage capital provided by Citizen’s Bank and operate under East Tennessee State University.</p>
+                <p>The Citizens Bank Fund is a student-managed investment fund. We manage capital provided by Citizens Bank and operate under East Tennessee State University.</p>
                 <p>Our portfolio holds a wide variety of equities and derivatives. Members write and coordinate macroeconomic reports, run discounted cash flow valuations, price options with Black-Scholes, and conduct quantitative research, including commodities analysis.</p>
                 <p>Every member has a voice. If a member has an investment idea, they’re encouraged to share it, defend their reasoning, and learn along the way.</p>
                 <p>Our macroeconomics, equities, fixed income, and FX & commodities teams produce their own research and coordinate in preparation for weekly fund-wide meetings.</p>

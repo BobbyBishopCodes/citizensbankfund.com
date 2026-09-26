@@ -19,9 +19,9 @@ export function Header() {
       <header className="masthead" id="home">
         <img className="masthead-photo" src="/assets/site/campus.webp" alt="" fetchPriority="high" />
         <div className="masthead-inner">
-          <Link className="brand" to="/" aria-label="Citizen’s Bank Fund home">
+          <Link className="brand" to="/" aria-label="Citizens Bank Fund home">
             <img src="/assets/branding/ship.webp" alt="" width="225" height="155" />
-            {isHome ? <h1 className="brand-title">Citizen’s Bank Fund</h1> : <p className="brand-title">Citizen’s Bank Fund</p>}
+            {isHome ? <h1 className="brand-title">Citizens Bank Fund</h1> : <p className="brand-title">Citizens Bank Fund</p>}
           </Link>
           <div className="header-tools">
             <a className="university-link" href="https://www.etsu.edu/" target="_blank" rel="noreferrer">

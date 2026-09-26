@@ -58,8 +58,8 @@ export const searchEntries = [
   { title: 'Portfolio', description: 'Current holdings, allocation, investment gains, and estimated income.', href: '/portfolio', keywords: 'portfolio returns performance assets holdings kpi' },
   { title: 'Our research teams', description: 'Meet our macroeconomics, equities, FX & commodities, and fixed income teams.', href: '/members', keywords: teams.map(team => `${team.title} ${team.description}`).join(' ') },
   { title: 'Blog', description: 'Research topics and market commentary from the fund.', href: '/blog', keywords: 'blog research updates articles' },
-  { title: 'Apply to the fund', description: 'Submit an application to join Citizen’s Bank Fund.', href: '/apply', keywords: 'apply join membership application students teams' },
-  { title: 'Contact', description: 'Send a message to Citizen’s Bank Fund.', href: '/contact', keywords: 'contact email message students partnership' },
+  { title: 'Apply to the fund', description: 'Submit an application to join Citizens Bank Fund.', href: '/apply', keywords: 'apply join membership application students teams' },
+  { title: 'Contact', description: 'Send a message to Citizens Bank Fund.', href: '/contact', keywords: 'contact email message students partnership' },
   ...articles.map(article => ({ title: article.title, description: article.summary, href: `/blog/${article.id}`, keywords: `${article.category} ${article.author ?? ''} ${article.body}` })),
 ];
 

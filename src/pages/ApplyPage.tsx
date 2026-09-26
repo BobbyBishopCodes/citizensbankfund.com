@@ -43,13 +43,13 @@ export function ApplyPage() {
     <h1>Apply to the fund</h1>
     <div className="contact-grid">
       <aside className="contact-details apply-details">
-        <h2>Join Citizen’s Bank Fund</h2>
+        <h2>Join Citizens Bank Fund</h2>
         <p>Our student managed fund gives ETSU students the chance to research markets, discuss investment ideas, and contribute to a real portfolio.</p>
         <p>Membership is selective. We look for curiosity, commitment, and a willingness to learn and work with a team. You do not need to have a preferred team before applying.</p>
         <p>Tell us a little about yourself. Fund leadership will review your application and follow up by email.</p>
       </aside>
       <div className="contact-form-panel">
-        {status === 'sent' ? <div className="contact-success" role="status"><span className="contact-check" aria-hidden="true">✓</span><h2>Application sent</h2><p>Thank you for your interest in Citizen’s Bank Fund. We’ll follow up by email.</p><button className="button" onClick={() => setStatus('idle')}>Submit another application</button></div> :
+        {status === 'sent' ? <div className="contact-success" role="status"><span className="contact-check" aria-hidden="true">✓</span><h2>Application sent</h2><p>Thank you for your interest in Citizens Bank Fund. We’ll follow up by email.</p><button className="button" onClick={() => setStatus('idle')}>Submit another application</button></div> :
           <form onSubmit={submit} aria-label="Fund application" aria-busy={status === 'sending'}>
             <h2>Application form</h2>
             <fieldset disabled={status === 'sending'}>
