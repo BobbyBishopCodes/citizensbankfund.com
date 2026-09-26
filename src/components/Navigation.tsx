@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import type { InformationKey } from '../data/content';
 
 const sections = ['home', 'information', 'portfolio', 'members', 'blog', 'contact'];
-const links = [ ['portfolio', 'Portfolio'], ['members', 'Members'], ['blog', 'Blog'], ['contact', 'Contact'] ];
+const links = [ ['portfolio', 'Portfolio'], ['members', 'Members'], ['blog', 'Blog'], ['apply', 'Apply'], ['contact', 'Contact'] ];
 
 export function Navigation({ onInformation }: { onInformation: (key: InformationKey) => void }) {
   const location = useLocation();
@@ -16,7 +16,7 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
   const navRef = useRef<HTMLElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships'].includes(pathname) ? 'information' : pathname === '/contact' ? 'contact' : isBlog ? 'blog' : isHome ? active : '';
+  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isBlog ? 'blog' : isHome ? active : '';
   const highlighted = open ? 'information' : current;
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
               <Link to="/scholarships" aria-current={pathname === '/scholarships' ? 'page' : undefined} onClick={close}>Scholarships<span aria-hidden="true">→</span></Link>
             </div>
           </div>
-          {links.map(([id, label]) => <Link key={id} className={`nav-link ${highlighted === id ? 'is-active' : ''}`} to={`/${id}`} aria-current={current === id ? (!isHome ? 'page' : 'location') : undefined} onClick={close}>{label}</Link>)}
+          {links.map(([id, label]) => <Link key={id} className={`nav-link ${highlighted === id && id !== 'apply' ? 'is-active' : ''}`} to={`/${id}`} aria-current={current === id ? (!isHome ? 'page' : 'location') : undefined} onClick={close}>{label}</Link>)}
         </div>
       </div>
     </nav>

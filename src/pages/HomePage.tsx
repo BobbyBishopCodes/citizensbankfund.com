@@ -63,7 +63,7 @@ export function HomePage() {
         <section className="teams section-space" id="members" aria-labelledby="teams-title"><div className="content-width">
           <div className="section-heading"><span className="section-label" id="teams-title">Our Teams</span><p>Specialized teams driving performance across global markets.</p></div>
           <div className="team-grid">{teams.map(team => <article className="team-card" key={team.id}><h3><span style={{ backgroundColor: team.color }} />{team.title}</h3><p>{team.description}</p></article>)}</div>
-          <div className="teams-bottom"><Link className="text-link" to="/contact">Interested in joining? <span aria-hidden="true">→</span></Link></div>
+          <div className="teams-bottom"><Link className="text-link" to="/apply">Interested in joining? Apply here <span aria-hidden="true">→</span></Link></div>
         </div></section>
 
         <section className="research section-space" id="blog" aria-labelledby="research-title"><div className="content-width">

@@ -259,7 +259,7 @@ main:focus { outline: none; }
 .carousel-dots { flex-wrap: wrap; }
 .not-found { padding-block: 80px; }
 .not-found h1 { font-size: 32px; margin-bottom: 24px; }
-.contact-page { padding-block: 30px 78px; }
+.contact-page, .apply-page { padding-block: 30px 78px; }
 .members-content { padding-block: 38px 72px; }
 .members-overview { display: grid; grid-template-columns: .9fr 1.2fr; gap: 48px; align-items: start; }
 .members-introduction h1 { padding-bottom: 20px; border-bottom: 2px solid var(--blue); margin: 22px 0 18px; font-size: 34px; font-weight: 600; letter-spacing: -.8px; color: var(--navy); }
@@ -332,6 +332,7 @@ main:focus { outline: none; }
 .fund-history-intro p { max-width: 660px; margin-top: 21px; color: #526579; font-size: 17px; line-height: 1.7; }
 .fund-history-chapter { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: center; gap: 58px; padding: 52px 0; border-top: 1px solid #d5e0ea; }
 .fund-history-image { overflow: hidden; aspect-ratio: 1.45; border-radius: 4px; background: #e7edf2; }
+.fund-history-image.fund-history-image-portrait { aspect-ratio: 1280 / 1218; }
 .fund-history-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
 .fund-history-chapter:hover .fund-history-image img { transform: scale(1.025); }
 .fund-history-copy { max-width: 440px; }
@@ -418,11 +419,12 @@ main:focus { outline: none; }
 .scholarships-copy a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
 .scholarship-card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
 .scholarship-photo { width: 100%; height: auto; border-radius: 7px; }
-.contact-page > h1 { margin: 22px 0 32px; font-size: 38px; font-weight: 600; letter-spacing: -1px; }
+.contact-page > h1, .apply-page > h1 { margin: 22px 0 32px; font-size: 38px; font-weight: 600; letter-spacing: -1px; }
 .contact-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 56px; align-items: start; }
 .contact-details { padding-top: 24px; border-top: 3px solid var(--blue); }
 .contact-details h2 { font-size: 21px; font-weight: 600; margin-bottom: 15px; }
 .contact-details p { color: var(--muted); font-size: 14px; line-height: 1.9; }
+.apply-details p + p { margin-top: 18px; }
 .contact-details h3 { margin-top: 30px; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
 .contact-details a { display: inline-block; color: var(--blue); font-size: 14px; overflow-wrap: anywhere; padding-block: 6px; }
 .contact-details a:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -432,10 +434,11 @@ main:focus { outline: none; }
 .contact-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .contact-field { margin-bottom: 22px; }
 .contact-field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 9px; }
-.contact-field input, .contact-field textarea { display: block; width: 100%; min-width: 0; padding: 12px 14px; border: 1px solid #bac3ce; background: white; color: var(--navy); border-radius: 7px; font: inherit; font-size: 16px; line-height: 1.6; transition: border-color 150ms; }
+.contact-field input, .contact-field textarea, .contact-field select { display: block; width: 100%; min-width: 0; padding: 12px 14px; border: 1px solid #bac3ce; background: white; color: var(--navy); border-radius: 7px; font: inherit; font-size: 16px; line-height: 1.6; transition: border-color 150ms; }
 .contact-field textarea { resize: vertical; min-height: 180px; }
-.contact-field input:hover, .contact-field textarea:hover { border-color: #778da5; }
-.contact-field textarea:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+.contact-field input:hover, .contact-field textarea:hover, .contact-field select:hover { border-color: #778da5; }
+.contact-field input:focus-visible, .contact-field textarea:focus-visible, .contact-field select:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.apply-form-note { margin: -4px 0 22px; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .contact-submit, .contact-success .button { border-radius: 7px; }
 .contact-submit:disabled { cursor: wait; opacity: .7; }
 .contact-error { margin-bottom: 22px; color: #943b35; font-size: 14px; line-height: 1.7; }
@@ -522,8 +525,8 @@ main:focus { outline: none; }
   .scholarships-grid { grid-template-columns: 1fr; gap: 30px; }
   .scholarships-copy h1 { font-size: 30px; }
   .contact-grid { grid-template-columns: 1fr; gap: 30px; }
-  .contact-page { padding-block: 22px 52px; }
-  .contact-page > h1 { font-size: 32px; }
+  .contact-page, .apply-page { padding-block: 22px 52px; }
+  .contact-page > h1, .apply-page > h1 { font-size: 32px; }
   .contact-details { padding-top: 20px; }
   .contact-form-panel { padding: 24px; }
   html { scroll-padding-top: 78px; }

@@ -42,9 +42,9 @@ export const information: Record<InformationKey, { title: string; paragraphs: st
     title: 'Become part of the conversation',
     paragraphs: [
       'The fund brings together students interested in markets, research, and investment analysis. Members contribute ideas, work within specialized teams, and prepare for fund-wide meetings.',
-      'Membership and direct contact details will be added here when applications open. In the meantime, visit ETSU to connect with the university.',
+      'Applications are open. Visit the Apply page to tell fund leadership about yourself and your interests.',
     ],
-    link: { label: 'Visit ETSU', href: 'https://www.etsu.edu/' },
+    link: { label: 'Apply', href: '/apply' },
   },
 };
 
@@ -57,7 +57,8 @@ export const searchEntries = [
   { title: 'Portfolio', description: 'Current holdings, allocation, investment gains, and estimated income.', href: '/portfolio', keywords: 'portfolio returns performance assets holdings kpi' },
   { title: 'Our research teams', description: 'Meet our macroeconomics, equities, FX & commodities, and fixed income teams.', href: '/members', keywords: teams.map(team => `${team.title} ${team.description}`).join(' ') },
   { title: 'Blog', description: 'Research topics and market commentary from the fund.', href: '/blog', keywords: 'blog research updates articles' },
-  { title: 'Contact & membership', description: 'Learn about getting involved with the fund.', href: '/contact', keywords: 'contact join membership apply applications students partnership scholarships' },
+  { title: 'Apply to the fund', description: 'Submit an application to join Citizen’s Bank Fund.', href: '/apply', keywords: 'apply join membership application students teams' },
+  { title: 'Contact', description: 'Send a message to Citizen’s Bank Fund.', href: '/contact', keywords: 'contact email message students partnership' },
   ...articles.map(article => ({ title: article.title, description: article.summary, href: `/blog/${article.id}`, keywords: `${article.category} ${article.author ?? ''} ${article.body}` })),
 ];
 

@@ -20,7 +20,7 @@ export function FundHistoryPage() {
     </section>
 
     <section className="fund-history-chapter fund-history-chapter-reverse" aria-labelledby="history-first-year">
-      <figure className="fund-history-image"><img src="/assets/site/fund-members.webp" alt="ETSU finance students and supporters beside market displays" width="800" height="533" loading="lazy" /></figure>
+      <figure className="fund-history-image fund-history-image-portrait"><img src="/assets/site/fund-history-first-year.png" alt="Three fund members posing together in front of a blue display" width="1280" height="1218" loading="lazy" /></figure>
       <div className="fund-history-copy">
         <span className="fund-history-date">02 <span aria-hidden="true">/</span> First year</span>
         <h2 id="history-first-year">The first year</h2>

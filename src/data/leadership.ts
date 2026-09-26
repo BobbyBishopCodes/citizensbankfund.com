@@ -14,6 +14,7 @@ export const leadership: { id: string; title: string; members: Leader[] }[] = [
   ] },
   { id: 'equities-leadership', title: 'Equities Team', members: [
     { name: 'Timothy Preshong', role: 'Equities Team Lead', photo: '/assets/leadership/timothy-preshong.png' },
+    { name: 'Saron Berhanu', role: 'Equities Team Lead' },
   ] },
   { id: 'macro-leadership', title: 'Macroeconomics Team', members: [
     { name: 'Amelie Jahncke', role: 'Macro Team Lead', photo: '/assets/leadership/amelie-jahncke.png' },

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
@@ -10,6 +10,7 @@ import { BlogPage } from './pages/BlogPage';
 import { ArticlePage } from './pages/ArticlePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ContactPage } from './pages/ContactPage';
+import { ApplyPage } from './pages/ApplyPage';
 import { ScholarshipsPage } from './pages/ScholarshipsPage';
 import { LeadershipPage } from './pages/LeadershipPage';
 import { LegacyPage } from './pages/LegacyPage';
@@ -36,6 +37,7 @@ export function App() {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<ArticlePage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/apply" element={<ApplyPage />} />
           <Route path="/scholarships" element={<ScholarshipsPage />} />
           <Route path="/leadership" element={<LeadershipPage />} />
           <Route path="/legacy" element={<LegacyPage />} />
@@ -46,7 +48,7 @@ export function App() {
         </Routes>
       </main>
       <Footer />
-      {info && <Modal title={info.title} onClose={() => setInformationKey(null)}>{info.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}{info.link && <a className="button" href={info.link.href} target="_blank" rel="noreferrer">{info.link.label}<span aria-hidden="true">↗</span></a>}</Modal>}
+      {info && <Modal title={info.title} onClose={() => setInformationKey(null)}>{info.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}{info.link && (info.link.href.startsWith('/') ? <Link className="button" to={info.link.href} onClick={() => setInformationKey(null)}>{info.link.label}<span aria-hidden="true">→</span></Link> : <a className="button" href={info.link.href} target="_blank" rel="noreferrer">{info.link.label}<span aria-hidden="true">↗</span></a>)}</Modal>}
     </>
   );
 }
