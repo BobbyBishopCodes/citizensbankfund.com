@@ -1,7 +1,6 @@
 name: Validate GitHub Pages build (no deployment)
 
-# Preparation only: no push, schedule, Pages configuration, or deployment job.
-# At release, enable publishing separately after reviewing the preview artifact.
+# prep focus, sitll have to really figure out how this works tbh
 on:
   workflow_dispatch:
     inputs:
