@@ -4,16 +4,10 @@ URL: citizensbankfund.com
 
 - Created by Robert Bishop
 
-```
-
 ** Possible Future Editions**
-
 ```
-
 CPI & PPI Forecasting
 User Logins & Direct Blog Uploads with LinkedIn bot auto-uploads of some sort
 Events
-
-```
 
 ```
