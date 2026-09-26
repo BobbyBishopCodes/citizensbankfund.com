@@ -6,8 +6,8 @@ import { countMembers, percentage } from '../src/lib/member-totals.ts';
 test('published roster matches the current team counts', async () => {
   const roster = JSON.parse(await readFile(new URL('../content/members.json', import.meta.url), 'utf8'));
   assert.deepEqual(countMembers(roster), {
-    counts: { macroeconomics: 8, equities: 6, 'fixed-income': 4, commodities: 3 },
-    total: 21,
+    counts: { macroeconomics: 8, equities: 20, 'fixed-income': 4, commodities: 4 },
+    total: 36,
   });
 });
 
