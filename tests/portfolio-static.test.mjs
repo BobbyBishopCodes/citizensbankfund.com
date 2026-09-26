@@ -76,13 +76,33 @@ test('market failures reject the whole candidate and leave a previous export int
   const output = join(directory, 'portfolio.json');
   await atomicJson(output, await staticPortfolio(holdings(), options));
   const before = await readFile(output, 'utf8');
-  for (const result of [provider({}), provider({ ABC: quote({ price: '0' }) }), provider({ ABC: quote({ asOf: '2020-01-01' }) }), provider({ ABC: quote() }, [{ code: 'HTTP_429' }])]) {
+  for (const result of [provider({}), provider({ ABC: quote({ price: '0' }) }), provider({ ABC: quote({ asOf: 'invalid' }) }), provider({ ABC: quote() }, [{ code: 'HTTP_429' }])]) {
     await assert.rejects(async () => {
       const view = await staticPortfolio(holdings(), { ...options, mode: 'market', provider: result });
       await atomicJson(output, view);
     }, /rejected/);
     assert.equal(await readFile(output, 'utf8'), before);
   }
+});
+
+test('weekend holdings retain CSV values until quotes catch up to the holdings date', async () => {
+  const latest = holdings();
+  latest.asOfDate = '2026-09-26';
+  const weekend = await staticPortfolio(latest, {
+    mode: 'market', clock: () => '2026-09-26T19:00:00Z',
+    provider: provider({ ABC: quote({ price: '999', asOf: '2026-09-25T20:00:00Z', fetchedAt: '2026-09-26T19:00:00Z' }) }),
+  });
+  assert.equal(weekend.summary.marketValueCents, 112183);
+  assert.equal(weekend.coverage.snapshotPrices, 1);
+  assert.equal(weekend.publication.oldestQuoteAt, null);
+  assert.equal(weekend.positions.find(position => position.symbol === 'ABC').priceStatus, 'broker-snapshot');
+  const monday = await staticPortfolio(latest, {
+    mode: 'market', clock: () => '2026-09-28T15:00:00Z',
+    provider: provider({ ABC: quote({ asOf: '2026-09-28T14:59:00Z', fetchedAt: '2026-09-28T15:00:00Z' }) }),
+  });
+  assert.equal(monday.summary.marketValueCents, 114000);
+  assert.equal(monday.coverage.freshQuotes, 1);
+  assert.equal(monday.coverage.snapshotPrices, 0);
 });
 
 test('artifact checker accepts static output and rejects source archives and hidden secrets', async t => {

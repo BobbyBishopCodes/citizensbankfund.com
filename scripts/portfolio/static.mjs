@@ -90,12 +90,13 @@ export async function staticPortfolio(holdings, { mode = 'snapshot', provider, c
     const result = await provider.fetchQuotes(symbols);
     const now = Date.parse(clock());
     const failed = symbols.filter(symbol => !result.quotes?.[symbol] ||
-      !validQuote(result.quotes[symbol], symbol, now) ||
-      Date.parse(result.quotes[symbol].asOf) < Date.parse(snapshot.asOfDate));
+      !validQuote(result.quotes[symbol], symbol, now));
     if (failed.length || result.errors?.length) {
       // No raw provider error messages or credentials enter logs/artifacts.
       throw new Error(`Market export rejected: ${failed.length} securities lack valid quotes or the provider reported errors. Previous output was not replaced.`);
     }
+    // A weekend import can be newer than the latest close. valuePortfolio keeps
+    // the CSV value for pre-holdings quotes instead of rolling its valuation back.
     quotes = result.quotes;
   }
   const view = valuePortfolio(snapshot, quotes, { now: clock() });

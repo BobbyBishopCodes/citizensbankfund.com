@@ -1,11 +1,20 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { staticPortfolio } from '../scripts/portfolio/static.mjs';
+import { prepareHoldings, staticPortfolio } from '../scripts/portfolio/static.mjs';
 import { parsePortfolioData, priceState, filterAndSort, money, percent } from '../src/lib/portfolio/display.ts';
 
-const source = JSON.parse(await readFile(new URL('../content/portfolio/holdings.json', import.meta.url), 'utf8'));
-const data = await staticPortfolio(source);
+const clock = () => '2026-09-25T15:00:00Z';
+const csv = 'Description,SYMBOL/CUSIP,Quantity,Delayed Price,Current Value,Product Type,Amount Invested (†),Estimated Annual Income\nExample fund,VOO,100,600,60000,Funds,50000,1000\nExample stock,MSFT,100,400,40000,Stock,42000,500\nCash,,10000,1,10000,Cash & Cash Alternatives,10000,0\n';
+const source = prepareHoldings(csv, '2026-09-24', clock()).holdings;
+const data = await staticPortfolio(source, { clock });
+
+test('current published holdings produce a valid browser read model without fixed totals or symbols', async () => {
+  const current = JSON.parse(await readFile(new URL('../content/portfolio/holdings.json', import.meta.url), 'utf8'));
+  const view = await staticPortfolio(current);
+  assert.equal(parsePortfolioData(view).summary.marketValueCents,
+    current.positions.reduce((sum, position) => sum + position.referenceValueCents, 0));
+});
 
 test('browser read model accepts generated data and rejects corrupt or incomplete financial data', () => {
   assert.equal(parsePortfolioData(data).summary.marketValueCents, data.summary.marketValueCents);
@@ -18,11 +27,11 @@ test('browser read model accepts generated data and rejects corrupt or incomplet
 
 test('headline gain uses original fund capital while position gains retain broker invested amounts', () => {
   assert.equal(data.summary.startingCapitalCents, 10_000_000);
-  assert.equal(data.summary.marketValueCents, 10_760_550);
-  assert.equal(data.summary.gainVsStartingCapitalCents, 760_550);
-  assert.equal(data.summary.gainVsStartingCapitalRatio, 0.076055);
-  assert.equal(data.summary.investmentGainCents, 481_968);
-  assert.equal(data.positions.find(position => position.symbol === 'VOO').investmentGainCents, 144_990);
+  assert.equal(data.summary.marketValueCents, 11_000_000);
+  assert.equal(data.summary.gainVsStartingCapitalCents, 1_000_000);
+  assert.equal(data.summary.gainVsStartingCapitalRatio, 0.1);
+  assert.equal(data.summary.investmentGainCents, 800_000);
+  assert.equal(data.positions.find(position => position.symbol === 'VOO').investmentGainCents, 1_000_000);
 });
 
 test('search, holding-type filters and numeric sorting preserve portfolio totals and cash ordering', () => {
