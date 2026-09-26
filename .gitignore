@@ -1,6 +1,13 @@
 # Local notes
+.local/
+/DEPLOYMENT.txt
+/content/MEMBERS.txt
+/content/blog/WRITING.txt
 *.[mM][dD]
+!README.md
 *.[mM][aA][rR][kK][dD][oO][wW][nN]
+!content/blog/*.md
+/content/blog/_template.md
 
 # Local workspace tools
 .agents/
@@ -27,3 +34,4 @@ coverage/
 !.env.example
 .DS_Store
 Thumbs.db
+*.tsbuildinfo

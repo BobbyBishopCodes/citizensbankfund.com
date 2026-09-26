@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "asOfDate": "2026-09-24",
+  "currency": "USD",
+  "positions": [
+    {
+      "description": "Raymond James Bank Deposit Program",
+      "symbol": null,
+      "assetType": "cash",
+      "quantity": "16615.250",
+      "referencePrice": "1.00",
+      "referenceValueCents": 1661525,
+      "amountInvestedCents": 1661525,
+      "estimatedAnnualIncomeCents": 498,
+      "costBasisCents": null
+    },
+    {
+      "description": "BRISTOL-MYERS SQUIBB COMPANY",
+      "symbol": "BMY",
+      "assetType": "stock",
+      "quantity": "22.000",
+      "referencePrice": "60.92",
+      "referenceValueCents": 134013,
+      "amountInvestedCents": 133100,
+      "estimatedAnnualIncomeCents": 5544,
+      "costBasisCents": null
+    },
+    {
+      "description": "CAPITAL ONE FINL CORPORATION",
+      "symbol": "COF",
+      "assetType": "stock",
+      "quantity": "25.000",
+      "referencePrice": "195.31",
+      "referenceValueCents": 488263,
+      "amountInvestedCents": 533534,
+      "estimatedAnnualIncomeCents": 8000,
+      "costBasisCents": null
+    },
+    {
+      "description": "CISCO SYSTEMS INCORPORATED",
+      "symbol": "CSCO",
+      "assetType": "stock",
+      "quantity": "50.000",
+      "referencePrice": "105.61",
+      "referenceValueCents": 528025,
+      "amountInvestedCents": 396675,
+      "estimatedAnnualIncomeCents": 8400,
+      "costBasisCents": null
+    },
+    {
+      "description": "FIRST SOLAR INCORPORATED",
+      "symbol": "FSLR",
+      "assetType": "stock",
+      "quantity": "18.000",
+      "referencePrice": "176.99",
+      "referenceValueCents": 318582,
+      "amountInvestedCents": 407883,
+      "estimatedAnnualIncomeCents": 0,
+      "costBasisCents": null
+    },
+    {
+      "description": "GE AEROSPACE COM NEW",
+      "symbol": "GE",
+      "assetType": "stock",
+      "quantity": "8.000",
+      "referencePrice": "320.93",
+      "referenceValueCents": 256744,
+      "amountInvestedCents": 268344,
+      "estimatedAnnualIncomeCents": 1504,
+      "costBasisCents": null
+    },
+    {
+      "description": "INVESCO NASDAQ 100 ETF",
+      "symbol": "QQQM",
+      "assetType": "fund",
+      "quantity": "20.000",
+      "referencePrice": "304.43",
+      "referenceValueCents": 608860,
+      "amountInvestedCents": 501230,
+      "estimatedAnnualIncomeCents": 2631,
+      "costBasisCents": null
+    },
+    {
+      "description": "INVESCO S&P 500 HIGH DIVIDEND LOW VOLATILITY ETF",
+      "symbol": "SPHD",
+      "assetType": "fund",
+      "quantity": "83.000",
+      "referencePrice": "49.02",
+      "referenceValueCents": 406825,
+      "amountInvestedCents": 404600,
+      "estimatedAnnualIncomeCents": 20473,
+      "costBasisCents": null
+    },
+    {
+      "description": "ISHARES FLEXIBLE INCOME ACTIVE ETF",
+      "symbol": "BINC",
+      "assetType": "fund",
+      "quantity": "90.000",
+      "referencePrice": "51.01",
+      "referenceValueCents": 459128,
+      "amountInvestedCents": 469169,
+      "estimatedAnnualIncomeCents": 26163,
+      "costBasisCents": null
+    },
+    {
+      "description": "ISHARES INCORPORATED MSCI JAPAN ETF",
+      "symbol": "EWJ",
+      "assetType": "fund",
+      "quantity": "60.000",
+      "referencePrice": "95.55",
+      "referenceValueCents": 573300,
+      "amountInvestedCents": 501450,
+      "estimatedAnnualIncomeCents": 20432,
+      "costBasisCents": null
+    },
+    {
+      "description": "ISHARES TR 7-10 YR TRSY BD",
+      "symbol": "IEF",
+      "assetType": "fund",
+      "quantity": "50.000",
+      "referencePrice": "89.91",
+      "referenceValueCents": 449525,
+      "amountInvestedCents": 479995,
+      "estimatedAnnualIncomeCents": 18508,
+      "costBasisCents": null
+    },
+    {
+      "description": "ISHARES TR IBOXX HI YD ETF",
+      "symbol": "HYG",
+      "assetType": "fund",
+      "quantity": "30.000",
+      "referencePrice": "77.91",
+      "referenceValueCents": 233715,
+      "amountInvestedCents": 238523,
+      "estimatedAnnualIncomeCents": 14215,
+      "costBasisCents": null
+    },
+    {
+      "description": "ISHARES TR IBOXX INV CP ETF",
+      "symbol": "LQD",
+      "assetType": "fund",
+      "quantity": "19.000",
+      "referencePrice": "103.44",
+      "referenceValueCents": 196527,
+      "amountInvestedCents": 206447,
+      "estimatedAnnualIncomeCents": 9531,
+      "costBasisCents": null
+    },
+    {
+      "description": "ISHARES TR MSCI INDIA ETF",
+      "symbol": "INDA",
+      "assetType": "fund",
+      "quantity": "60.000",
+      "referencePrice": "47.60",
+      "referenceValueCents": 285600,
+      "amountInvestedCents": 299430,
+      "estimatedAnnualIncomeCents": 0,
+      "costBasisCents": null
+    },
+    {
+      "description": "MICROSOFT CORPORATION",
+      "symbol": "MSFT",
+      "assetType": "stock",
+      "quantity": "7.000",
+      "referencePrice": "495.05",
+      "referenceValueCents": 346535,
+      "amountInvestedCents": 297044,
+      "estimatedAnnualIncomeCents": 2744,
+      "costBasisCents": null
+    },
+    {
+      "description": "PROCTER & GAMBLE COMPANY",
+      "symbol": "PG",
+      "assetType": "stock",
+      "quantity": "20.000",
+      "referencePrice": "147.07",
+      "referenceValueCents": 294140,
+      "amountInvestedCents": 286520,
+      "estimatedAnnualIncomeCents": 8708,
+      "costBasisCents": null
+    },
+    {
+      "description": "SPDR GOLD SHARES",
+      "symbol": "GLD",
+      "assetType": "fund",
+      "quantity": "13.000",
+      "referencePrice": "390.34",
+      "referenceValueCents": 507442,
+      "amountInvestedCents": 491625,
+      "estimatedAnnualIncomeCents": 0,
+      "costBasisCents": null
+    },
+    {
+      "description": "STATE STREET ENERGY SELECT SECTOR SPDR ETF",
+      "symbol": "XLE",
+      "assetType": "fund",
+      "quantity": "46.000",
+      "referencePrice": "63.01",
+      "referenceValueCents": 289823,
+      "amountInvestedCents": 199491,
+      "estimatedAnnualIncomeCents": 7007,
+      "costBasisCents": null
+    },
+    {
+      "description": "TAKE-TWO INTERACTIVE SOFTWARE",
+      "symbol": "TTWO",
+      "assetType": "stock",
+      "quantity": "14.000",
+      "referencePrice": "206.76",
+      "referenceValueCents": 289464,
+      "amountInvestedCents": 316428,
+      "estimatedAnnualIncomeCents": 0,
+      "costBasisCents": null
+    },
+    {
+      "description": "UNITY SOFTWARE INCORPORATED",
+      "symbol": "U",
+      "assetType": "stock",
+      "quantity": "70.000",
+      "referencePrice": "43.46",
+      "referenceValueCents": 304220,
+      "amountInvestedCents": 209790,
+      "estimatedAnnualIncomeCents": 0,
+      "costBasisCents": null
+    },
+    {
+      "description": "VANGUARD CONSUMER STAPLES ETF",
+      "symbol": "VDC",
+      "assetType": "fund",
+      "quantity": "23.000",
+      "referencePrice": "222.21",
+      "referenceValueCents": 511072,
+      "amountInvestedCents": 499812,
+      "estimatedAnnualIncomeCents": 11228,
+      "costBasisCents": null
+    },
+    {
+      "description": "VANGUARD INDEX FUNDS S&P 500 ETF SHS NEW",
+      "symbol": "VOO",
+      "assetType": "fund",
+      "quantity": "15.000",
+      "referencePrice": "706.25",
+      "referenceValueCents": 1059375,
+      "amountInvestedCents": 914385,
+      "estimatedAnnualIncomeCents": 11018,
+      "costBasisCents": null
+    },
+    {
+      "description": "VANGUARD SHORT-TERM TREASURY ETF",
+      "symbol": "VGSH",
+      "assetType": "fund",
+      "quantity": "97.000",
+      "referencePrice": "57.51",
+      "referenceValueCents": 557847,
+      "amountInvestedCents": 561582,
+      "estimatedAnnualIncomeCents": 21205,
+      "costBasisCents": null
+    }
+  ]
+}

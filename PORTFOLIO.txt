@@ -1,0 +1,175 @@
+PORTFOLIO ENGINE — OPERATOR AND INTEGRATION GUIDE
+
+Scope
+  GitHub Pages is the required website hosting target. The engine processes
+  one USD, long-only portfolio at build time and exports static data. The
+  Portfolio and Home page metrics read the same static portfolio data.
+  Node 24+ is required (native TypeScript execution). No new dependencies.
+
+GitHub Pages workflow (primary)
+  Read GITHUB-PAGES.txt for the full build/validation and later-release setup.
+  Prepare the input used by GitHub Actions:
+  npm run portfolio:prepare -- "C:\Users\Roberto\Downloads\RJFPortfolio 9.24.2026.csv" --as-of 2026-09-24
+  npm run build:preview
+  node scripts/check-pages-preview.mjs
+
+  The prepared input is content/portfolio/holdings.json. Review it before
+  committing. The preview is .local/pages-preview and includes data/portfolio.json.
+  The manual-only Actions workflow uploads a preview artifact; it cannot deploy.
+  No schedules, remote secrets or Pages settings have been activated.
+  The website does not need PORTFOLIO_ADMIN_TOKEN or a local serve process.
+  The local API/archive tools below remain optional operator utilities.
+
+Optional private local archive import (separate from the Pages input)
+  npm run portfolio -- import "C:\Users\Roberto\Downloads\RJFPortfolio 9.24.2026.csv" --as-of 2026-09-24
+  npm run portfolio -- status
+
+  Direct Node equivalent, if the system npm launcher is unavailable:
+  node --env-file-if-exists=.env scripts/portfolio.mjs import "path.csv" --as-of 2026-09-24
+
+  Each CSV is a COMPLETE replacement, not a trades/delta file. A missing position
+  is removed. The date is explicit because the file itself contains no as-of
+  date. Older dates and future dates are rejected. Same-date corrections are
+  allowed. Re-uploading the active file with the same date is idempotent.
+
+  Source files and normalized immutable imports are archived privately under
+  .local/portfolio/imports. Active state is .local/portfolio/state.json.
+  Neither location is published by Vite or tracked by git. Back up this directory
+  to retain history. PORTFOLIO_DATA_DIR can point to another private directory.
+  Archived source fields are untrusted data; never render them as HTML.
+
+Market prices
+  Add FINNHUB_API_KEY to .env or the server environment (see .env.example).
+  npm run portfolio -- refresh
+
+  Finnhub API reference: https://finnhub.io/docs/api/quote
+  Uses c (current price), pc (previous close), and t (quote timestamp), with
+  X-Finnhub-Token authentication. Credentials never enter browser bundles or
+  API responses. USD-listed stock/ETF tickers only; resolve CUSIPs and verify
+  listing/currency identity before importing other securities. The current
+  export's Stock/Funds products are classifications, not look-through sectors.
+  Confirm provider entitlements/display licensing before public distribution.
+
+  CLI import refreshes when a key is configured. Refresh requests have a 10s
+  timeout per symbol, max 3 concurrent requests, and 1.1s spacing. Failures are
+  recorded per symbol. Existing valid quotes survive failures. No zero-price
+  substitution. Quotes older than the holdings date, in the future, malformed,
+  or older than a cached quote are rejected. Freshness is based on the provider
+  timestamp, not the HTTP fetch time. Quotes >15 minutes old are explicitly
+  stale (including closed markets); stale values can still be valued. Missing
+  quotes use reported CSV values and are labelled broker-snapshot.
+
+  A new holdings import clears cached quotes. If holdings change while a fetch
+  is running, that refresh cannot overwrite the new import; refresh again.
+  Quote refresh does not infer trades, splits, cash flows, or new dividends.
+  Upload current holdings after trades/corporate actions. CSV as-of dates have
+  day precision; intra-day trade/order sequencing cannot be inferred.
+
+Optional local upload API (not used by GitHub Pages)
+  Set a random PORTFOLIO_ADMIN_TOKEN of at least 24 characters in .env.
+  npm run portfolio -- serve
+  Default: http://127.0.0.1:8788; PORTFOLIO_PORT changes the port.
+
+  Every request requires Authorization: Bearer <PORTFOLIO_ADMIN_TOKEN>.
+  GET  /api/portfolio
+       Returns normalized positions, computed summary, allocations, coverage,
+       import identity, refresh errors, source warnings, and metric limitations.
+  POST /api/portfolio/import?asOf=2026-09-24
+       Content-Type: text/csv; UTF-8 CSV request body (max 2 MiB).
+       Optional X-Filename header for audit metadata; it is never a disk path.
+       Returns 201 (accepted) or 200 (duplicate), warnings and refreshQueued.
+  POST /api/portfolio/refresh
+       Refresh prices and return the new read model; 503 if no key is configured.
+
+  Example from PowerShell, after setting $env:PORTFOLIO_ADMIN_TOKEN:
+  $headers = @{ Authorization = "Bearer $env:PORTFOLIO_ADMIN_TOKEN" }
+  Invoke-RestMethod -Method Post -Uri 'http://127.0.0.1:8788/api/portfolio/import?asOf=2026-09-24' -Headers $headers -ContentType 'text/csv' -InFile 'C:\Users\Roberto\Downloads\RJFPortfolio 9.24.2026.csv'
+
+  While serve runs with a key, refresh starts immediately, after each upload,
+  and every five minutes (PORTFOLIO_REFRESH_MS, minimum 60000). It stops when
+  the process exits. Concurrent refreshes within a process share one request.
+  Use a single operator server so provider quotas are not shared across writers.
+  GET recalculates freshness at read time. Refresh errors remain visible in
+  lastRefresh.errors. No background daemon or cloud deployment is installed.
+
+  This is a loopback-only operator API, with token auth, no CORS, and origin/host
+  checks. It is not a public API for the static website. A future hosted upload
+  screen is outside the Pages workflow; never embed the operator token or
+  Finnhub key in client code. Use the build-time static export described in
+  GITHUB-PAGES.txt for this project's website.
+
+Metric definitions and safe page integration
+  src/lib/portfolio/types.ts   Normalized snapshot/quote contract.
+  src/lib/portfolio/import.ts  Pure CSV parser and validation.
+  src/lib/portfolio/money.ts   Exact decimal arithmetic and cent totals.
+  src/lib/portfolio/value.ts   Single shared read model for future consumers.
+  scripts/portfolio/          Private storage, provider and HTTP adapter.
+
+  Totals are integer USD cents. Quantities/prices are decimal strings with up
+  to six decimal places. Position values round once to cents (half away from
+  zero); totals sum the rounded positions. Ratios are fractions: .025 = 2.5%.
+  Display-only per-unit averages are numeric dollar values and must not be
+  multiplied back to reconstruct authoritative totals. null means unavailable.
+
+  marketValueCents: Sum of positions, including cash. A quote values quantity ×
+  price. Without a quote, broker Current Value is authoritative: the displayed
+  price is rounded and may not reproduce reported value. Differences are flagged.
+
+  amountInvestedCents: Broker Amount Invested (†), not quantity × rounded unit
+  investment. investmentGainCents = market value - amount invested;
+  investmentGainRatio = investment gain / amount invested. This is a gain
+  against reported invested capital, NOT a total return or a tax gain.
+  The headline gain on Portfolio and Home instead compares total portfolio value,
+  including cash, with the fund's original $100,000 starting capital. Its
+  percentage uses $100,000 as the denominator. Position gain/loss still uses
+  broker-reported amount invested.
+
+  costBasisCents / averageCostPerUnit / unrealizedGainCents: available only if
+  an explicit Total Cost Basis column is supplied. The supplied export has no
+  such column, so these are null. Do not relabel Amount Invested as cost basis.
+  summary.securitiesCostBasisCents excludes cash consistently with unrealized
+  gains. Tax-lot accounting cannot be reconstructed from a holdings snapshot.
+
+  estimatedAnnualIncomeCents: Sum of broker estimated income across positions.
+  estimatedIncomeYieldRatio = annual estimated income / current total value,
+  including cash in both numerator and denominator. This changes as prices
+  change; the income estimate remains dated to the CSV. It is an income yield,
+  not annual performance. Missing income makes the aggregate income/yield null;
+  an explicit $0.00 is valid zero. Do not average individual percentage yields.
+
+  totalReturnRatio / ytdReturnRatio / annualizedReturnRatio: null. Require trade
+  and distribution history, fees, external cash flows, and valuations. Never
+  add estimated future annual income to investment gain and call it total return.
+  The Home page shows gain vs. starting capital, not YTD return, because the
+  holdings snapshot cannot establish YTD performance. This simple comparison
+  assumes no additional capital contributions or withdrawals.
+
+  dailyHoldingsChangeCents: Current share quantities × price movement, only when
+  all securities have fresh quotes from one date and previous-close data. This
+  is not the account's actual daily P&L; trades and distributions are absent.
+  dailySecuritiesChangeRatio uses securities' prior value, excluding cash.
+
+  securityCount excludes cash. assetType allocations group stocks/funds/cash;
+  funds are not necessarily equities. weightRatio uses total value including
+  cash. Future pages should use these shared fields and coverage metadata,
+  showing holdingsAsOfDate and quote freshness beside values.
+
+Validation and recovery
+  Imports reject missing/duplicate headers, malformed quoting, inconsistent
+  field counts, invalid numerics, duplicate tickers, zero/negative quantities,
+  unsupported assets, unresolved CUSIPs, empty files and oversized files.
+  Unknown extra columns are retained as raw fields. Time Held = Short is a
+  holding-period label, not a short sale. Totals/footer rows are not positions
+  and will be rejected rather than silently skipped. UTF-8 with optional BOM,
+  quoted newlines/commas, CRLF and LF are supported.
+
+  All validation and aggregate checks finish before activation. File writes
+  use a cross-process exclusive lock and atomic replacement, so failed imports
+  preserve the last accepted state. After a process crash, inspect write.lock
+  and confirm its recorded PID is no longer running before removing that lock.
+  Locks are never forcibly broken based on elapsed time alone.
+
+  Run tests: node --test tests/*.test.mjs
+  Typecheck: node node_modules/typescript/bin/tsc --noEmit
+  Tests use synthetic data, mocked providers and temporary private stores; the
+  actual fund export and API secrets are not embedded in fixtures or bundles.

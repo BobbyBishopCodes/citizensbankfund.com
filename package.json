@@ -1,0 +1,35 @@
+{
+  "name": "citizens-bank-fund",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "portfolio": "node --env-file-if-exists=.env scripts/portfolio.mjs",
+    "portfolio:prepare": "node scripts/portfolio-static.mjs prepare",
+    "portfolio:export": "node --env-file-if-exists=.env scripts/portfolio-static.mjs export",
+    "build:preview": "tsc -b && vite build --outDir .local/pages-preview && node scripts/build-pages.mjs .local/pages-preview && node scripts/portfolio-static.mjs export snapshot",
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build && node scripts/build-pages.mjs && node scripts/portfolio-static.mjs export snapshot docs/data/portfolio.json",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/inria-sans": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "chart.js": "^4.5.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.4",
+    "remark-gfm": "^4.0.1",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}
