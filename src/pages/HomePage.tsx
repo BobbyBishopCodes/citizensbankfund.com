@@ -35,7 +35,7 @@ export function HomePage() {
   const gainRatio = portfolio?.summary.gainVsStartingCapitalRatio ?? null;
   return (<>
         <NewsCarousel onArticle={openArticle} />
-        <section className="introduction" aria-label="Introduction"><div className="content-width"><p>The Citizens Bank Fund, is a student managed investment fund that manages capital provided by Citizens Bank and is under the governance of East Tennessee State University. The portfolio itself has a wide variety of equities and derivatives providing students real world experience with investing and wealth preservation.</p></div></section>
+        <section className="introduction" aria-label="Introduction"><div className="content-width"><p>The Citizens Bank Fund, is a student managed investment fund that manages capital provided by the Laporte brothers and is under the governance of East Tennessee State University. The portfolio itself has a wide variety of equities and derivatives providing students real world experience with investing and wealth preservation.</p></div></section>
 
         <section className="about section-space" id="information" aria-labelledby="about-title">
           <div className="content-width">
