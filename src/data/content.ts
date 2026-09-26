@@ -52,6 +52,7 @@ export const searchEntries = [
   { title: 'Leadership', description: 'Fund leadership and team leads.', href: '/leadership', keywords: leadership.flatMap(group => group.members.map(member => member.name + ' ' + member.role)).join(' ') },
   { title: 'Legacy', description: 'Past presidents and alumni destinations.', href: '/legacy', keywords: `${pastPresidents.map(president => president.name).join(' ')} ${alumniDestinations.join(' ')} alumni history` },
   { title: 'Partnerships', description: 'Wall Street Oasis and Godel Terminal.', href: '/partnerships', keywords: 'partners Wall Street Oasis WSO Godel Terminal finance' },
+  { title: 'Investors', description: 'Our thanks to the LaPorte brothers for supporting student investing.', href: '/investors', keywords: 'LaPorte brothers investor supporter' },
   { title: 'Scholarships', description: 'A possible future scholarship program for ETSU students.', href: '/scholarships', keywords: 'scholarships eligibility financial aid possible future program' },
   { title: 'Fund History', description: 'How the Citizens Bank Fund began and its first year at ETSU.', href: '/fund-history', keywords: 'history origins 2025 Citizens Bank LaPorte Students of Finance Association' },
   { title: 'Portfolio', description: 'Current holdings, allocation, investment gains, and estimated income.', href: '/portfolio', keywords: 'portfolio returns performance assets holdings kpi' },

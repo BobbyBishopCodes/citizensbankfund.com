@@ -16,6 +16,7 @@ import { LeadershipPage } from './pages/LeadershipPage';
 import { LegacyPage } from './pages/LegacyPage';
 import { FundHistoryPage } from './pages/FundHistoryPage';
 import { PartnershipsPage } from './pages/PartnershipsPage';
+import { InvestorsPage } from './pages/InvestorsPage';
 const MembersPage = lazy(() => import('./pages/MembersPage').then(module => ({ default: module.MembersPage })));
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage').then(module => ({ default: module.PortfolioPage })));
 import { information, type InformationKey } from './data/content';
@@ -43,6 +44,7 @@ export function App() {
           <Route path="/legacy" element={<LegacyPage />} />
           <Route path="/fund-history" element={<FundHistoryPage />} />
           <Route path="/partnerships" element={<PartnershipsPage />} />
+          <Route path="/investors" element={<InvestorsPage />} />
           <Route path="/members" element={<Suspense fallback={<div className="content-width section-space" role="status">Loading members…</div>}><MembersPage /></Suspense>} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

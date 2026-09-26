@@ -5,7 +5,7 @@ import { parseArticle } from '../src/lib/article-files.ts';
 const root = process.cwd();
 const dist = join(root, process.argv[2] ?? 'docs');
 const template = await readFile(join(dist, 'index.html'));
-const routes = ['blog', 'contact', 'apply', 'fund-history', 'scholarships', 'leadership', 'legacy', 'partnerships', 'members', 'portfolio'];
+const routes = ['blog', 'contact', 'apply', 'fund-history', 'scholarships', 'leadership', 'legacy', 'partnerships', 'investors', 'members', 'portfolio'];
 
 for (const filename of await readdir(join(root, 'content', 'blog'))) {
   if (!filename.toLowerCase().endsWith('.md')) continue;

@@ -16,7 +16,7 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
   const navRef = useRef<HTMLElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isBlog ? 'blog' : isHome ? active : '';
+  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships', '/investors'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isBlog ? 'blog' : isHome ? active : '';
   const highlighted = open ? 'information' : current;
 
   useEffect(() => {
@@ -92,6 +92,7 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
               <Link to="/legacy" aria-current={pathname === '/legacy' ? 'page' : undefined} onClick={close}>Legacy<span aria-hidden="true">→</span></Link>
               <button onClick={() => showInformation('achievements')}>Achievements<span aria-hidden="true">→</span></button>
               <Link to="/partnerships" aria-current={pathname === '/partnerships' ? 'page' : undefined} onClick={close}>Partnerships<span aria-hidden="true">→</span></Link>
+              <Link to="/investors" aria-current={pathname === '/investors' ? 'page' : undefined} onClick={close}>Investors<span aria-hidden="true">→</span></Link>
               <Link to="/scholarships" aria-current={pathname === '/scholarships' ? 'page' : undefined} onClick={close}>Scholarships<span aria-hidden="true">→</span></Link>
             </div>
           </div>
