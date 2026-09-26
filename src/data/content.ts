@@ -27,11 +27,8 @@ export const teams = [
 export type InformationKey = 'achievements' | 'scholarships' | 'join';
 export const information: Record<InformationKey, { title: string; paragraphs: string[]; link?: { label: string; href: string } }> = {
   achievements: {
-    title: 'Learning through experience',
-    paragraphs: [
-      'Members develop research, present investment ideas, and defend their reasoning in fund-wide discussions. That work brings classroom concepts into practical investment analysis.',
-      'A record of fund awards, competitions, and milestones will be published here once the details are confirmed.',
-    ],
+    title: 'Achievements',
+    paragraphs: ['Coming soon.'],
   },
   scholarships: {
     title: 'Scholarships',

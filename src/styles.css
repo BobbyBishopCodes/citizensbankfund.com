@@ -400,7 +400,8 @@ main:focus { outline: none; }
 .partnerships-heading p { margin-top: 18px; color: #536579; font-size: 16px; line-height: 1.7; }
 .partner-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .partner-card { overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
-.partner-media { display: grid; place-items: center; height: 234px; padding: 36px; }
+.partner-media { position: relative; display: grid; place-items: center; height: 234px; padding: 36px; }
+.partner-coming-soon { position: absolute; top: 16px; right: 0; padding: 8px 20px; background: #d4ad50; color: #122c45; font-size: 13px; font-weight: 700; letter-spacing: .04em; }
 .partner-media-light { background: #f2f6f8; }
 .partner-media-dark { background: #142c40; }
 .partner-media img { width: min(100%, 355px); max-height: 100%; object-fit: contain; }
