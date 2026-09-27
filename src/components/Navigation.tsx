@@ -90,7 +90,8 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
               <Link to="/fund-history" aria-current={pathname === '/fund-history' ? 'page' : undefined} onClick={close}>Fund History<span aria-hidden="true">→</span></Link>
               <Link to="/leadership" aria-current={pathname === '/leadership' ? 'page' : undefined} onClick={close}>Leadership<span aria-hidden="true">→</span></Link>
               <Link to="/legacy" aria-current={pathname === '/legacy' ? 'page' : undefined} onClick={close}>Legacy<span aria-hidden="true">→</span></Link>
-              <button onClick={() => showInformation('achievements')}>Achievements<span aria-hidden="true">→</span></button>
+              {/* Set to true when Achievements is ready to return to the menu. */}
+              {false && <button onClick={() => showInformation('achievements')}>Achievements<span aria-hidden="true">→</span></button>}
               <Link to="/partnerships" aria-current={pathname === '/partnerships' ? 'page' : undefined} onClick={close}>Partnerships<span aria-hidden="true">→</span></Link>
               <Link to="/investors" aria-current={pathname === '/investors' ? 'page' : undefined} onClick={close}>Investors<span aria-hidden="true">→</span></Link>
               <Link to="/scholarships" aria-current={pathname === '/scholarships' ? 'page' : undefined} onClick={close}>Scholarships<span aria-hidden="true">→</span></Link>
