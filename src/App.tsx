@@ -9,7 +9,7 @@ import { HomePage } from './pages/HomePage';
 import { BlogPage } from './pages/BlogPage';
 import { ArticlePage } from './pages/ArticlePage';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { ContactPage } from './pages/ContactPage';
+const ContactPage = lazy(() => import('./pages/ContactPage').then(module => ({ default: module.ContactPage })));
 import { ApplyPage } from './pages/ApplyPage';
 import { ScholarshipsPage } from './pages/ScholarshipsPage';
 import { LeadershipPage } from './pages/LeadershipPage';
@@ -37,7 +37,7 @@ export function App() {
           <Route path="/portfolio" element={<Suspense fallback={<div className="content-width section-space" role="status">Loading portfolio…</div>}><PortfolioPage /></Suspense>} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<ArticlePage />} />
-          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/contact" element={<Suspense fallback={<div className="content-width section-space" role="status">Loading contact…</div>}><ContactPage /></Suspense>} />
           <Route path="/apply" element={<ApplyPage />} />
           <Route path="/scholarships" element={<ScholarshipsPage />} />
           <Route path="/leadership" element={<LeadershipPage />} />

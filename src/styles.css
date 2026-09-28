@@ -449,7 +449,8 @@ main:focus { outline: none; }
 .contact-field textarea { resize: vertical; min-height: 180px; }
 .contact-field input:hover, .contact-field textarea:hover, .contact-field select:hover { border-color: #778da5; }
 .contact-field input:focus-visible, .contact-field textarea:focus-visible, .contact-field select:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
-.apply-form-note { margin: -4px 0 22px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.application-link { justify-self: start; max-width: 100%; border-radius: 7px; }
+.application-link span { flex-shrink: 0; }
 .contact-submit, .contact-success .button { border-radius: 7px; }
 .contact-submit:disabled { cursor: wait; opacity: .7; }
 .contact-error { margin-bottom: 22px; color: #943b35; font-size: 14px; line-height: 1.7; }
