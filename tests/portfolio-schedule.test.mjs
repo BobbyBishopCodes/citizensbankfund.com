@@ -22,7 +22,7 @@ test('publishing requires successful market export and validation before deploym
   assert.deepEqual(document.errors, []);
   const workflow = document.toJS();
   assert.deepEqual(workflow.on.push.branches, ['main']);
-  assert.equal(workflow.on.schedule[0].cron, '7,22,37,52 13-21 * * 1-5');
+  assert.equal(workflow.on.schedule[0].cron, '3,18,33,48 13-21 * * 1-5');
   assert.deepEqual(workflow.permissions, { contents: 'read' });
   assert.equal(workflow.jobs.deploy.needs, 'build');
   assert.equal(workflow.jobs.deploy.environment.name, 'github-pages');
