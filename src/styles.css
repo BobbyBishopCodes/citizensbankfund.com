@@ -111,7 +111,7 @@ main:focus { outline: none; }
 .news-slide-featured { border-inline: 3px solid #ffffff55; }
 .news-slide-featured:focus-visible { outline: 3px solid var(--gold); outline-offset: -7px; }
 .news-slide-side:focus-visible { outline-offset: -7px; }
-.news-shield { position: absolute; right: 6px; top: 0; width: 102px; height: auto; }
+.news-brand { position: absolute; top: 16px; right: 20px; display: block; width: 96px; height: auto; box-shadow: 0 3px 14px #0004; }
 .news-caption { position: absolute; left: 25px; right: 26px; bottom: 37px; }
 .news-category { display: block; text-transform: uppercase; letter-spacing: 1.8px; font-size: 10px; font-weight: 600; margin-bottom: 14px; }
 .news-caption h2 { font-family: 'Inria Sans', Arial, sans-serif; font-weight: 700; font-size: 35px; letter-spacing: -.4px; line-height: 1.1; text-wrap: pretty; max-width: 445px; text-shadow: 0 1px 5px #0003; }
@@ -473,8 +473,6 @@ main:focus { outline: none; }
 .footer-column > a, .footer-column > button { display: block; background: none; padding: 6px 0; min-height: 30px; color: #bbc9d6; font-size: 11px; text-align: left; line-height: 1.5; }
 .footer-column > a:hover, .footer-column > button:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
 .footer-university > a { display: flex; gap: 20px; }
-.university-signature { display: flex; gap: 12px; align-items: center; margin-top: 18px; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; color: #d5dee7; line-height: 1.5; }
-.university-signature img { width: 35px; height: auto; }
 .footer-bottom { border-top: 1px solid #ffffff29; display: flex; gap: 20px; justify-content: space-between; align-items: center; padding-block: 19px; font-size: 10px; color: #aebdcb; }
 .footer-bottom a { padding: 8px 0; display: flex; gap: 14px; color: #e1e8ee; }
 .footer a:focus-visible, .footer button:focus-visible { outline-color: var(--gold); }
@@ -517,7 +515,6 @@ main:focus { outline: none; }
   .news-caption h2 { font-size: 31px; max-width: 365px; }
   .news-slide-side .news-caption { left: 20px; right: 20px; }
   .news-slide-side .news-caption h2 { font-size: 20px; }
-  .news-shield { width: 77px; }
   .about-grid { gap: 40px; }
   .about-photo { padding-left: 16px; }
   .photo-mat img { height: 425px; }
@@ -585,7 +582,7 @@ main:focus { outline: none; }
   .news-caption { left: 50px; right: 44px; bottom: 30px; }
   .news-caption h2 { font-size: 32px; max-width: 440px; }
   .news-category { font-size: 10px; }
-  .news-shield { right: 15px; width: 70px; }
+  .news-brand { right: 15px; width: 80px; }
   .news-read { margin-top: 19px; }
   .carousel-arrow { top: 43%; width: 44px; height: 51px; background: #0d1e3055; overflow: hidden; }
   .carousel-arrow img { transform: scale(.65); }
@@ -634,10 +631,7 @@ main:focus { outline: none; }
   .footer-main { grid-template-columns: 1fr 1fr; padding-block: 35px; gap: 30px 18px; }
   .footer-brand { margin-bottom: 4px; }
   .footer-brand > span { font-size: 19px; white-space: normal; }
-  .footer-university { grid-column: 1 / -1; border-top: 1px solid #ffffff29; padding-top: 25px; display: grid; grid-template-columns: 1fr 1fr; }
-  .footer-university h3 { grid-column: 1; }
-  .footer-university > a { grid-column: 1; }
-  .university-signature { grid-column: 2; grid-row: 1 / 3; margin-top: 0; justify-self: end; }
+  .footer-university { grid-column: 1 / -1; border-top: 1px solid #ffffff29; padding-top: 25px; }
   .footer-column > a, .footer-column > button { min-height: 44px; display: flex; align-items: center; font-size: 12px; }
   .footer-column h3 { margin-bottom: 9px; }
   .footer-bottom { flex-wrap: wrap; gap: 5px 15px; font-size: 9px; }
@@ -735,7 +729,7 @@ main:focus { outline: none; }
   .carousel-stage { height: 380px; }
   .news-caption { left: 43px; right: 37px; }
   .news-caption h2 { font-size: 29px; }
-  .news-shield { width: 58px; right: 10px; }
+  .news-brand { top: 12px; right: 12px; width: 72px; }
   .photo-mat img { height: 360px; }
   .research-image { height: 190px; }
 }
