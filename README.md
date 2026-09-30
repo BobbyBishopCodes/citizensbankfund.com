@@ -34,4 +34,6 @@ Add Riley's Email for the profile descriptions.
 Excel export of better data from the portfolio's calculations.
 
 Change Dennis name fr
+
+Sharpe & Beta for Portfolio Screen
 ```
