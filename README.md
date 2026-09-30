@@ -28,4 +28,6 @@ Events
 Macro based effects on each equity per month or per investing period
 
 Macro monthly reports
+
+Add Riley's Email for the profile descriptions.
 ```
