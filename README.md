@@ -22,6 +22,7 @@ Check Actions for failed runs. Public repositories can have scheduled workflows 
 
 ```
 CPI & PPI Forecasting
+
 User Logins & Direct Blog Uploads with LinkedIn bot auto-uploads of some sort
 Events
 
@@ -29,17 +30,8 @@ Macro based effects on each equity per month or per investing period
 
 Macro monthly reports
 
-Add Riley's Email for the profile descriptions.
-
 Excel export of better data from the portfolio's calculations.
 
-Change Dennis name fr
-
-Change the blog screen to reports and shit.
-
-
-Sharpe & Beta for Portfolio Screen
-
-3d version of Riley's AI algo stuff & it doesn't matter amount so it doesn't needd to be dynamic maybe everytime we notice a change in positions 
+3d version of Riley's AI algo stuff & it doesn't matter amount so it doesn't needd to be dynamic maybe everytime we notice a change in positions
 
 ```
