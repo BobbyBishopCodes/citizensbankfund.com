@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "currency": "USD",
   "holdingsAsOfDate": "2026-09-26",
-  "calculatedAt": "2026-10-01T20:32:03.249Z",
+  "calculatedAt": "2026-10-01T20:47:12.560Z",
   "positions": [
     {
       "id": "cash:raymond james bank deposit program",
@@ -684,7 +684,7 @@
     "sharpe": 1.3615626481588399,
     "windowStartMonth": "2023-10",
     "windowEndMonth": "2026-09",
-    "weightsAsOf": "2026-10-01T20:32:03.249Z",
+    "weightsAsOf": "2026-10-01T20:47:12.560Z",
     "observations": 36,
     "monthlyReturns": [
       {

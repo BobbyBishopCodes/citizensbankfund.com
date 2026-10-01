@@ -126,7 +126,7 @@ export function PortfolioPage() {
         </table></div>
       </section>
       <section className="pf-panel pf-analysis" aria-labelledby="portfolio-analysis-heading">
-        <div className="pf-panel-heading"><h2 id="portfolio-analysis-heading">Portfolio Correlation and Cluster Analysis</h2><button className="pf-analysis-toggle" type="button" aria-expanded={analysisOpen} aria-controls="portfolio-analysis-content" onClick={() => setAnalysisOpen(open => !open)}>{analysisOpen ? 'Hide analysis' : 'View analysis'}<span aria-hidden="true">{analysisOpen ? '−' : '+'}</span></button></div>
+        <div className="pf-panel-heading"><h2 id="portfolio-analysis-heading">Portfolio Correlation and Cluster Analysis</h2><button className="pf-analysis-toggle" type="button" aria-expanded={analysisOpen} aria-controls="portfolio-analysis-content" onClick={() => setAnalysisOpen(open => !open)}>{analysisOpen ? 'Hide analysis' : 'View analysis'}<span aria-hidden="true" /></button></div>
         {analysisOpen && <div id="portfolio-analysis-content"><PortfolioClusterAnalysis analysis={data.clusterAnalysis ?? null} /></div>}
       </section>
     </>}
