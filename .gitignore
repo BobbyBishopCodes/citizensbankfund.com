@@ -7,6 +7,7 @@
 /content/blog/WRITING.txt
 *.[mM][dD]
 !README.md
+!/Sharpe & Beta math.md
 *.[mM][aA][rR][kK][dD][oO][wW][nN]
 !content/blog/*.md
 /content/blog/_template.md
