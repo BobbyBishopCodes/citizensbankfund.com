@@ -14,7 +14,7 @@ Robert Bishop
 
 ## Timeframe
 
-We use **12 monthly returns** ending with the latest completed calendar month in New York time. That requires **13 month-end closing prices**: one starting value and 12 ending values. For example, on October 1, 2026, the intended return window is October 2025 through September 2026. If the latest month is incomplete in the source data, we use the preceding 12-month window. If that window is also incomplete, Sharpe and beta are unavailable.
+We use **36 monthly returns** over three years, ending with the latest completed calendar month in New York time. That requires **37 month-end closing prices**: one starting value and 36 ending values. For example, on October 1, 2026, the intended return window is October 2023 through September 2026, using closing prices from September 2023 through September 2026. If the latest month is incomplete in the source data, we use the preceding 36-month window. If that window is also incomplete, Sharpe and beta are unavailable.
 
 ## Monthly returns
 
@@ -28,8 +28,8 @@ We use **12 monthly returns** ending with the latest completed calendar month in
 
 ## Beta
 
-**Beta** = covariance of the 12 portfolio and S&P 500 monthly returns / variance of the 12 S&P 500 monthly returns. Both use the sample calculation (divide by 11). A beta of 1 means the portfolio's monthly returns moved about one-for-one with the index over this window.
+**Beta** = covariance of the 36 portfolio and S&P 500 monthly returns / variance of the 36 S&P 500 monthly returns. Both use the sample calculation (divide by 35). A beta of 1 means the portfolio's monthly returns moved about one-for-one with the index over this window.
 
 ## Sharpe ratio
 
-**Sharpe** = square root of 12 × average monthly excess return / sample standard deviation of the 12 monthly excess returns. The square root of 12 annualizes the ratio. Higher values mean more excess return per unit of monthly return variability over this window.
+**Sharpe** = square root of 12 × average monthly excess return / sample standard deviation of the 36 monthly excess returns. The square root of 12 annualizes the ratio. Higher values mean more excess return per unit of monthly return variability over this window.
