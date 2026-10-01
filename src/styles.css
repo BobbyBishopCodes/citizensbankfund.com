@@ -320,7 +320,12 @@ main:focus { outline: none; }
 .leader-photo-frame .leader-photo-riley { transform: scale(1.45); object-position: center 38%; }
 .leader-initials { display: grid; place-items: center; background: #e6ebf0; color: #536c85; border: 1px solid #d5dee7; font-family: Georgia, serif; font-size: 42px; letter-spacing: 2px; }
 .leader-details { flex: 1; min-width: 0; }
+.leader-heading { display: flex; align-items: center; gap: 10px; }
 .leader-details h3 { font-size: 24px; color: var(--navy); font-weight: 600; letter-spacing: -.5px; line-height: 1.3; }
+.leader-linkedin { width: 28px; height: 28px; flex: none; display: inline-grid; place-items: center; transition: opacity 150ms; }
+.leader-linkedin img { display: block; width: 16px; height: 16px; }
+.leader-linkedin:hover { opacity: .75; }
+.leader-linkedin:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 .leader-role { font-size: 16px; color: #536579; margin-top: 7px; line-height: 1.5; }
 .leader-accent { display: block; width: 34px; height: 3px; background: var(--gold); margin-top: 15px; }
 .leader-biography { margin-top: 18px; font-size: 14px; line-height: 1.8; color: var(--muted); }
