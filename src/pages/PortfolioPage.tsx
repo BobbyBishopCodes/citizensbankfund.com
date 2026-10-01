@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PortfolioAllocation } from '../components/PortfolioAllocation';
-import { parsePortfolioData, money, percent, signedMoney, signedPercent, dateLabel, quoteDateLabel, quantity, priceState, filterAndSort, type PortfolioData, type DisplayPosition, type SortKey } from '../lib/portfolio/display';
+import { parsePortfolioData, money, percent, signedMoney, signedPercent, dateLabel, quoteDateLabel, monthLabel, riskNumber, quantity, priceState, filterAndSort, type PortfolioData, type DisplayPosition, type SortKey } from '../lib/portfolio/display';
 import './portfolio.css';
 
 const names: Record<string, string> = { BMY: 'Bristol Myers Squibb', COF: 'Capital One', CSCO: 'Cisco Systems', FSLR: 'First Solar', GE: 'GE Aerospace', QQQM: 'Invesco Nasdaq 100 ETF', SPHD: 'Invesco S&P 500 High Dividend Low Volatility ETF', BINC: 'iShares Flexible Income Active ETF', EWJ: 'iShares MSCI Japan ETF', IEF: 'iShares 7–10 Year Treasury Bond ETF', HYG: 'iShares High Yield Corporate Bond ETF', LQD: 'iShares Investment Grade Corporate Bond ETF', INDA: 'iShares MSCI India ETF', MSFT: 'Microsoft', PG: 'Procter & Gamble', GLD: 'SPDR Gold Shares', XLE: 'Energy Select Sector SPDR ETF', TTWO: 'Take-Two Interactive', U: 'Unity Software', VDC: 'Vanguard Consumer Staples ETF', VOO: 'Vanguard S&P 500 ETF', VGSH: 'Vanguard Short-Term Treasury ETF' };
@@ -94,6 +94,8 @@ export function PortfolioPage() {
         <div><dt>Gain vs. Starting Capital</dt><dd className={gainClass(data.summary.gainVsStartingCapitalCents)}>{signedMoney(data.summary.gainVsStartingCapitalCents)}</dd><p><span className={gainClass(data.summary.gainVsStartingCapitalRatio)}>{signedPercent(data.summary.gainVsStartingCapitalRatio)}</span></p></div>
         <div><dt>Estimated Annual Income</dt><dd>{money(data.summary.estimatedAnnualIncomeCents)}</dd><p>{percent(data.summary.estimatedIncomeYieldRatio)} portfolio income yield</p></div>
         <div><dt>Estimated Income Yield</dt><dd>{percent(data.summary.estimatedIncomeYieldRatio)}</dd><p>Annual income ÷ portfolio value</p></div>
+        <div><dt>Beta · 12 months</dt><dd>{riskNumber(data.risk.beta)}</dd><p>vs. S&amp;P 500 price index{data.risk.windowEndMonth ? ` · ${monthLabel(data.risk.windowEndMonth)}` : ''}</p></div>
+        <div><dt>Sharpe · 12 months</dt><dd>{riskNumber(data.risk.sharpe)}</dd><p>Annualized · 3-month Treasury{data.risk.windowEndMonth ? ` · ${monthLabel(data.risk.windowEndMonth)}` : ''}</p></div>
       </dl>
       <div className="pf-charts"><PortfolioAllocation data={data} />
         <section className="pf-panel pf-top-holdings" aria-labelledby="top-holdings-heading"><div className="pf-panel-heading"><h2 id="top-holdings-heading">Top Holdings</h2><button className="pf-text-button" onClick={showHoldings}>View all holdings<img src="/assets/icons/chevron-right.svg" alt="" /></button></div>

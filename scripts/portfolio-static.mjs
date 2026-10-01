@@ -3,9 +3,11 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { prepareHoldings, parseHoldings, staticPortfolio, atomicJson, snapshotFromHoldings } from './portfolio/static.mjs';
 import { finnhubProvider } from './portfolio/provider.mjs';
+import { monthEndObservations } from './portfolio/risk.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const inputPath = resolve(root, 'content/portfolio/holdings.json');
+const riskInputPath = resolve(root, 'content/portfolio/risk-history.json');
 const [command, ...args] = process.argv.slice(2);
 try {
   if (command === 'prepare') {
@@ -31,8 +33,16 @@ try {
     if (outputPath.toLowerCase() === inputPath.toLowerCase() || !outputPath.endsWith('.json')) throw new Error('Choose a JSON output path different from holdings.json');
     const holdings = parseHoldings(await readFile(inputPath, 'utf8'));
     const provider = mode === 'market' ? finnhubProvider({ apiKey: process.env.FINNHUB_API_KEY }) : undefined;
-    const view = await staticPortfolio(holdings, { mode, provider });
+    let riskPrices, benchmark, treasury;
+    try {
+      riskPrices = JSON.parse(await readFile(riskInputPath, 'utf8'));
+      benchmark = monthEndObservations(riskPrices.benchmark, 'index');
+      treasury = monthEndObservations(riskPrices.treasury, 'yield');
+    } catch {
+      console.warn('Risk history cache is missing or invalid; Beta and Sharpe will be unavailable.');
+    }
+    const view = await staticPortfolio(holdings, { mode, provider, riskPrices, benchmark, treasury });
     await atomicJson(outputPath, view);
-    console.log(`Exported ${view.summary.securityCount} securities; mode=${mode}; snapshot=${view.coverage.snapshotPrices}, fresh=${view.coverage.freshQuotes}, stale=${view.coverage.staleQuotes}.`);
+    console.log(`Exported ${view.summary.securityCount} securities; mode=${mode}; snapshot=${view.coverage.snapshotPrices}, fresh=${view.coverage.freshQuotes}, stale=${view.coverage.staleQuotes}; risk=${view.risk.status}.`);
   } else throw new Error('Commands: prepare, export');
 } catch (error) { console.error(error.message); process.exitCode = 1; }

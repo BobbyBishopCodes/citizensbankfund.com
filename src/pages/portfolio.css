@@ -5,7 +5,7 @@
 .pf-page-heading > div > p { color: #526b89; font-size: 14px; line-height: 1.6; }
 .pf-freshness { border-left: 1px solid #dce4ed; padding-left: 15px; display: flex; flex-direction: column; gap: 7px; max-width: 330px; color: #5b7190; font-size: 11px; line-height: 1.5; }
 .pf-freshness strong { font-weight: 500; }
-.pf-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+.pf-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
 .pf-summary > div, .pf-panel { background: #fff; border: 1px solid #dfe6ee; border-radius: 5px; }
 .pf-summary > div { padding: 18px 20px; min-height: 116px; }
 .pf-summary dt { font-size: 13px; color: #536a87; line-height: 1.5; }

@@ -1,6 +1,7 @@
 import { readFile, readdir, lstat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parsePortfolioData } from '../src/lib/portfolio/display.ts';
 
 /** Check only the directory that will be uploaded, not the source checkout. */
 export async function checkPagesPreview(directory) {
@@ -26,7 +27,7 @@ export async function checkPagesPreview(directory) {
     if (!allowed) throw new Error(`Unexpected artifact file: ${file}`);
     if (/\.(?:html|js|css|json|svg|txt)$/.test(file)) {
       const text = await readFile(join(directory, file), 'utf8');
-      if (/FINNHUB_API_KEY|PORTFOLIO_ADMIN_TOKEN|RESEND_API_KEY|"rawCsv"\s*:|"fields"\s*:/.test(text)) {
+      if (/FINNHUB_API_KEY|FRED_API_KEY|PORTFOLIO_ADMIN_TOKEN|RESEND_API_KEY|"rawCsv"\s*:|"fields"\s*:/.test(text)) {
         throw new Error(`Private configuration or source fields in artifact: ${file}`);
       }
     }
@@ -40,6 +41,7 @@ export async function checkPagesPreview(directory) {
       !Number.isSafeInteger(portfolio.summary.marketValueCents) || !Number.isFinite(Date.parse(portfolio.calculatedAt))) {
     throw new Error('Invalid static portfolio read model');
   }
+  parsePortfolioData(portfolio);
   return { files: files.length, mode: portfolio.publication.mode, securityCount: portfolio.summary.securityCount };
 }
 

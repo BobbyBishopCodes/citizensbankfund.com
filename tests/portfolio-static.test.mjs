@@ -135,6 +135,7 @@ test('validation workflow is manual-only, read-only, and cannot deploy', async (
   assert.deepEqual(Object.keys(workflow.jobs), ['validate']);
   assert.equal(workflow.on.workflow_dispatch.inputs.quote_mode.default, 'snapshot');
   assert.equal(workflow.jobs.validate.steps.filter(step => step.env?.FINNHUB_API_KEY).length, 1);
+  assert.equal(workflow.jobs.validate.steps.filter(step => step.env?.FRED_API_KEY).length, 0);
   const upload = workflow.jobs.validate.steps.find(step => step.uses?.startsWith('actions/upload-artifact@'));
   assert.equal(upload.with.path, '.local/pages-preview/');
   assert.equal(upload.with['retention-days'], 7);

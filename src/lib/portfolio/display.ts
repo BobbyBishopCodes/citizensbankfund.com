@@ -3,6 +3,13 @@ import { STARTING_CAPITAL_CENTS } from './value.ts';
 
 export type PortfolioData = ReturnType<typeof valuePortfolio> & {
   publication: { mode: 'snapshot' | 'market'; staleAfterMs: number; oldestQuoteAt: string | null; newestQuoteAt: string | null };
+  risk: {
+    status: 'available' | 'awaiting-month' | 'unavailable'; reason: string | null;
+    beta: number | null; sharpe: number | null; windowStartMonth: string | null; windowEndMonth: string | null;
+    weightsAsOf: string; observations: number;
+    monthlyReturns: { month: string; portfolioReturnRatio: number; benchmarkReturnRatio: number;
+      riskFreeReturnRatio: number; excessReturnRatio: number }[];
+  };
 };
 export type DisplayPosition = PortfolioData['positions'][number];
 export type SortKey = 'symbol' | 'description' | 'quantity' | 'price' | 'averageInvestmentPerUnit' | 'marketValueCents' | 'amountInvestedCents' | 'costBasisCents' | 'investmentGainCents' | 'weightRatio' | 'estimatedAnnualIncomeCents' | 'estimatedIncomeYieldRatio';
@@ -14,6 +21,8 @@ export const signedPercent = (value: number | null) => value !== null && value >
 export const quantity = (value: string) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 6 }).format(Number(value));
 export const dateLabel = (date: string) => new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(date));
 export const quoteDateLabel = (date: string) => new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York', timeZoneName: 'short' }).format(new Date(date));
+export const monthLabel = (month: string) => new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${month}-01T00:00:00Z`));
+export const riskNumber = (value: number | null) => value === null ? 'Unavailable' : value.toFixed(2);
 
 /** Validate before showing money; missing or malformed documents must not appear as zero. */
 export function parsePortfolioData(input: unknown): PortfolioData {
@@ -51,6 +60,28 @@ export function parsePortfolioData(input: unknown): PortfolioData {
         new Set(data.allocations.map(group => group.assetType)).size !== 3 ||
         data.allocations.some(group => !['stock', 'fund', 'cash'].includes(group.assetType) || !cents(group.marketValueCents) || group.marketValueCents < 0 || !maybeNumber(group.weightRatio)) ||
         data.allocations.reduce((sum, group) => sum + group.marketValueCents, 0) !== data.summary.marketValueCents) throw new Error();
+    const risk = data.risk;
+    if (!risk || !['available', 'awaiting-month', 'unavailable'].includes(risk.status) ||
+        !Number.isFinite(Date.parse(risk.weightsAsOf)) || risk.weightsAsOf !== data.calculatedAt ||
+        !Array.isArray(risk.monthlyReturns)) throw new Error();
+    if (risk.status === 'unavailable') {
+      if (risk.beta !== null || risk.sharpe !== null || risk.windowStartMonth !== null ||
+          risk.windowEndMonth !== null || risk.observations !== 0 || risk.monthlyReturns.length !== 0 ||
+          typeof risk.reason !== 'string') throw new Error();
+    } else {
+      const month = (value: unknown) => typeof value === 'string' && /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
+      const monthIndex = (value: string) => Number(value.slice(0, 4)) * 12 + Number(value.slice(5)) - 1;
+      if (!numeric(risk.beta) || !numeric(risk.sharpe) || !month(risk.windowStartMonth) ||
+          !month(risk.windowEndMonth) || risk.reason !== null || risk.observations !== 12 ||
+          risk.monthlyReturns.length !== 12 || risk.monthlyReturns[0].month !== risk.windowStartMonth ||
+          risk.monthlyReturns[11].month !== risk.windowEndMonth ||
+          monthIndex(risk.windowEndMonth as string) - monthIndex(risk.windowStartMonth as string) !== 11 ||
+          risk.monthlyReturns.some((row, index) => !month(row.month) ||
+            (index > 0 && monthIndex(row.month) - monthIndex(risk.monthlyReturns[index - 1].month) !== 1) ||
+            !numeric(row.portfolioReturnRatio) || !numeric(row.benchmarkReturnRatio) ||
+            !numeric(row.riskFreeReturnRatio) || !numeric(row.excessReturnRatio) ||
+            Math.abs(row.excessReturnRatio - (row.portfolioReturnRatio - row.riskFreeReturnRatio)) > 1e-12)) throw new Error();
+    }
     return data;
   } catch { throw new Error('Portfolio data is unavailable or incomplete.'); }
 }

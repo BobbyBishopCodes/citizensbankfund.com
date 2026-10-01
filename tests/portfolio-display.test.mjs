@@ -18,7 +18,7 @@ test('current published holdings produce a valid browser read model without fixe
 
 test('browser read model accepts generated data and rejects corrupt or incomplete financial data', () => {
   assert.equal(parsePortfolioData(data).summary.marketValueCents, data.summary.marketValueCents);
-  for (const edit of [value => { value.summary.marketValueCents++; }, value => { value.summary.gainVsStartingCapitalCents++; }, value => { value.summary.estimatedAnnualIncomeCents = undefined; }, value => { value.positions[0].marketValueCents = NaN; }, value => { value.positions.push(value.positions[0]); }, value => { value.publication = null; }]) {
+  for (const edit of [value => { value.summary.marketValueCents++; }, value => { value.summary.gainVsStartingCapitalCents++; }, value => { value.summary.estimatedAnnualIncomeCents = undefined; }, value => { value.positions[0].marketValueCents = NaN; }, value => { value.positions.push(value.positions[0]); }, value => { value.publication = null; }, value => { value.risk.weightsAsOf = 'invalid'; }, value => { value.risk.beta = 0; }]) {
     const bad = structuredClone(data); edit(bad);
     assert.throws(() => parsePortfolioData(bad), /unavailable/);
   }

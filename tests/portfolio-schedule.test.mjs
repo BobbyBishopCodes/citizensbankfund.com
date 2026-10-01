@@ -32,6 +32,8 @@ test('publishing requires successful market export and validation before deploym
   const upload = steps.findIndex(step => step.uses?.startsWith('actions/upload-pages-artifact@'));
   assert.ok(market >= 0 && market < check && check < upload);
   assert.equal(steps.filter(step => step.env?.FINNHUB_API_KEY).length, 1);
-  assert.ok(steps.every(step => !step['continue-on-error']));
+  assert.equal(steps.filter(step => step.env?.FRED_API_KEY).length, 0);
+  assert.equal(steps.find(step => step.id === 'risk-history')['continue-on-error'], true);
+  assert.deepEqual(workflow.jobs.build.permissions, { contents: 'write' });
   assert.equal(steps[upload].with.path, '.local/pages-preview');
 });
