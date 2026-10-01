@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "currency": "USD",
   "holdingsAsOfDate": "2026-09-26",
-  "calculatedAt": "2026-10-01T05:16:54.427Z",
+  "calculatedAt": "2026-10-01T15:47:42.272Z",
   "positions": [
     {
       "id": "cash:raymond james bank deposit program",
@@ -680,89 +680,257 @@
   "risk": {
     "status": "available",
     "reason": null,
-    "beta": 0.5429512599931332,
-    "sharpe": 0.7986221300807944,
-    "windowStartMonth": "2025-10",
+    "beta": 0.5172925702152553,
+    "sharpe": 1.3615626481588399,
+    "windowStartMonth": "2023-10",
     "windowEndMonth": "2026-09",
-    "weightsAsOf": "2026-10-01T05:16:54.427Z",
-    "observations": 12,
+    "weightsAsOf": "2026-10-01T15:47:42.272Z",
+    "observations": 36,
     "monthlyReturns": [
       {
+        "month": "2023-10",
+        "portfolioReturnRatio": -0.009117043104855812,
+        "benchmarkReturnRatio": -0.021979687736850106,
+        "riskFreeReturnRatio": 0.004511361380472367,
+        "excessReturnRatio": -0.013628404485328179
+      },
+      {
+        "month": "2023-11",
+        "portfolioReturnRatio": 0.04342479936495412,
+        "benchmarkReturnRatio": 0.08917926462873771,
+        "riskFreeReturnRatio": 0.004543078952765622,
+        "excessReturnRatio": 0.0388817204121885
+      },
+      {
+        "month": "2023-12",
+        "portfolioReturnRatio": 0.046276902010587234,
+        "benchmarkReturnRatio": 0.04422916940321375,
+        "riskFreeReturnRatio": 0.004432019218941319,
+        "excessReturnRatio": 0.041844882791645915
+      },
+      {
+        "month": "2024-01",
+        "portfolioReturnRatio": 0.005360865606306059,
+        "benchmarkReturnRatio": 0.015895744712075555,
+        "riskFreeReturnRatio": 0.0043923222705009035,
+        "excessReturnRatio": 0.0009685433358051559
+      },
+      {
+        "month": "2024-02",
+        "portfolioReturnRatio": 0.01759615985879522,
+        "benchmarkReturnRatio": 0.05172061539731532,
+        "riskFreeReturnRatio": 0.004408203120921161,
+        "excessReturnRatio": 0.013187956737874058
+      },
+      {
+        "month": "2024-03",
+        "portfolioReturnRatio": 0.029509079525049026,
+        "benchmarkReturnRatio": 0.031018764704381807,
+        "riskFreeReturnRatio": 0.004432019218941319,
+        "excessReturnRatio": 0.025077060306107707
+      },
+      {
+        "month": "2024-04",
+        "portfolioReturnRatio": -0.02402579971120133,
+        "benchmarkReturnRatio": -0.04161504277408257,
+        "riskFreeReturnRatio": 0.004439956538087042,
+        "excessReturnRatio": -0.028465756249288373
+      },
+      {
+        "month": "2024-05",
+        "portfolioReturnRatio": 0.010391414961600315,
+        "benchmarkReturnRatio": 0.04802122449952262,
+        "riskFreeReturnRatio": 0.004439956538087042,
+        "excessReturnRatio": 0.005951458423513273
+      },
+      {
+        "month": "2024-06",
+        "portfolioReturnRatio": 0.006887726337688402,
+        "benchmarkReturnRatio": 0.034669759034089864,
+        "riskFreeReturnRatio": 0.004439956538087042,
+        "excessReturnRatio": 0.0024477697996013598
+      },
+      {
+        "month": "2024-07",
+        "portfolioReturnRatio": 0.0243183931209748,
+        "benchmarkReturnRatio": 0.011321349038912354,
+        "riskFreeReturnRatio": 0.004455829106839726,
+        "excessReturnRatio": 0.019862564014135074
+      },
+      {
+        "month": "2024-08",
+        "portfolioReturnRatio": 0.018678144957389724,
+        "benchmarkReturnRatio": 0.022834688445031892,
+        "riskFreeReturnRatio": 0.004400263040968744,
+        "excessReturnRatio": 0.01427788191642098
+      },
+      {
+        "month": "2024-09",
+        "portfolioReturnRatio": 0.02446556424108275,
+        "benchmarkReturnRatio": 0.020196869910062976,
+        "riskFreeReturnRatio": 0.004241316266458295,
+        "excessReturnRatio": 0.020224247974624455
+      },
+      {
+        "month": "2024-10",
+        "portfolioReturnRatio": -0.008458736931099518,
+        "benchmarkReturnRatio": -0.009896780552817508,
+        "riskFreeReturnRatio": 0.0038587110455146068,
+        "excessReturnRatio": -0.012317447976614125
+      },
+      {
+        "month": "2024-11",
+        "portfolioReturnRatio": 0.047626481392152475,
+        "benchmarkReturnRatio": 0.057301352215863854,
+        "riskFreeReturnRatio": 0.003786793663815624,
+        "excessReturnRatio": 0.04383968772833685
+      },
+      {
+        "month": "2024-12",
+        "portfolioReturnRatio": -0.029452724020304837,
+        "benchmarkReturnRatio": -0.024990136563014964,
+        "riskFreeReturnRatio": 0.0037388172355212745,
+        "excessReturnRatio": -0.033191541255826115
+      },
+      {
+        "month": "2025-01",
+        "portfolioReturnRatio": 0.026781767599146227,
+        "benchmarkReturnRatio": 0.027016320305765618,
+        "riskFreeReturnRatio": 0.003570700804265803,
+        "excessReturnRatio": 0.023211066794880424
+      },
+      {
+        "month": "2025-02",
+        "portfolioReturnRatio": 0.01615998077520491,
+        "benchmarkReturnRatio": -0.014242127760312417,
+        "riskFreeReturnRatio": 0.003522610585598107,
+        "excessReturnRatio": 0.012637370189606804
+      },
+      {
+        "month": "2025-03",
+        "portfolioReturnRatio": -0.017500252386225056,
+        "benchmarkReturnRatio": -0.05754471408178685,
+        "riskFreeReturnRatio": 0.003530627382636986,
+        "excessReturnRatio": -0.021030879768862042
+      },
+      {
+        "month": "2025-04",
+        "portfolioReturnRatio": 0.0013167897980918906,
+        "benchmarkReturnRatio": -0.007624936518260461,
+        "riskFreeReturnRatio": 0.003530627382636986,
+        "excessReturnRatio": -0.0022138375845450952
+      },
+      {
+        "month": "2025-05",
+        "portfolioReturnRatio": 0.0364505556151685,
+        "benchmarkReturnRatio": 0.06152384783069298,
+        "riskFreeReturnRatio": 0.003522610585598107,
+        "excessReturnRatio": 0.032927945029570395
+      },
+      {
+        "month": "2025-06",
+        "portfolioReturnRatio": 0.02636284065597922,
+        "benchmarkReturnRatio": 0.04960679602617879,
+        "riskFreeReturnRatio": 0.0035626875279843873,
+        "excessReturnRatio": 0.022800153127994834
+      },
+      {
+        "month": "2025-07",
+        "portfolioReturnRatio": 0.003981277250145082,
+        "benchmarkReturnRatio": 0.021666572655702376,
+        "riskFreeReturnRatio": 0.003602746873047291,
+        "excessReturnRatio": 0.0003785303770977907
+      },
+      {
+        "month": "2025-08",
+        "portfolioReturnRatio": 0.029529186439074248,
+        "benchmarkReturnRatio": 0.01906650324400294,
+        "riskFreeReturnRatio": 0.003602746873047291,
+        "excessReturnRatio": 0.025926439566026957
+      },
+      {
+        "month": "2025-09",
+        "portfolioReturnRatio": 0.013319514741470693,
+        "benchmarkReturnRatio": 0.03532365570425955,
+        "riskFreeReturnRatio": 0.003458450834976645,
+        "excessReturnRatio": 0.009861063906494048
+      },
+      {
         "month": "2025-10",
-        "portfolioReturnRatio": 0.008066548689255604,
+        "portfolioReturnRatio": 0.00806654535618053,
         "benchmarkReturnRatio": 0.022686836730727133,
         "riskFreeReturnRatio": 0.003289816470036566,
-        "excessReturnRatio": 0.004776732219219038
+        "excessReturnRatio": 0.004776728886143963
       },
       {
         "month": "2025-11",
-        "portfolioReturnRatio": 0.015045732980846634,
+        "portfolioReturnRatio": 0.015045737378301022,
         "benchmarkReturnRatio": 0.001299669600304032,
         "riskFreeReturnRatio": 0.003185267308280393,
-        "excessReturnRatio": 0.011860465672566241
+        "excessReturnRatio": 0.01186047007002063
       },
       {
         "month": "2025-12",
-        "portfolioReturnRatio": 0.009308349777006552,
+        "portfolioReturnRatio": 0.009308345657937521,
         "benchmarkReturnRatio": -0.0005241572238063874,
         "riskFreeReturnRatio": 0.0031772200986699417,
-        "excessReturnRatio": 0.00613112967833661
+        "excessReturnRatio": 0.00613112555926758
       },
       {
         "month": "2026-01",
-        "portfolioReturnRatio": 0.0025947098113452316,
+        "portfolioReturnRatio": 0.0025946984993056653,
         "benchmarkReturnRatio": 0.013662990285588927,
         "riskFreeReturnRatio": 0.0030080644524299593,
-        "excessReturnRatio": -0.00041335464108472773
+        "excessReturnRatio": -0.00041336595312429407
       },
       {
         "month": "2026-02",
-        "portfolioReturnRatio": 0.009627347827660575,
+        "portfolioReturnRatio": 0.009627379257035305,
         "benchmarkReturnRatio": -0.008668358545790955,
         "riskFreeReturnRatio": 0.0030080644524299593,
-        "excessReturnRatio": 0.006619283375230616
+        "excessReturnRatio": 0.006619314804605345
       },
       {
         "month": "2026-03",
-        "portfolioReturnRatio": -0.0389062655026525,
+        "portfolioReturnRatio": -0.03890628578191543,
         "benchmarkReturnRatio": -0.0509327099760426,
         "riskFreeReturnRatio": 0.0030080644524299593,
-        "excessReturnRatio": -0.04191432995508246
+        "excessReturnRatio": -0.041914350234345386
       },
       {
         "month": "2026-04",
-        "portfolioReturnRatio": 0.0522853823613829,
+        "portfolioReturnRatio": 0.05228538671137957,
         "benchmarkReturnRatio": 0.10423342503354505,
         "riskFreeReturnRatio": 0.003032248764614831,
-        "excessReturnRatio": 0.04925313359676807
+        "excessReturnRatio": 0.04925313794676474
       },
       {
         "month": "2026-05",
-        "portfolioReturnRatio": 0.03212333303478284,
+        "portfolioReturnRatio": 0.03212332258212887,
         "benchmarkReturnRatio": 0.05147031284462078,
         "riskFreeReturnRatio": 0.0030161266025487965,
-        "excessReturnRatio": 0.029107206432234044
+        "excessReturnRatio": 0.029107195979580072
       },
       {
         "month": "2026-06",
-        "portfolioReturnRatio": -0.0028774492179771856,
+        "portfolioReturnRatio": -0.0028774441992467266,
         "benchmarkReturnRatio": -0.010646353722793878,
         "riskFreeReturnRatio": 0.003024188039900011,
-        "excessReturnRatio": -0.0059016372578771965
+        "excessReturnRatio": -0.0059016322391467375
       },
       {
         "month": "2026-07",
-        "portfolioReturnRatio": 0.0171523508189833,
+        "portfolioReturnRatio": 0.01715233591039844,
         "benchmarkReturnRatio": -0.001285443024471311,
         "riskFreeReturnRatio": 0.0031691721789193217,
-        "excessReturnRatio": 0.01398317864006398
+        "excessReturnRatio": 0.013983163731479117
       },
       {
         "month": "2026-08",
-        "portfolioReturnRatio": 0.021669004889624054,
+        "portfolioReturnRatio": 0.02166901148637271,
         "benchmarkReturnRatio": 0.0262252794496991,
         "riskFreeReturnRatio": 0.0031369733958956925,
-        "excessReturnRatio": 0.01853203149372836
+        "excessReturnRatio": 0.01853203809047702
       },
       {
         "month": "2026-09",

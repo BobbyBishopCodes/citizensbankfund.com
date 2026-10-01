@@ -63,7 +63,7 @@ export const leadership: { id: string; title: string; members: Leader[] }[] = [
   { id: 'commodities-leadership', title: 'Commodities Team', members: [
     {
       name: 'Dennis Pham', role: 'Commodities Team Lead', photo: '/assets/leadership/denis-pham.png',
-      biography: "Dennis is a junior studying Finance. He's aspiring to go into Trading.",
+      biography: "Dennis is a junior studying Finance. He's aspiring to go into Financial Services.",
       linkedin: 'https://www.linkedin.com/in/dennis-pham-63a1643ab/',
     },
   ] },

@@ -12,7 +12,7 @@ export function LeadershipPage() {
         <div className="leadership-list">{group.members.map(member => {
           const reverse = position++ % 2 === 1;
           return <article className={`leader-row${reverse ? ' leader-row-reverse' : ''}`} key={member.name}>
-            {member.photo ? <div className="leader-portrait leader-photo-frame"><img className={member.name === 'Riley Murray' ? 'leader-photo-riley' : undefined} src={member.photo} alt={member.name} width="180" height="190" loading="lazy" /></div> : <div className="leader-portrait leader-initials" aria-hidden="true">{member.name.split(' ').map(part => part[0]).join('')}</div>}
+            {member.photo ? <div className="leader-portrait leader-photo-frame"><img className={member.name === 'Riley Murray' ? 'leader-photo-riley' : member.name === 'Dennis Pham' ? 'leader-photo-dennis' : undefined} src={member.photo} alt={member.name} width="180" height="190" loading="lazy" /></div> : <div className="leader-portrait leader-initials" aria-hidden="true">{member.name.split(' ').map(part => part[0]).join('')}</div>}
             <div className="leader-details">
               <div className="leader-heading">
                 <h3>{member.name}</h3>
