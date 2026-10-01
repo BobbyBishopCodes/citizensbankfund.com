@@ -2,21 +2,21 @@ import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { InformationKey } from '../data/content';
 
-const sections = ['home', 'information', 'portfolio', 'members', 'blog', 'contact'];
-const links = [ ['portfolio', 'Portfolio'], ['members', 'Members'], ['blog', 'Blog'], ['apply', 'Apply'], ['contact', 'Contact'] ];
+const sections = ['home', 'information', 'portfolio', 'members', 'reports', 'contact'];
+const links = [ ['portfolio', 'Portfolio'], ['members', 'Members'], ['reports', 'Reports'], ['apply', 'Apply'], ['contact', 'Contact'] ];
 
 export function Navigation({ onInformation }: { onInformation: (key: InformationKey) => void }) {
   const location = useLocation();
   const pathname = location.pathname.replace(/\/+$/, '') || '/';
   const isHome = pathname === '/';
-  const isBlog = pathname === '/blog' || pathname.startsWith('/blog/');
+  const isReports = pathname === '/reports' || pathname.startsWith('/reports/');
   const [active, setActive] = useState('home');
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships', '/investors'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isBlog ? 'blog' : isHome ? active : '';
+  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships', '/investors'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isReports ? 'reports' : isHome ? active : '';
   const highlighted = open ? 'information' : current;
 
   useEffect(() => {

@@ -12,4 +12,4 @@ preview: true
 
 A proposed research brief on monetary policy, interest rates, and the questions they raise for the fund’s research teams.
 
-> This headline is a sample of possible blog posts.
+> This headline is a sample of possible reports.

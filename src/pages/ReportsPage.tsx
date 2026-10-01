@@ -4,7 +4,7 @@ import { articles } from '../data/content';
 
 const categories = Array.from(new Set(articles.map(article => article.category)));
 
-export function BlogPage() {
+export function ReportsPage() {
   const [params, setParams] = useSearchParams();
   const query = params.get('q') ?? '';
   const requestedCategory = params.get('category') ?? '';
@@ -28,32 +28,32 @@ export function BlogPage() {
 
   return (
     <div className="blog-page content-width">
-      <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">Blog</span></nav>
+      <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">Reports</span></nav>
       <div className="blog-heading">
-        <h1>Blog</h1>
-        <div className="blog-search" role="search" aria-label="Blog search">
-          <label className="sr-only" htmlFor="blog-search">Search articles</label>
-          <input id="blog-search" type="search" placeholder="Search articles" value={query} onChange={event => setFilter('q', event.target.value, true)} maxLength={150} />
+        <h1>Reports</h1>
+        <div className="blog-search" role="search" aria-label="Reports search">
+          <label className="sr-only" htmlFor="reports-search">Search reports</label>
+          <input id="reports-search" type="search" placeholder="Search reports" value={query} onChange={event => setFilter('q', event.target.value, true)} maxLength={150} />
           <span className="blog-search-icon" aria-hidden="true"><img src="/assets/icons/search.svg" alt="" /></span>
         </div>
       </div>
       <div className="blog-toolbar">
         <div className="category-filters" role="group" aria-label="Filter by category">
-          <button aria-pressed={!category} onClick={() => setFilter('category', '')}>All posts</button>
+          <button aria-pressed={!category} onClick={() => setFilter('category', '')}>All reports</button>
           {categories.map(item => <button key={item} aria-pressed={category === item} onClick={() => setFilter('category', item)}>{item}</button>)}
         </div>
-        <p className="blog-result-count" role="status">{filtered.length} {filtered.length === 1 ? 'article' : 'articles'}</p>
+        <p className="blog-result-count" role="status">{filtered.length} {filtered.length === 1 ? 'report' : 'reports'}</p>
       </div>
 
       {featured && <article className="featured-article">
-        <Link to={`/blog/${featured.id}`} state={{ blogSearch: '' }}>
+        <Link to={`/reports/${featured.id}`} state={{ reportsSearch: '' }}>
           <div className="featured-article-image"><img src={featured.image} alt={featured.imageAlt} width="800" height="533" fetchPriority="high" /></div>
-          <div className="featured-article-copy"><span className="research-category">{featured.category}</span><h2>{featured.title}</h2><p className="article-summary">{featured.summary}</p><span className="text-link">{featured.preview ? 'Read preview' : 'Read article'} <span aria-hidden="true">→</span></span></div>
+          <div className="featured-article-copy"><span className="research-category">{featured.category}</span><h2>{featured.title}</h2><p className="article-summary">{featured.summary}</p><span className="text-link">{featured.preview ? 'Read preview' : 'Read report'} <span aria-hidden="true">→</span></span></div>
         </Link>
       </article>}
 
       {remaining.length > 0 && <div className="blog-grid">{remaining.map(article => <ArticleCard key={article.id} article={article} showSummary headingLevel={2} />)}</div>}
-      {filtered.length === 0 && <div className="blog-empty"><h2>No articles found</h2><button className="button" onClick={() => setParams({})}>Clear filters</button></div>}
+      {filtered.length === 0 && <div className="blog-empty"><h2>No reports found</h2><button className="button" onClick={() => setParams({})}>Clear filters</button></div>}
     </div>
   );
 }

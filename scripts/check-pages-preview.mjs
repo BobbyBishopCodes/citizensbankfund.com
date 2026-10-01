@@ -32,7 +32,7 @@ export async function checkPagesPreview(directory) {
       }
     }
   }
-  for (const required of ['index.html', '404.html', 'CNAME', '.nojekyll', 'data/portfolio.json', 'blog/index.html', 'fund-history/index.html', 'members/index.html', 'portfolio/index.html']) {
+  for (const required of ['index.html', '404.html', 'CNAME', '.nojekyll', 'data/portfolio.json', 'reports/index.html', 'blog/index.html', 'fund-history/index.html', 'members/index.html', 'portfolio/index.html']) {
     if (!files.includes(required)) throw new Error(`Missing static artifact file: ${required}`);
   }
   const portfolio = JSON.parse(await readFile(join(directory, 'data/portfolio.json'), 'utf8'));

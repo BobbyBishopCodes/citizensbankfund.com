@@ -12,4 +12,4 @@ preview: true
 
 A research topic from the FX & Commodities desk, exploring the relationship between agricultural and energy markets.
 
-> This headline is a sample of possible blog posts.
+> This headline is a sample of possible reports.

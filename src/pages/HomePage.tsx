@@ -7,7 +7,7 @@ import { money, parsePortfolioData, signedPercent, type PortfolioData } from '..
 
 export function HomePage() {
   const navigate = useNavigate();
-  const openArticle = (article: Article) => navigate('/blog/' + article.id);
+  const openArticle = (article: Article) => navigate('/reports/' + article.id);
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   useEffect(() => {
     let disposed = false;
@@ -66,8 +66,8 @@ export function HomePage() {
           <div className="teams-bottom"><Link className="text-link" to="/apply">Interested in joining? Apply here <span aria-hidden="true">→</span></Link></div>
         </div></section>
 
-        <section className="research section-space" id="blog" aria-labelledby="research-title"><div className="content-width">
-          <div className="research-heading"><div><span className="eyebrow">From our desks</span><h2 id="research-title">Research & updates</h2></div><Link className="text-link" to="/blog">View all posts <span aria-hidden="true">→</span></Link></div>
+        <section className="research section-space" id="reports" aria-labelledby="research-title"><div className="content-width">
+          <div className="research-heading"><div><span className="eyebrow">From our desks</span><h2 id="research-title">Reports</h2></div><Link className="text-link" to="/reports">View all reports <span aria-hidden="true">→</span></Link></div>
           <div className="research-grid">{articles.map(item => <ArticleCard key={item.id} article={item} />)}</div>
         </div></section>
     </>);

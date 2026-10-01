@@ -9,14 +9,14 @@ export function ArticlePage() {
   const location = useLocation();
   const article = articles.find(item => item.id === slug);
   if (!article) return <NotFoundPage />;
-  const savedSearch = location.state?.blogSearch;
-  const backToBlog = `/blog${typeof savedSearch === 'string' && savedSearch.startsWith('?') ? savedSearch : ''}`;
+  const savedSearch = location.state?.reportsSearch;
+  const backToReports = `/reports${typeof savedSearch === 'string' && savedSearch.startsWith('?') ? savedSearch : ''}`;
 
   return (
     <article className="article-page content-width">
-      <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><Link to={backToBlog}>Blog</Link><span aria-hidden="true">/</span><span aria-current="page">Article</span></nav>
+      <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><Link to={backToReports}>Reports</Link><span aria-hidden="true">/</span><span aria-current="page">Report</span></nav>
       <header className="article-heading">
-        <Link className="research-category" to={`/blog?category=${encodeURIComponent(article.category)}`}>{article.category}</Link>
+        <Link className="research-category" to={`/reports?category=${encodeURIComponent(article.category)}`}>{article.category}</Link>
         <h1>{article.title}</h1>
         {(article.author || article.date) && <p className="article-byline">{article.author && <span>{article.author}</span>}{article.date && <time dateTime={article.date}>{new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(article.date))}</time>}</p>}
       </header>
@@ -27,7 +27,7 @@ export function ArticlePage() {
           table: ({ children }) => <div className="markdown-table"><table>{children}</table></div>,
           img: ({ src, alt }) => <img src={src} alt={alt ?? ''} loading="lazy" />,
         }}>{article.body}</Markdown></div>
-        <Link className="text-link" to={backToBlog}><span aria-hidden="true">←</span>Back to blog</Link>
+        <Link className="text-link" to={backToReports}><span aria-hidden="true">←</span>Back to reports</Link>
       </div>
     </article>
   );

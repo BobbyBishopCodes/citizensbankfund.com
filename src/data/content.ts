@@ -57,10 +57,10 @@ export const searchEntries = [
   { title: 'Fund History', description: 'How the Citizens Bank Fund began and its first year at ETSU.', href: '/fund-history', keywords: 'history origins 2025 Citizens Bank LaPorte Students of Finance Association' },
   { title: 'Portfolio', description: 'Current holdings, allocation, investment gains, and estimated income.', href: '/portfolio', keywords: 'portfolio returns performance assets holdings kpi' },
   { title: 'Our research teams', description: 'Meet our macroeconomics, equities, FX & commodities, and fixed income teams.', href: '/members', keywords: teams.map(team => `${team.title} ${team.description}`).join(' ') },
-  { title: 'Blog', description: 'Research topics and market commentary from the fund.', href: '/blog', keywords: 'blog research updates articles' },
+  { title: 'Reports', description: 'Research topics and market commentary from the fund.', href: '/reports', keywords: 'reports research updates articles' },
   { title: 'Apply to the fund', description: 'Apply to join Citizens Bank Fund through Google Forms.', href: '/apply', keywords: 'apply join membership application students teams Google Forms' },
   { title: 'Contact', description: 'Send a message to Citizens Bank Fund.', href: '/contact', keywords: 'contact email message students partnership' },
-  ...articles.map(article => ({ title: article.title, description: article.summary, href: `/blog/${article.id}`, keywords: `${article.category} ${article.author ?? ''} ${article.body}` })),
+  ...articles.map(article => ({ title: article.title, description: article.summary, href: `/reports/${article.id}`, keywords: `${article.category} ${article.author ?? ''} ${article.body}` })),
 ];
 
 export function searchSite(query: string) {

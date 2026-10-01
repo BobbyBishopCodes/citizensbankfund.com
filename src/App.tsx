@@ -1,12 +1,12 @@
 import { lazy, Suspense, useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { Modal } from './components/Modal';
 import { RouteEffects } from './components/RouteEffects';
 import { HomePage } from './pages/HomePage';
-import { BlogPage } from './pages/BlogPage';
+import { ReportsPage } from './pages/ReportsPage';
 import { ArticlePage } from './pages/ArticlePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 const ContactPage = lazy(() => import('./pages/ContactPage').then(module => ({ default: module.ContactPage })));
@@ -35,8 +35,9 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/portfolio" element={<Suspense fallback={<div className="content-width section-space" role="status">Loading portfolio…</div>}><PortfolioPage /></Suspense>} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/:slug" element={<ArticlePage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/reports/:slug" element={<ArticlePage />} />
+          <Route path="/blog/*" element={<LegacyBlogRedirect />} />
           <Route path="/contact" element={<Suspense fallback={<div className="content-width section-space" role="status">Loading contact…</div>}><ContactPage /></Suspense>} />
           <Route path="/apply" element={<ApplyPage />} />
           <Route path="/scholarships" element={<ScholarshipsPage />} />
@@ -53,4 +54,9 @@ export function App() {
       {info && <Modal title={info.title} onClose={() => setInformationKey(null)}>{info.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}{info.link && (info.link.href.startsWith('/') ? <Link className="button" to={info.link.href} onClick={() => setInformationKey(null)}>{info.link.label}<span aria-hidden="true">→</span></Link> : <a className="button" href={info.link.href} target="_blank" rel="noreferrer">{info.link.label}<span aria-hidden="true">↗</span></a>)}</Modal>}
     </>
   );
+}
+
+function LegacyBlogRedirect() {
+  const { pathname, search, hash } = useLocation();
+  return <Navigate to={`/reports${pathname.slice('/blog'.length)}${search}${hash}`} replace />;
 }

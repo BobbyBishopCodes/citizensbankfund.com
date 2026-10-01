@@ -31,7 +31,7 @@ export function NewsCarousel({ onArticle }: { onArticle: (article: Article) => v
         {[previous, current, next].map((articleIndex, position) => {
           if (articles.length === 1 && position !== 1) return null;
           const article = articles[articleIndex];
-          return <button key={position} className={`news-slide ${position === 1 ? 'news-slide-featured' : 'news-slide-side'}`} onClick={() => { if (swiped.current) { swiped.current = false; return; } if (position === 1) onArticle(article); else setCurrent(articleIndex); }} aria-label={position === 1 ? `${article.preview ? 'Read preview' : 'Read article'}: ${article.title}` : `Show story: ${article.title}`}>
+          return <button key={position} className={`news-slide ${position === 1 ? 'news-slide-featured' : 'news-slide-side'}`} onClick={() => { if (swiped.current) { swiped.current = false; return; } if (position === 1) onArticle(article); else setCurrent(articleIndex); }} aria-label={position === 1 ? `${article.preview ? 'Read preview' : 'Read report'}: ${article.title}` : `Show report: ${article.title}`}>
             <img key={article.image} className="news-image" src={article.image} alt="" fetchPriority={position === 1 ? 'high' : 'auto'} />
             <div className="news-shade" />
             {position === 1 && <img className="news-brand" src="/assets/branding/buccaneer-ship-cropped.svg" alt="" aria-hidden="true" />}

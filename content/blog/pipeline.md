@@ -13,4 +13,4 @@ preview: true
 
 A proposed market update examining energy infrastructure, supply disruptions, and their implications for commodity research.
 
-> This headline is a sample of possible blog posts.
+> This headline is a sample of possible reports.
