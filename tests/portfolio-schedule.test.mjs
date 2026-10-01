@@ -27,10 +27,15 @@ test('publishing requires successful market export and validation before deploym
   assert.equal(workflow.jobs.deploy.needs, 'build');
   assert.equal(workflow.jobs.deploy.environment.name, 'github-pages');
   const steps = workflow.jobs.build.steps;
+  const refreshCluster = steps.findIndex(step => step.run === 'python scripts/portfolio/fetch-cluster-analysis.py');
+  const checkCluster = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs check-cluster');
   const market = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs export market');
   const check = steps.findIndex(step => step.run === 'node scripts/check-pages-preview.mjs');
   const upload = steps.findIndex(step => step.uses?.startsWith('actions/upload-pages-artifact@'));
   assert.ok(market >= 0 && market < check && check < upload);
+  assert.ok(refreshCluster >= 0 && refreshCluster < checkCluster && checkCluster < market);
+  assert.notEqual(steps[refreshCluster]['continue-on-error'], true);
+  assert.notEqual(steps[checkCluster]['continue-on-error'], true);
   assert.equal(steps.filter(step => step.env?.FINNHUB_API_KEY).length, 1);
   assert.equal(steps.filter(step => step.env?.FRED_API_KEY).length, 0);
   assert.equal(steps.find(step => step.id === 'risk-history')['continue-on-error'], true);

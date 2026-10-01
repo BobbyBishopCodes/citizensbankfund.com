@@ -5,10 +5,13 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArticle, sortArticles } from './src/lib/article-files.ts';
 import { parseHoldings, staticPortfolio } from './scripts/portfolio/static.mjs';
+import { clusterSymbols } from './scripts/portfolio/cluster.mjs';
 
 const blogDirectory = fileURLToPath(new URL('./content/blog', import.meta.url));
 const virtualId = '\0virtual:articles';
 const holdingsPath = fileURLToPath(new URL('./content/portfolio/holdings.json', import.meta.url));
+const clusterPath = fileURLToPath(new URL('./content/portfolio/cluster-analysis.json', import.meta.url));
+const figurePath = fileURLToPath(new URL('./public/assets/portfolio/pca-clusters.svg', import.meta.url));
 
 export default defineConfig({
   build: { outDir: 'docs' },
@@ -21,16 +24,20 @@ export default defineConfig({
         response.setHeader('Cache-Control', 'no-store');
         try {
           const holdings = parseHoldings(readFileSync(holdingsPath, 'utf8'));
-          response.end(JSON.stringify(await staticPortfolio(holdings)));
+          const clusterAnalysis = clusterSymbols(holdings.positions).length >= 3
+            ? JSON.parse(readFileSync(clusterPath, 'utf8')) : undefined;
+          response.end(JSON.stringify(await staticPortfolio(holdings, { clusterAnalysis })));
         } catch {
           response.statusCode = 503;
           response.end(JSON.stringify({ error: 'Prepared portfolio data is unavailable' }));
         }
       });
-      server.watcher.add(holdingsPath);
-      const update = (path: string) => { if (resolve(path) === holdingsPath) server.ws.send({ type: 'full-reload' }); };
-      server.watcher.on('change', update);
-      server.httpServer?.once('close', () => server.watcher.off('change', update));
+      server.watcher.add([holdingsPath, clusterPath, figurePath]);
+      const update = (path: string) => {
+        if ([holdingsPath, clusterPath, figurePath].includes(resolve(path))) server.ws.send({ type: 'full-reload' });
+      };
+      server.watcher.on('add', update).on('change', update);
+      server.httpServer?.once('close', () => server.watcher.off('add', update).off('change', update));
     },
   }, {
     name: 'markdown-articles',

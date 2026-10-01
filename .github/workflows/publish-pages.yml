@@ -50,12 +50,19 @@ jobs:
           python-version: '3.11'
           cache: pip
           cache-dependency-path: scripts/portfolio/requirements.txt
-      - name: Install risk history fetcher
+      - name: Install portfolio history tools
         run: python -m pip install -r scripts/portfolio/requirements.txt
       - name: Refresh cached monthly risk history
         id: risk-history
         continue-on-error: true
         run: python scripts/portfolio/fetch-risk-history.py
+      - name: Refresh correlation and cluster analysis
+        id: cluster-analysis
+        run: python scripts/portfolio/fetch-cluster-analysis.py
+      - name: Render PCA figure
+        run: python scripts/portfolio/render-cluster-charts.py
+      - name: Verify analysis matches the current holdings
+        run: node scripts/portfolio-static.mjs check-cluster
       - name: Run tests
         run: npm test
       - name: Build site
@@ -66,13 +73,13 @@ jobs:
         run: node scripts/portfolio-static.mjs export market
       - name: Check public files
         run: node scripts/check-pages-preview.mjs
-      - name: Save refreshed risk history to repository
-        if: steps.risk-history.outcome == 'success'
+      - name: Save refreshed portfolio analysis caches to repository
+        if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success'
         continue-on-error: true
         run: |
-          git add content/portfolio/risk-history.json
+          git add content/portfolio/risk-history.json content/portfolio/cluster-analysis.json public/assets/portfolio/pca-clusters.svg
           if ! git diff --cached --quiet; then
-            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Refresh portfolio risk history'
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Refresh portfolio analysis caches'
             git push origin HEAD:main
           fi
       - name: Configure Pages

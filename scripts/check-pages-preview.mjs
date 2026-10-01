@@ -2,6 +2,7 @@ import { readFile, readdir, lstat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parsePortfolioData } from '../src/lib/portfolio/display.ts';
+import { clusterSymbols, portfolioClusterAnalysis } from './portfolio/cluster.mjs';
 
 /** Check only the directory that will be uploaded, not the source checkout. */
 export async function checkPagesPreview(directory) {
@@ -42,6 +43,14 @@ export async function checkPagesPreview(directory) {
     throw new Error('Invalid static portfolio read model');
   }
   parsePortfolioData(portfolio);
+  const chartSymbols = clusterSymbols(portfolio.positions);
+  if (chartSymbols.length >= 3 && !portfolioClusterAnalysis(portfolio.clusterAnalysis, portfolio.positions)) {
+    throw new Error('Static portfolio analysis is missing or does not match current holdings');
+  }
+  if (portfolio.clusterAnalysis) {
+    const file = 'assets/portfolio/pca-clusters.svg';
+    if (!files.includes(file)) throw new Error(`Missing PCA figure in static artifact: ${file}`);
+  }
   return { files: files.length, mode: portfolio.publication.mode, securityCount: portfolio.summary.securityCount };
 }
 

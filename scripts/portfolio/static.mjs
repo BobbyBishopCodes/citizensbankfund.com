@@ -4,6 +4,7 @@ import { dirname } from 'node:path';
 import { parsePortfolioCsv, MAX_CSV_BYTES } from '../../src/lib/portfolio/import.ts';
 import { valuePortfolio, validQuote } from '../../src/lib/portfolio/value.ts';
 import { calculatePortfolioRisk, unavailablePortfolioRisk } from './risk.mjs';
+import { portfolioClusterAnalysis } from './cluster.mjs';
 
 const columns = ['Description', 'SYMBOL/CUSIP', 'Quantity', 'Delayed Price', 'Current Value', 'Product Type', 'Amount Invested (†)', 'Estimated Annual Income', 'Total Cost Basis'];
 const keys = ['description', 'symbol', 'assetType', 'quantity', 'referencePrice', 'referenceValueCents', 'amountInvestedCents', 'estimatedAnnualIncomeCents', 'costBasisCents'];
@@ -79,7 +80,7 @@ export async function atomicJson(path, value) {
     await rename(temporary, path);
   } finally { await unlink(temporary).catch(error => { if (error.code !== 'ENOENT') throw error; }); }
 }
-export async function staticPortfolio(holdings, { mode = 'snapshot', provider, clock = () => new Date().toISOString(), riskPrices, benchmark, treasury } = {}) {
+export async function staticPortfolio(holdings, { mode = 'snapshot', provider, clock = () => new Date().toISOString(), riskPrices, benchmark, treasury, clusterAnalysis } = {}) {
   if (!['snapshot', 'market'].includes(mode)) throw new Error('Quote mode must be snapshot or market');
   const snapshot = snapshotFromHoldings(holdings, clock());
   let quotes = {};
@@ -108,6 +109,7 @@ export async function staticPortfolio(holdings, { mode = 'snapshot', provider, c
   return {
     ...view,
     risk,
+    clusterAnalysis: portfolioClusterAnalysis(clusterAnalysis, view.positions),
     publication: {
       mode, holdingsDigest: createHash('sha256').update(JSON.stringify(holdings)).digest('hex'),
       oldestQuoteAt: quoteTimes[0] ?? null, newestQuoteAt: quoteTimes.at(-1) ?? null,

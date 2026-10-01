@@ -2,6 +2,7 @@ import type { valuePortfolio } from './value.ts';
 import { STARTING_CAPITAL_CENTS } from './value.ts';
 
 export type PortfolioData = ReturnType<typeof valuePortfolio> & {
+  clusterAnalysis: ClusterAnalysis | null;
   publication: { mode: 'snapshot' | 'market'; staleAfterMs: number; oldestQuoteAt: string | null; newestQuoteAt: string | null };
   risk: {
     status: 'available' | 'awaiting-month' | 'unavailable'; reason: string | null;
@@ -10,6 +11,11 @@ export type PortfolioData = ReturnType<typeof valuePortfolio> & {
     monthlyReturns: { month: string; portfolioReturnRatio: number; benchmarkReturnRatio: number;
       riskFreeReturnRatio: number; excessReturnRatio: number }[];
   };
+};
+export type ClusterAnalysis = {
+  schemaVersion: 1; symbols: string[]; startDate: string; endDate: string; observations: number;
+  correlation: number[][]; leafOrder: number[];
+  branches: { x: number[]; y: number[] }[]; groups: number[]; coordinates: number[][];
 };
 export type DisplayPosition = PortfolioData['positions'][number];
 export type SortKey = 'symbol' | 'description' | 'quantity' | 'price' | 'averageInvestmentPerUnit' | 'marketValueCents' | 'amountInvestedCents' | 'costBasisCents' | 'investmentGainCents' | 'weightRatio' | 'estimatedAnnualIncomeCents' | 'estimatedIncomeYieldRatio';

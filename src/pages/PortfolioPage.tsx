@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PortfolioAllocation } from '../components/PortfolioAllocation';
+import { PortfolioClusterAnalysis } from '../components/PortfolioClusterAnalysis';
 import { parsePortfolioData, money, percent, signedMoney, signedPercent, dateLabel, quoteDateLabel, monthLabel, riskNumber, quantity, priceState, filterAndSort, type PortfolioData, type DisplayPosition, type SortKey } from '../lib/portfolio/display';
 import './portfolio.css';
 
@@ -46,6 +47,7 @@ export function PortfolioPage() {
   const [filter, setFilter] = useState('all');
   const [sort, setSort] = useState<{ key: SortKey; direction: 'asc' | 'desc' }>({ key: 'marketValueCents', direction: 'desc' });
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [analysisOpen, setAnalysisOpen] = useState(false);
   const search = useRef<HTMLInputElement>(null);
   useEffect(() => {
     let disposed = false;
@@ -122,6 +124,10 @@ export function PortfolioPage() {
             </tr><tr id={detailsId} hidden={!open}><td colSpan={columns.length + 1} className="pf-details-cell">{open && <PositionDetails position={position} now={now} staleAfterMs={data.publication.staleAfterMs} />}</td></tr></Fragment>;
           })}{!visible.length && <tr><td colSpan={columns.length + 1} className="pf-empty">No holdings match your search. <button className="pf-text-button" onClick={() => { setQuery(''); setFilter('all'); }}>Clear filters</button></td></tr>}</tbody>
         </table></div>
+      </section>
+      <section className="pf-panel pf-analysis" aria-labelledby="portfolio-analysis-heading">
+        <div className="pf-panel-heading"><h2 id="portfolio-analysis-heading">Portfolio Correlation and Cluster Analysis</h2><button className="pf-analysis-toggle" type="button" aria-expanded={analysisOpen} aria-controls="portfolio-analysis-content" onClick={() => setAnalysisOpen(open => !open)}>{analysisOpen ? 'Hide analysis' : 'View analysis'}<span aria-hidden="true">{analysisOpen ? '−' : '+'}</span></button></div>
+        {analysisOpen && <div id="portfolio-analysis-content"><PortfolioClusterAnalysis analysis={data.clusterAnalysis ?? null} /></div>}
       </section>
     </>}
     <section className="pf-panel pf-reports" aria-labelledby="semester-reports-heading">
