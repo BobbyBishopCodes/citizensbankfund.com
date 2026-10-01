@@ -47,7 +47,7 @@ export function snapshotFromHoldings(holdings, now = new Date().toISOString()) {
   return snapshot;
 }
 
-/** Explicit allowlist: no account columns, filenames, machine paths, or raw CSV. */
+/** Explicit allowlist: realisticaly there should be no account columns, filenames, machine paths, or raw CSV. */
 export function prepareHoldings(csv, asOfDate, now = new Date().toISOString()) {
   const snapshot = parsePortfolioCsv(csv, asOfDate);
   const holdings = {
@@ -79,8 +79,6 @@ export async function atomicJson(path, value) {
     await rename(temporary, path);
   } finally { await unlink(temporary).catch(error => { if (error.code !== 'ENOENT') throw error; }); }
 }
-
-/** Stateless build-time valuation. No local server, admin token or private store. */
 export async function staticPortfolio(holdings, { mode = 'snapshot', provider, clock = () => new Date().toISOString(), riskPrices, benchmark, treasury } = {}) {
   if (!['snapshot', 'market'].includes(mode)) throw new Error('Quote mode must be snapshot or market');
   const snapshot = snapshotFromHoldings(holdings, clock());
@@ -97,7 +95,7 @@ export async function staticPortfolio(holdings, { mode = 'snapshot', provider, c
       throw new Error(`Market export rejected: ${failed.length} securities lack valid quotes or the provider reported errors. Previous output was not replaced.`);
     }
     // A weekend import can be newer than the latest close. valuePortfolio keeps
-    // the CSV value for pre-holdings quotes instead of rolling its valuation back.
+    // the CSV value for pre-holdings quotes instead of rolling the entire valuation back.Thank God
     quotes = result.quotes;
   }
   const view = valuePortfolio(snapshot, quotes, { now: clock() });

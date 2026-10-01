@@ -86,7 +86,7 @@ export function PortfolioPage() {
       <div><h1>Portfolio</h1><p>Current holdings, allocation, and investment gains.</p></div>
       {data && <div className="pf-freshness"><span>Holdings as of <strong>{dateLabel(data.holdingsAsOfDate)}</strong></span>{quoteDates.length > 0 && <span>Oldest quote: {quoteDateLabel(quoteDates[0])}</span>}</div>}
     </header>
-    {failed && <div className="pf-notice" role="alert"><p>{data ? 'Could not check for updates. Showing the last loaded snapshot.' : 'Portfolio data could not be loaded. Please try again.'}</p><button onClick={() => { setFailed(false); setRetry(value => value + 1); }}>Try again</button></div>}
+    {failed && !data && <div className="pf-notice" role="alert"><p>Portfolio data could not be loaded. Please try again.</p><button onClick={() => { setFailed(false); setRetry(value => value + 1); }}>Try again</button></div>}
     {!data && !failed && <div className="pf-loading" role="status">Loading portfolio positions…</div>}
     {data && <>
       <dl className="pf-summary">
