@@ -1,4 +1,4 @@
-"""Cache 13 completed month-end adjusted closes and keyless FRED series."""
+"""Cache 37 completed month-end adjusted closes and keyless FRED series."""
 
 import csv
 import io
@@ -57,7 +57,7 @@ def fetch():
     today = datetime.now(ZoneInfo("America/New_York")).date()
     last_completed = date(today.year, today.month, 1)
     first = last_completed
-    for _ in range(13):
+    for _ in range(37):
         first = date(first.year - (first.month == 1), 12 if first.month == 1 else first.month - 1, 1)
     wanted = []
     cursor = first
@@ -70,7 +70,7 @@ def fetch():
             rows = cached["months"]
             index_months = {row["date"][:7]: row["date"] for row in cached["benchmark"]}
             yield_months = {row["date"][:7] for row in cached["treasury"]}
-            if (len(rows) == 13 and [row["month"] for row in rows] == wanted
+            if (len(rows) == 37 and [row["month"] for row in rows] == wanted
                     and all(sorted(row["adjustedCloses"]) == symbols
                             and all(math.isfinite(float(value)) and float(value) > 0
                                     for value in row["adjustedCloses"].values())
@@ -99,8 +99,8 @@ def fetch():
                 raise ValueError(f"Missing adjusted close for {symbol} on {day}")
             closes[symbol] = str(float(price))
         months[month] = {"month": month, "closeDate": day.isoformat(), "adjustedCloses": closes}
-    if len(wanted) != 13 or any(month not in months for month in wanted):
-        raise ValueError("Fewer than 13 completed months of adjusted closes")
+    if len(wanted) != 37 or any(month not in months for month in wanted):
+        raise ValueError("Fewer than 37 completed months of adjusted closes")
     benchmark = fred_series("SP500", first.isoformat(), today.isoformat())
     treasury = fred_series("DGS3MO", first.isoformat(), today.isoformat())
     index_months = {row["date"][:7]: row for row in benchmark if row["date"][:7] in wanted}
@@ -108,7 +108,7 @@ def fetch():
     if any(index_months.get(month, {}).get("date") != months[month]["closeDate"] for month in wanted):
         raise ValueError("FRED S&P 500 history does not align with security month ends")
     if any(month not in yield_months for month in wanted[:-1]):
-        raise ValueError("FRED Treasury history has fewer than 12 aligned months")
+        raise ValueError("FRED Treasury history has fewer than 36 aligned months")
     document = {"schemaVersion": 1, "priceBasis": "split-and-dividend-adjusted",
                 "source": "Yahoo Finance adjusted close via yfinance; FRED SP500 and DGS3MO graph CSV",
                 "fetchedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),

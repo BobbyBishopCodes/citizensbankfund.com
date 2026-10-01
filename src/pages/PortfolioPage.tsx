@@ -94,8 +94,8 @@ export function PortfolioPage() {
         <div><dt>Gain vs. Starting Capital</dt><dd className={gainClass(data.summary.gainVsStartingCapitalCents)}>{signedMoney(data.summary.gainVsStartingCapitalCents)}</dd><p><span className={gainClass(data.summary.gainVsStartingCapitalRatio)}>{signedPercent(data.summary.gainVsStartingCapitalRatio)}</span></p></div>
         <div><dt>Estimated Annual Income</dt><dd>{money(data.summary.estimatedAnnualIncomeCents)}</dd><p>{percent(data.summary.estimatedIncomeYieldRatio)} portfolio income yield</p></div>
         <div><dt>Estimated Income Yield</dt><dd>{percent(data.summary.estimatedIncomeYieldRatio)}</dd><p>Annual income ÷ portfolio value</p></div>
-        <div><dt>Beta · 12 months</dt><dd>{riskNumber(data.risk.beta)}</dd><p>vs. S&amp;P 500 price index{data.risk.windowEndMonth ? ` · ${monthLabel(data.risk.windowEndMonth)}` : ''}</p></div>
-        <div><dt>Sharpe · 12 months</dt><dd>{riskNumber(data.risk.sharpe)}</dd><p>Annualized · 3-month Treasury{data.risk.windowEndMonth ? ` · ${monthLabel(data.risk.windowEndMonth)}` : ''}</p></div>
+        <div><dt>Beta · 3 years</dt><dd>{riskNumber(data.risk.beta)}</dd><p>vs. S&amp;P 500 price index{data.risk.windowEndMonth ? ` · ${monthLabel(data.risk.windowEndMonth)}` : ''}</p></div>
+        <div><dt>Sharpe · 3 years</dt><dd>{riskNumber(data.risk.sharpe)}</dd><p>Annualized · 3-month Treasury{data.risk.windowEndMonth ? ` · ${monthLabel(data.risk.windowEndMonth)}` : ''}</p></div>
       </dl>
       <div className="pf-charts"><PortfolioAllocation data={data} />
         <section className="pf-panel pf-top-holdings" aria-labelledby="top-holdings-heading"><div className="pf-panel-heading"><h2 id="top-holdings-heading">Top Holdings</h2><button className="pf-text-button" onClick={showHoldings}>View all holdings<img src="/assets/icons/chevron-right.svg" alt="" /></button></div>

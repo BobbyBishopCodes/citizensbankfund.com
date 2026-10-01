@@ -10,6 +10,7 @@ const completedMonth = now => {
   return Number(parts.year) * 12 + Number(parts.month) - 2;
 };
 const finite = value => typeof value === 'number' && Number.isFinite(value);
+const returnMonths = 36;
 export const unavailablePortfolioRisk = (reason, weightsAsOf) => ({
   status: 'unavailable', reason, beta: null, sharpe: null, windowStartMonth: null,
   windowEndMonth: null, weightsAsOf, observations: 0, monthlyReturns: [],
@@ -62,7 +63,7 @@ export function monthEndObservations(observations, kind) {
   return months;
 }
 
-/** All twelve returns use today's weights; no historical fund account values enter the calculation. */
+/** All 36 returns use today's weights; no historical fund account values enter the calculation. */
 export function calculatePortfolioRisk(view, adjustedPrices, benchmark, treasury, now = view.calculatedAt) {
   const weightsAsOf = view.calculatedAt;
   const prices = validateAdjustedPrices(adjustedPrices);
@@ -72,7 +73,7 @@ export function calculatePortfolioRisk(view, adjustedPrices, benchmark, treasury
   let end = null;
   for (let candidate = lastCompleted; candidate >= lastCompleted - 1; candidate--) {
     let complete = true;
-    for (let month = candidate - 12; month <= candidate; month++) {
+    for (let month = candidate - returnMonths; month <= candidate; month++) {
       const row = prices.get(month);
       if (!row || !benchmark.has(month) || (month < candidate && !treasury.has(month)) ||
           securities.some(position => !row.prices.has(position.symbol))) { complete = false; break; }
@@ -82,7 +83,7 @@ export function calculatePortfolioRisk(view, adjustedPrices, benchmark, treasury
   }
   if (end === null) return unavailablePortfolioRisk('missing-history', weightsAsOf);
   const monthlyReturns = [];
-  for (let month = end - 11; month <= end; month++) {
+  for (let month = end - returnMonths + 1; month <= end; month++) {
     const previous = prices.get(month - 1), current = prices.get(month);
     const portfolioReturnRatio = securities.reduce((sum, position) =>
       sum + position.weightRatio * (current.prices.get(position.symbol) / previous.prices.get(position.symbol) - 1), 0);
@@ -99,12 +100,13 @@ export function calculatePortfolioRisk(view, adjustedPrices, benchmark, treasury
   const benchmarkSquares = monthlyReturns.reduce((sum, row) => sum + (row.benchmarkReturnRatio - benchmarkMean) ** 2, 0);
   const excessSquares = monthlyReturns.reduce((sum, row) => sum + (row.excessReturnRatio - excessMean) ** 2, 0);
   if (benchmarkSquares < 1e-20 || excessSquares < 1e-20) return unavailablePortfolioRisk('zero-variance', weightsAsOf);
+  const sampleDivisor = monthlyReturns.length - 1;
   const covariance = monthlyReturns.reduce((sum, row) =>
-    sum + (row.portfolioReturnRatio - portfolioMean) * (row.benchmarkReturnRatio - benchmarkMean), 0) / 11;
-  const beta = covariance / (benchmarkSquares / 11);
-  const sharpe = Math.sqrt(12) * excessMean / Math.sqrt(excessSquares / 11);
+    sum + (row.portfolioReturnRatio - portfolioMean) * (row.benchmarkReturnRatio - benchmarkMean), 0) / sampleDivisor;
+  const beta = covariance / (benchmarkSquares / sampleDivisor);
+  const sharpe = Math.sqrt(12) * excessMean / Math.sqrt(excessSquares / sampleDivisor);
   if (![beta, sharpe].every(finite)) return unavailablePortfolioRisk('invalid-result', weightsAsOf);
   return { status: end === lastCompleted ? 'available' : 'awaiting-month', reason: null, beta, sharpe,
-    windowStartMonth: monthLabel(end - 11), windowEndMonth: monthLabel(end), weightsAsOf,
-    observations: 12, monthlyReturns };
+    windowStartMonth: monthLabel(end - returnMonths + 1), windowEndMonth: monthLabel(end), weightsAsOf,
+    observations: returnMonths, monthlyReturns };
 }

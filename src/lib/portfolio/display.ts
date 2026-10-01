@@ -72,10 +72,10 @@ export function parsePortfolioData(input: unknown): PortfolioData {
       const month = (value: unknown) => typeof value === 'string' && /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
       const monthIndex = (value: string) => Number(value.slice(0, 4)) * 12 + Number(value.slice(5)) - 1;
       if (!numeric(risk.beta) || !numeric(risk.sharpe) || !month(risk.windowStartMonth) ||
-          !month(risk.windowEndMonth) || risk.reason !== null || risk.observations !== 12 ||
-          risk.monthlyReturns.length !== 12 || risk.monthlyReturns[0].month !== risk.windowStartMonth ||
-          risk.monthlyReturns[11].month !== risk.windowEndMonth ||
-          monthIndex(risk.windowEndMonth as string) - monthIndex(risk.windowStartMonth as string) !== 11 ||
+          !month(risk.windowEndMonth) || risk.reason !== null || risk.observations !== 36 ||
+          risk.monthlyReturns.length !== 36 || risk.monthlyReturns[0].month !== risk.windowStartMonth ||
+          risk.monthlyReturns[35].month !== risk.windowEndMonth ||
+          monthIndex(risk.windowEndMonth as string) - monthIndex(risk.windowStartMonth as string) !== 35 ||
           risk.monthlyReturns.some((row, index) => !month(row.month) ||
             (index > 0 && monthIndex(row.month) - monthIndex(risk.monthlyReturns[index - 1].month) !== 1) ||
             !numeric(row.portfolioReturnRatio) || !numeric(row.benchmarkReturnRatio) ||

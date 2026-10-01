@@ -2,13 +2,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { calculatePortfolioRisk, monthEndObservations, validateAdjustedPrices } from '../scripts/portfolio/risk.mjs';
 import { prepareHoldings, staticPortfolio } from '../scripts/portfolio/static.mjs';
+import { parsePortfolioData } from '../src/lib/portfolio/display.ts';
 
 const now = '2026-10-01T16:00:00Z';
-const months = Array.from({ length: 14 }, (_, index) => {
-  const date = new Date(Date.UTC(2025, 7 + index, 1));
+const months = Array.from({ length: 38 }, (_, index) => {
+  const date = new Date(Date.UTC(2023, 7 + index, 1));
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
 });
-const marketReturns = Array.from({ length: 13 }, (_, index) => (index % 5 - 2) / 100);
+const marketReturns = Array.from({ length: 37 }, (_, index) => (index % 5 - 2) / 100);
 function fixture() {
   let a = 100, b = 100, index = 1000;
   const benchmark = new Map(), treasury = new Map();
@@ -33,13 +34,13 @@ function fixture() {
   return { prices, benchmark, treasury, view };
 }
 
-test('twelve monthly current-weight returns produce known Beta and annualized Sharpe with cash included', () => {
+test('36 monthly current-weight returns produce known Beta and annualized Sharpe with cash included', () => {
   const { prices, benchmark, treasury, view } = fixture();
   const risk = calculatePortfolioRisk(view, prices, benchmark, treasury, now);
   assert.equal(risk.status, 'available');
-  assert.equal(risk.windowStartMonth, '2025-10');
+  assert.equal(risk.windowStartMonth, '2023-10');
   assert.equal(risk.windowEndMonth, '2026-09');
-  assert.equal(risk.monthlyReturns.length, 12);
+  assert.equal(risk.monthlyReturns.length, 36);
   assert.ok(Math.abs(risk.beta - 1.2) < 1e-12);
   const expected = risk.monthlyReturns.map((row, index) => {
     const monthIndex = index + 2;
@@ -49,8 +50,8 @@ test('twelve monthly current-weight returns produce known Beta and annualized Sh
     assert.ok(Math.abs(row.riskFreeReturnRatio - rf) < 1e-12);
     return p - rf;
   });
-  const average = expected.reduce((sum, value) => sum + value, 0) / 12;
-  const deviation = Math.sqrt(expected.reduce((sum, value) => sum + (value - average) ** 2, 0) / 11);
+  const average = expected.reduce((sum, value) => sum + value, 0) / 36;
+  const deviation = Math.sqrt(expected.reduce((sum, value) => sum + (value - average) ** 2, 0) / 35);
   assert.ok(Math.abs(risk.sharpe - Math.sqrt(12) * average / deviation) < 1e-12);
 });
 
@@ -101,7 +102,14 @@ test('static portfolio export includes the calculated risk block for the browser
   const output = await staticPortfolio(holdings, { clock: () => now, riskPrices: prices, benchmark, treasury });
   assert.equal(output.risk.status, 'available');
   assert.ok(Math.abs(output.risk.beta - 1.2) < 1e-12);
+  assert.equal(output.risk.observations, 36);
   assert.equal(output.risk.weightsAsOf, output.calculatedAt);
+  assert.equal(parsePortfolioData(output).risk.monthlyReturns.length, 36);
+  const truncated = structuredClone(output);
+  truncated.risk.monthlyReturns = truncated.risk.monthlyReturns.slice(-12);
+  truncated.risk.observations = 12;
+  truncated.risk.windowStartMonth = truncated.risk.monthlyReturns[0].month;
+  assert.throws(() => parsePortfolioData(truncated), /unavailable/);
 });
 
 test('invalid cached inputs leave the portfolio export available with unavailable risk cards', async () => {
