@@ -34,4 +34,6 @@ Excel export of better data from the portfolio's calculations.
 
 3d version of Riley's AI algo stuff & it doesn't matter amount so it doesn't needd to be dynamic maybe everytime we notice a change in positions
 
+
+
 ```
