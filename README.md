@@ -1,4 +1,5 @@
 URL: citizensbankfund.com
+Designed and Engineered by Robert Bishop a Accounting & Finance student at ETSU on behalf of the Citizens Bank Fund..
 
 ## Official Website of ETSU's Citizens Bank & Laporte Fund
 
