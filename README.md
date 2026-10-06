@@ -19,12 +19,12 @@ For the uhh csv holdings, run `npm run portfolio:prepare -- "path/to/export.csv"
 
 Check Actions for failed runs. Public repositories can have scheduled workflows disabled after 60 days without repository activity; re-enable the workflow in Actions if that happens.
 
-**Black-Litterman Model**
+**Black-Litterman Model** \
 Quick note on the Black-Litterman addition, the system implements a dynamic version of my testing repo at "https://github.com/BobbyBishopCodes/Black-Litterman-Model"...
 
-As noted within that project's README.md, we use a similair approach to the traditional Black-Litterman model, negating a few factors but primarily integrating our own portfolio's dynamic positions and hard caps for some of the stuff that we wanted to do...
+As noted within that project's README.md, we use a similair approach to the traditional Black-Litterman model, negating a few factors but primarily integrating our own portfolio's dynamic positions and hard caps for some of the stuff that we wanted to do... \
 
-So if you are interested in extrapolating on that system, check out that repo as we use static data. Here we use dynamic data that follows a pipeline that fuels all of our calculations & analysis in regards to uploading CSV statements from Raymond James. Definetly more efficient ways to do this, so if it looks like a mess in that regards its because of the limited ability to better source data. Still works tho!
+So if you are interested in extrapolating on that system, check out that repo as we use static data. Here we use dynamic data that follows a pipeline that fuels all of our calculations & analysis in regards to uploading CSV statements from Raymond James. Definetly more efficient ways to do this, so if it looks like a mess in that regards its because of the limited ability to better source data. Still works tho! \
 
 Oh also entirely uneccesary to utilize Rust, actually substantially more of a headache to implement and jumbles the code a bit more, but I just wanted to.
 
