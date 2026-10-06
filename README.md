@@ -22,11 +22,11 @@ Check Actions for failed runs. Public repositories can have scheduled workflows 
 **Black-Litterman Model** \
 Quick note on the Black-Litterman addition, the system implements a dynamic version of my testing repo at "https://github.com/BobbyBishopCodes/Black-Litterman-Model"...
 
-As noted within that project's README.md, we use a similair approach to the traditional Black-Litterman model, negating a few factors but primarily integrating our own portfolio's dynamic positions and hard caps for some of the stuff that we wanted to do... \
+As noted within that project's README.md, we use a similair approach to the traditional Black-Litterman model, negating a few factors but primarily integrating our own portfolio's dynamic positions and hard caps for some of the stuff that we wanted to do...
 
-So if you are interested in extrapolating on that system, check out that repo as we use static data. Here we use dynamic data that follows a pipeline that fuels all of our calculations & analysis in regards to uploading CSV statements from Raymond James. Definetly more efficient ways to do this, so if it looks like a mess in that regards its because of the limited ability to better source data. Still works tho! \
+So if you are interested in extrapolating on that system, check out that repo as we use static data. Here we use dynamic data that follows a pipeline that fuels all of our calculations & analysis in regards to uploading CSV statements from Raymond James. Definetly more efficient ways to do this, so if it looks like a mess in that regards its because of the limited ability to better source data. Still works tho!
 
-Oh also entirely uneccesary to utilize Rust, actually substantially more of a headache to implement and jumbles the code a bit more, but I just wanted to. \
+Oh also entirely uneccesary to utilize Rust, actually substantially more of a headache to implement and jumbles the code a bit more, but I just wanted to.
 
 10/6/2026 note, basically because of the current accesibility to long-term historical pricing being an issue, we are setting a cloudflare worker which bascially then uses a worker to utilize a API to grab information then run the rust calculations within the browser itself, once again all of this is entirely uneccesary if you are not using a static webpage. But we like to keep things cheap around here.
 
