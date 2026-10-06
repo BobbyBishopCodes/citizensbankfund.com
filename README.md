@@ -28,7 +28,7 @@ So if you are interested in extrapolating on that system, check out that repo as
 
 Oh also entirely uneccesary to utilize Rust, actually substantially more of a headache to implement and jumbles the code a bit more, but I just wanted to.
 
-** Possible Future Editions**
+**Possible Future Editions**
 
 ```
 CPI & PPI Forecasting
