@@ -41,7 +41,7 @@ test('publishing requires successful market export and validation before deploym
   assert.ok(steps.some(step => step.run?.includes('git add') && step.run.includes('content/portfolio/black-litterman-history.json')));
   assert.notEqual(steps[refreshCluster]['continue-on-error'], true);
   assert.notEqual(steps[checkCluster]['continue-on-error'], true);
-  assert.equal(steps.filter(step => step.env?.FINNHUB_API_KEY).length, 1);
+  assert.deepEqual(steps.filter(step => step.env?.FINNHUB_API_KEY).map(step => step.run), ['node scripts/portfolio-static.mjs export market', 'node scripts/check-pages-preview.mjs']);
   assert.equal(steps.filter(step => step.env?.FRED_API_KEY).length, 0);
   assert.equal(steps.find(step => step.id === 'risk-history')['continue-on-error'], true);
   assert.deepEqual(workflow.jobs.build.permissions, { contents: 'write' });

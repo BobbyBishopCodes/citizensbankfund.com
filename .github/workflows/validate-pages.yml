@@ -61,6 +61,8 @@ jobs:
         run: npm test
 
       - name: Build static preview with CSV snapshot values
+        env:
+          VITE_TICKER_DATA_URL: ${{ vars.TICKER_DATA_URL }}
         run: npm run build:preview
 
       - name: Revalue preview using market quotes
@@ -70,6 +72,8 @@ jobs:
         run: node scripts/portfolio-static.mjs export market
 
       - name: Verify artifact contents
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: node scripts/check-pages-preview.mjs
 
       - name: Save downloadable preview (does not publish)

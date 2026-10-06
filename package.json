@@ -16,7 +16,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "npm run model:build && tsc -b && vite build && node scripts/build-pages.mjs && node scripts/portfolio-static.mjs export snapshot docs/data/portfolio.json",
     "preview": "vite preview --host 127.0.0.1",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ticker:deploy": "npm --prefix cloudflare/ticker-data run deploy"
   },
   "dependencies": {
     "@fontsource/inria-sans": "^5.3.0",

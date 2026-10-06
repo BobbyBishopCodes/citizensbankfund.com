@@ -75,12 +75,16 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Build site
+        env:
+          VITE_TICKER_DATA_URL: ${{ vars.TICKER_DATA_URL }}
         run: npm run build:preview
       - name: Fetch prices and recalculate portfolio
         env:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: node scripts/portfolio-static.mjs export market
       - name: Check public files
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: node scripts/check-pages-preview.mjs
       - name: Save refreshed portfolio analysis caches to repository
         if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success'

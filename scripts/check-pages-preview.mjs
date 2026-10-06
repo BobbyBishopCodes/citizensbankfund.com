@@ -1,3 +1,4 @@
+import { checkPublicSecrets } from './check-public-secrets.mjs';
 import { readFile, readdir, lstat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,6 +8,7 @@ import { validateBlackLittermanData } from '../src/lib/portfolio/black-litterman
 
 /** Check only the directory that will be uploaded, not the source checkout. */
 export async function checkPagesPreview(directory) {
+  await checkPublicSecrets(directory);
   const files = [];
   async function walk(relative = '') {
     for (const entry of await readdir(join(directory, relative), { withFileTypes: true })) {

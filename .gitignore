@@ -40,3 +40,7 @@ Thumbs.db
 *.tsbuildinfo
 /rust/black-litterman/target/
 /src/lib/portfolio/black-litterman.wasm
+
+.wrangler/
+.dev.vars
+.dev.vars.*

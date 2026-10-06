@@ -7,7 +7,7 @@ import { validateBlackLittermanHistory } from '../../src/lib/portfolio/black-lit
 import { buildRust } from '../build-black-litterman.mjs';
 
 const holdingsPath = resolve('content/portfolio/holdings.json');
-const configPath = resolve('content/portfolio/black-litterman-candidates.json');
+const configPath = resolve('content/portfolio/black-litterman-classes.json');
 const cachePath = resolve('content/portfolio/black-litterman-history.json');
 const holdings = parseHoldings(await readFile(holdingsPath, 'utf8'));
 const config = await readFile(configPath, 'utf8');
@@ -16,7 +16,7 @@ const localDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York
 const today = localDate.format(new Date());
 let cached;
 try { cached = validateBlackLittermanHistory(JSON.parse(await readFile(cachePath, 'utf8')), holdings.positions); } catch {}
-if (cached && localDate.format(new Date(cached.generatedAt)) === today && cached.configDigest === configDigest && !process.argv.includes('--force')) {
+if (cached?.weeklyReturns && localDate.format(new Date(cached.generatedAt)) === today && cached.configDigest === configDigest && !process.argv.includes('--force')) {
   console.log(`Black Litterman history already covers ${cached.assets.length} tickers today.`);
 } else {
   buildRust(['build', '--release', '--bin', 'cbf-model']);

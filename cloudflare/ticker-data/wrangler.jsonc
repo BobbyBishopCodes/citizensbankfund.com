@@ -1,0 +1,22 @@
+{
+  "name": "cbf-ticker-data",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-10-06",
+  "workers_dev": true,
+  "vars": {
+    "ALLOWED_ORIGINS": "https://citizensbankfund.com,https://www.citizensbankfund.com"
+  },
+  "observability": {
+    "enabled": false
+  },
+  "ratelimits": [
+    {
+      "name": "PROVIDER_LIMIT",
+      "namespace_id": "1041",
+      "simple": {
+        "limit": 30,
+        "period": 60
+      }
+    }
+  ]
+}

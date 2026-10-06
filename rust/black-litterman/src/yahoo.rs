@@ -21,6 +21,8 @@ pub struct MarketData {
     pub observation_count: usize,
     pub first_week: String,
     pub last_week: String,
+    pub weeks: Vec<String>,
+    pub weekly_returns: Vec<Vec<f64>>,
 }
 
 // Love codex error handling
@@ -236,6 +238,8 @@ pub fn fetch(symbols: &[String]) -> Result<MarketData, String> {
         observation_count: common_weeks.len(),
         first_week: common_weeks.first().unwrap().to_string(),
         last_week: common_weeks.last().unwrap().to_string(),
+        weeks: common_weeks.iter().map(ToString::to_string).collect(),
+        weekly_returns: rows,
     })
 }
 

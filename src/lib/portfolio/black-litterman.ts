@@ -9,7 +9,7 @@ export type BlackLittermanHistory = {
   riskFreeRate: number; marketExcessReturn: number; tau: number;
   caps: Record<ModelAssetClass | 'cash', number>;
   assets: { symbol: string; assetClass: ModelAssetClass; closingPrice: number }[];
-  annualCovariance: number[][];
+  annualCovariance: number[][]; weeks?: string[]; weeklyReturns?: number[][];
 };
 export type BlackLittermanData = Omit<BlackLittermanHistory, 'assets'> & {
   portfolioAsOf: string;
@@ -50,6 +50,12 @@ export function validateBlackLittermanHistory(input: unknown, positions: { symbo
         data.caps.international !== 0.08 || data.caps.equities !== 0.59 ||
         !Array.isArray(data.annualCovariance) || data.annualCovariance.length !== n ||
         data.annualCovariance.some(row => !Array.isArray(row) || row.length !== n || row.some(value => !finite(value)))) throw new Error();
+    if (data.weeks !== undefined || data.weeklyReturns !== undefined) {
+      if (!Array.isArray(data.weeks) || data.weeks.length !== data.observations || data.weeks[0] !== data.firstWeek ||
+        data.weeks.at(-1) !== data.lastWeek || data.weeks.some((week, index) => !date(week) || new Date(week).getUTCDay() !== 1 ||
+          (index > 0 && week <= data.weeks![index - 1])) || !Array.isArray(data.weeklyReturns) || data.weeklyReturns.length !== n ||
+        data.weeklyReturns.some(row => !Array.isArray(row) || row.length !== data.observations || row.some(value => !finite(value) || value <= -1))) throw new Error();
+    }
     const lower = Array.from({ length: n }, () => Array<number>(n).fill(0));
     for (let i = 0; i < n; i++) {
       if (data.annualCovariance[i][i] <= 1e-8) throw new Error();
@@ -69,7 +75,7 @@ export function validateBlackLittermanData(input: unknown, portfolio: PortfolioD
   validateBlackLittermanHistory(input, portfolio.positions);
   const data = input as BlackLittermanData;
   if (data.portfolioAsOf !== portfolio.calculatedAt || data.assets.some(asset => !finite(asset.price) || asset.price <= 0 ||
-    !Number.isFinite(Date.parse(asset.priceAsOf)) || !asset.priceSource || Date.parse(asset.priceAsOf) > Date.parse(portfolio.calculatedAt) + 300_000)) {
+    !Number.isFinite(Date.parse(asset.priceAsOf)) || !asset.priceSource || Date.parse(asset.priceAsOf) > Math.max(Date.now(), Date.parse(portfolio.calculatedAt)) + 300_000)) {
     throw new Error('Model pricing does not match the published portfolio.');
   }
   for (const position of portfolio.positions.filter(position => position.assetType !== 'cash')) {

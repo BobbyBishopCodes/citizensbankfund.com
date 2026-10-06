@@ -13,7 +13,7 @@ const inputPath = resolve(root, 'content/portfolio/holdings.json');
 const riskInputPath = resolve(root, 'content/portfolio/risk-history.json');
 const clusterInputPath = resolve(root, 'content/portfolio/cluster-analysis.json');
 const modelInputPath = resolve(root, 'content/portfolio/black-litterman-history.json');
-const modelConfigPath = resolve(root, 'content/portfolio/black-litterman-candidates.json');
+const modelConfigPath = resolve(root, 'content/portfolio/black-litterman-classes.json');
 const pcaFigurePath = resolve(root, 'public/assets/portfolio/pca-clusters.svg');
 async function verifyPcaFigure(source) {
   const digest = createHash('sha256').update(source).digest('hex');
@@ -95,7 +95,7 @@ try {
       const config = JSON.parse(await readFile(modelConfigPath, 'utf8'));
       const digest = createHash('sha256').update(JSON.stringify(config)).digest('hex');
       if (blackLittermanHistory.configDigest !== digest) throw new Error();
-    } catch { throw new Error('Black Litterman history is missing or does not match its candidate configuration. Run npm run model:refresh.'); }
+    } catch { throw new Error('Black Litterman history is missing or does not match its class configuration. Run npm run model:refresh.'); }
     const view = await staticPortfolio(holdings, { mode, provider, riskPrices, benchmark, treasury, clusterAnalysis, blackLittermanHistory });
     await atomicJson(outputPath, view);
     console.log(`Exported ${view.summary.securityCount} securities; mode=${mode}; snapshot=${view.coverage.snapshotPrices}, fresh=${view.coverage.freshQuotes}, stale=${view.coverage.staleQuotes}; risk=${view.risk.status}.`);

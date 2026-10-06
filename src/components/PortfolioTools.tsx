@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { money, signedMoney, dateLabel, type PortfolioData } from '../lib/portfolio/display';
-import { buildBlackLittermanRequest, modelAssetClasses, modelClassLabel, validateBlackLittermanResult, type ModelAssetClass, type BlackLittermanResult } from '../lib/portfolio/black-litterman';
+import { modelAssetClasses, modelClassLabel, validateBlackLittermanResult, type ModelAssetClass, type BlackLittermanResult } from '../lib/portfolio/black-litterman';
 import './portfolio-tools.css';
+import { prepareTickerAnalysis } from '../lib/portfolio/ticker-data';
 
 type ToolInputs = { ticker: string; targetPrice: string; horizon: string; confidence: string; assetClass: ModelAssetClass | '' };
 type CompletedModel = { inputs: ToolInputs; model: BlackLittermanResult; data: PortfolioData };
@@ -98,27 +99,33 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
     if (!submitted) return;
     let worker: Worker | null = null;
     let disposed = false;
+    const controller = new AbortController();
     let timeout: ReturnType<typeof setTimeout> | undefined;
     setLoading(true); setError(''); setResult(null);
-    function fail(message: string) { if (!disposed) { setError(message); setLoading(false); } worker?.terminate(); clearTimeout(timeout); }
-    try {
-      const request = buildBlackLittermanRequest(data, { ticker: submitted.ticker, assetClass: submitted.assetClass as ModelAssetClass,
-        targetPrice: Number(submitted.targetPrice), months: Number(submitted.horizon), confidence: Number(submitted.confidence) });
-      worker = new Worker(new URL('../lib/portfolio/black-litterman.worker.ts', import.meta.url), { type: 'module' });
-      worker.onmessage = event => {
+    function fail(message: string) { if (!disposed) { setError(message); setLoading(false); } controller.abort(); worker?.terminate(); clearTimeout(timeout); }
+    timeout = setTimeout(() => fail('The calculation timed out. Check your inputs and try again.'), 120_000);
+    async function calculate() {
+      try {
+        const prepared = await prepareTickerAnalysis(data, { ticker: submitted!.ticker, assetClass: submitted!.assetClass as ModelAssetClass,
+          targetPrice: Number(submitted!.targetPrice), months: Number(submitted!.horizon), confidence: Number(submitted!.confidence) }, { endpoint: import.meta.env.VITE_TICKER_DATA_URL, signal: controller.signal });
         if (disposed) return;
-        try {
-          if (!event.data.ok) throw new Error(event.data.error || 'The calculation could not be completed.');
-          const model = validateBlackLittermanResult(event.data.result, data, request.view.ticker);
-          setResult({ inputs: { ...submitted, assetClass: request.view.assetClass }, model, data }); setLoading(false);
-          worker?.terminate(); clearTimeout(timeout);
-        } catch (cause) { fail(cause instanceof Error ? cause.message : 'Invalid calculation result.'); }
-      };
-      worker.onerror = () => fail('The Rust engine could not run. Reload the page and try again.');
-      timeout = setTimeout(() => fail('The calculation timed out. Check your inputs and try again.'), 120_000);
-      worker.postMessage(request);
-    } catch (cause) { fail(cause instanceof Error ? cause.message : 'The calculation could not be started.'); }
-    return () => { disposed = true; worker?.terminate(); clearTimeout(timeout); };
+        const { request, data: modelData } = prepared;
+        worker = new Worker(new URL('../lib/portfolio/black-litterman.worker.ts', import.meta.url), { type: 'module' });
+        worker.onmessage = event => {
+          if (disposed) return;
+          try {
+            if (!event.data.ok) throw new Error(event.data.error || 'The calculation could not be completed.');
+            const model = validateBlackLittermanResult(event.data.result, modelData, request.view.ticker);
+            setResult({ inputs: { ...submitted!, assetClass: request.view.assetClass }, model, data: modelData }); setLoading(false);
+            worker?.terminate(); clearTimeout(timeout);
+          } catch (cause) { fail(cause instanceof Error ? cause.message : 'Invalid calculation result.'); }
+        };
+        worker.onerror = () => fail('The Rust engine could not run. Reload the page and try again.');
+        worker.postMessage(request);
+      } catch (cause) { fail(cause instanceof Error ? cause.message : 'The calculation could not be started.'); }
+    }
+    void calculate();
+    return () => { disposed = true; controller.abort(); worker?.terminate(); clearTimeout(timeout); };
   }, [submitted, data]);
 
   function updateInput(key: keyof ToolInputs, value: string) { setInputs(previous => ({ ...previous, [key]: value })); }
@@ -138,10 +145,10 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
         <div className="pf-tool-form-heading"><h3>CBF Modified Black Litterman test</h3></div>
         <form onSubmit={runModel}>
           <div className="pf-tool-fields">
-            <div className="pf-tool-field"><label htmlFor="pf-tool-ticker">Enter Ticker</label><input ref={tickerInput} id="pf-tool-ticker" name="ticker" type="text" autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="e.g. MSFT" required maxLength={15} pattern="[A-Za-z][A-Za-z0-9.\-]{0,14}" title="Use a current holding or a configured candidate ticker." value={inputs.ticker} onChange={event => updateInput('ticker', event.target.value.toUpperCase())} /></div>
+            <div className="pf-tool-field"><label htmlFor="pf-tool-ticker">Enter Ticker</label><input ref={tickerInput} id="pf-tool-ticker" name="ticker" type="text" autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="e.g. MSFT" required maxLength={15} pattern="[A-Za-z][A-Za-z0-9.\-]{0,14}" title="Enter a USD-listed stock or fund ticker." value={inputs.ticker} onChange={event => updateInput('ticker', event.target.value.toUpperCase())} /></div>
             <div className="pf-tool-field"><label htmlFor="pf-tool-price">Target Price in USD</label><div className="pf-tool-input-unit"><span aria-hidden="true">$</span><input id="pf-tool-price" name="targetPrice" type="number" inputMode="decimal" placeholder="450.00" min="0.01" step="0.01" required value={inputs.targetPrice} onChange={event => updateInput('targetPrice', event.target.value)} /></div></div>
             <div className="pf-tool-field"><label htmlFor="pf-tool-horizon">Horizon in Months</label><input id="pf-tool-horizon" name="horizon" type="number" inputMode="numeric" placeholder="12" min="1" step="1" required value={inputs.horizon} onChange={event => updateInput('horizon', event.target.value)} /></div>
-            <div className="pf-tool-field"><label htmlFor="pf-tool-confidence">Confidence</label><div className="pf-tool-input-unit pf-tool-unit-end"><input id="pf-tool-confidence" name="confidence" type="number" inputMode="decimal" placeholder="75" min="0" max="100" step="any" required value={inputs.confidence} onChange={event => updateInput('confidence', event.target.value)} /><span aria-hidden="true">%</span></div></div>
+            <div className="pf-tool-field"><label htmlFor="pf-tool-confidence">Confidence</label><div className="pf-tool-input-unit pf-tool-unit-end"><input id="pf-tool-confidence" name="confidence" type="number" inputMode="decimal" placeholder="50" min="0" max="100" step="any" required value={inputs.confidence} onChange={event => updateInput('confidence', event.target.value)} /><span aria-hidden="true">%</span></div></div>
           </div>
           <fieldset className="pf-tool-classes"><legend>Asset Class</legend><div>
             {/* Future integration: known ticker classifications should override this selection. */}

@@ -233,6 +233,7 @@ pub fn refresh_json(holdings: &[u8], config: &[u8]) -> Result<String, String> {
     #[derive(Deserialize)]
     struct Config {
         classes: HashMap<String, AssetClass>,
+        #[serde(default)]
         candidates: HashMap<String, AssetClass>,
     }
     let snapshot: Snapshot = serde_json::from_slice(holdings).map_err(|error| error.to_string())?;
@@ -280,6 +281,7 @@ pub fn refresh_json(holdings: &[u8], config: &[u8]) -> Result<String, String> {
     Ok(serde_json::json!({"schemaVersion": 1, "holdingsSymbols": holdings_symbols, "assets": assets,
         "historyAsOf": market.as_of_date, "firstWeek": market.first_week, "lastWeek": market.last_week,
         "observations": market.observation_count, "annualCovariance": market.annual_covariance,
+        "weeks": market.weeks, "weeklyReturns": market.weekly_returns,
         "riskFreeRate": 0.03, "marketExcessReturn": 0.05, "tau": 0.025,
         "caps": {"cash": ALLOCATION_CAPS.cash, "bonds": ALLOCATION_CAPS.bonds, "commodities": ALLOCATION_CAPS.commodities,
             "international": ALLOCATION_CAPS.international, "equities": ALLOCATION_CAPS.equities},
