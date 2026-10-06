@@ -21,12 +21,16 @@ use allocation::{AssetClass, Caps, Constraints};
 // Refer to the top of allocations.rs for a explanation of what this is
 const ALLOCATION_CAPS: Caps = Caps {
     cash: 0.05,
-    bonds: 0.20,
+    bonds: 0.15,
     commodities: 0.08,
     international: 0.08,
-    equities: 0.59,
+    equities: 0.64,
 };
 
+
+// One-year Treasury CMT, October 6, 2026 (home.treasury.gov daily par yields).
+const RISK_FREE_RATE: f64 = 0.0446;
+const RISK_FREE_RATE_AS_OF: &str = "2026-10-06";
 
 // Can autoset classes, incase of someone miss-identifying will auto correct for them, probably should come up with a dynamic way of doign this but oh well
 const HOLDING_CLASSES: &[(&str, AssetClass)] = &[
@@ -105,6 +109,7 @@ struct View {
     asset_class: Option<AssetClass>,
     candidate_price: Option<f64>,
     target_price: f64,
+    expected_annual_yield: f64,
     months: f64,
     confidence: f64,
 }
@@ -186,7 +191,7 @@ fn demo_model(snapshot: &Snapshot) -> Result<Model, String> {
     Ok(Model {
         as_of_date: snapshot.as_of_date.clone(),
         source: "DEMO: portfolio weights as equilibrium proxy; invented risk data".into(),
-        risk_free_rate: 0.03,
+        risk_free_rate: RISK_FREE_RATE,
         market_excess_return: 0.05,
         tau: 0.025,
         assets,
@@ -246,10 +251,10 @@ fn yahoo_model(snapshot: &mut Snapshot, view_ticker: &str) -> Result<Model, Stri
     Ok(Model {
         as_of_date: market.as_of_date,
         source: format!(
-            "Yahoo Finance daily closes and adjusted-close weekly returns, {} common weeks ({} to {}); snapshot quantities marked to common close; portfolio weights are equilibrium proxy; 10% off-diagonal covariance shrinkage; assumed 3% risk-free and 5% market premium",
-            market.observation_count, market.first_week, market.last_week
+            "Yahoo Finance daily closes and adjusted-close weekly returns, {} common weeks ({} to {}); snapshot quantities marked to common close; portfolio weights are equilibrium proxy; 10% off-diagonal covariance shrinkage; {:.2}% one-year Treasury as of {}; assumed 5% market premium",
+            market.observation_count, market.first_week, market.last_week, RISK_FREE_RATE * 100.0, RISK_FREE_RATE_AS_OF
         ),
-        risk_free_rate: 0.03,
+        risk_free_rate: RISK_FREE_RATE,
         market_excess_return: 0.05,
         tau: 0.025,
         assets,
@@ -389,7 +394,8 @@ fn allocation_constraints(model: &Model) -> Result<Constraints, String> {
 }
 
 fn target_excess(view: &View, price: f64, risk_free: f64) -> f64 {
-    (view.target_price / price).powf(12.0 / view.months) - 1.0 - risk_free
+    // Add annual cash yield to annualized price appreciation; no dividend reinvestment.
+    (view.target_price / price).powf(12.0 / view.months) - 1.0 + view.expected_annual_yield - risk_free
 }
 
 // Single absolute view P selects asset k. This Omega makes C the fraction of
@@ -518,6 +524,7 @@ fn input(args: &[String], allow_prompts: bool) -> Result<View, &'static str> {
         asset_class,
         candidate_price,
         target_price,
+        expected_annual_yield: 0.0,
         months,
         confidence: percent / 100.0,
     })
@@ -692,9 +699,9 @@ fn run() -> Result<(), &'static str> {
     );
     println!("Cash modeled at the risk-free rate with zero excess return and zero covariance.");
     println!(
-        "Equilibrium proxy remains normalized invested holdings; caps constrain the final allocation."
+        "Equilibrium proxy remains normalized invested holdings; targets constrain the final allocation."
     );
-    println!("Caps sum to 100%, so full allocation requires each class budget exactly.");
+    println!("Targets sum to 100%, so full allocation requires each class budget exactly.");
     println!("\nConfidence sensitivity (not statistical confidence intervals):");
     println!(
         "Confidence | View omega | Posterior excess | Target weight | Target USD | Change USD"
@@ -713,7 +720,7 @@ fn run() -> Result<(), &'static str> {
         );
     }
     println!("\nSelected confidence allocation (percent of total portfolio):");
-    println!("Class         | Hard cap | Target weight | Target USD | Change USD");
+    println!("Class         | Targets  | Target weight | Target USD | Change USD");
     let cash_target = constraints.caps.cash * budget as f64 / 100.0;
     println!(
         "{:13} | {:>7.2}% | {:>12.2}% | {:>10.2} | {:>+10.2}",

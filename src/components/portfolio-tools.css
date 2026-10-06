@@ -14,6 +14,9 @@
 .pf-tool-fields input::placeholder { color: #778aa1; opacity: 1; }
 .pf-tool-fields input:hover { border-color: #809fbe; }
 .pf-tool-fields input:focus-visible { outline: 2px solid #0756ad; outline-offset: 2px; }
+.pf-tool-fixed { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 12px; border: 1px solid #d3dde8; border-radius: 4px; background: #edf2f7; color: #365272; font-size: 14px; line-height: 22px; }
+.pf-tool-fixed svg { flex: none; width: 16px; height: 16px; }
+.pf-tool-fixed-label { margin-left: auto; color: #526b89; font-size: 11px; }
 .pf-tool-input-unit { position: relative; }
 .pf-tool-input-unit > span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #607590; pointer-events: none; font-weight: 400; }
 .pf-tool-input-unit > input { padding-left: 28px; }

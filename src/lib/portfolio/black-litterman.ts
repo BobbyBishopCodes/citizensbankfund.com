@@ -1,12 +1,13 @@
 import type { PortfolioData } from './display.ts';
 
+export const modelViewMonths = 12;
 export const modelAssetClasses = ['bonds', 'commodities', 'international', 'equities'] as const;
 export type ModelAssetClass = typeof modelAssetClasses[number];
 export const modelClassLabel = (value: ModelAssetClass) => value.charAt(0).toUpperCase() + value.slice(1);
 export type BlackLittermanHistory = {
   schemaVersion: 1; holdingsSymbols: string[]; historyAsOf: string; firstWeek: string; lastWeek: string;
   observations: number; generatedAt: string; source: string; configDigest: string;
-  riskFreeRate: number; marketExcessReturn: number; tau: number;
+  riskFreeRate: number; riskFreeRateAsOf?: string; marketExcessReturn: number; tau: number;
   caps: Record<ModelAssetClass | 'cash', number>;
   assets: { symbol: string; assetClass: ModelAssetClass; closingPrice: number }[];
   annualCovariance: number[][]; weeks?: string[]; weeklyReturns?: number[][];
@@ -15,7 +16,7 @@ export type BlackLittermanData = Omit<BlackLittermanHistory, 'assets'> & {
   portfolioAsOf: string;
   assets: (BlackLittermanHistory['assets'][number] & { price: number; priceAsOf: string; priceSource: string })[];
 };
-export type BlackLittermanView = { ticker: string; assetClass: ModelAssetClass; targetPrice: number; months: number; confidence: number };
+export type BlackLittermanView = { ticker: string; assetClass: ModelAssetClass; targetPrice: number; expectedAnnualYield?: number; months: number; confidence: number };
 export type BlackLittermanResult = {
   ticker: string; assetClass: string; currentPrice: number; navCents: number; prior: number[]; posterior: number[];
   lambda: number; annualizedTargetReturn: number; targetExcessReturn: number; omega: number | null;
@@ -40,14 +41,14 @@ export function validateBlackLittermanHistory(input: unknown, positions: { symbo
         (Date.parse(data.lastWeek) - Date.parse(data.firstWeek)) / (7 * 86_400_000) + 1 < data.observations ||
         !Number.isInteger(data.observations) || data.observations < 104 || !data.source.trim() ||
         !/^[a-f0-9]{64}$/.test(data.configDigest) ||
-        data.riskFreeRate !== 0.03 || data.marketExcessReturn !== 0.05 || data.tau !== 0.025 ||
+        data.riskFreeRate !== 0.0446 || data.marketExcessReturn !== 0.05 || data.tau !== 0.025 ||
         JSON.stringify(data.holdingsSymbols) !== JSON.stringify(symbolsFor(positions)) ||
         new Set(data.assets.map(asset => asset.symbol)).size !== n ||
         data.assets.some(asset => !/^[A-Z][A-Z0-9.-]{0,14}$/.test(asset.symbol) || !modelAssetClasses.includes(asset.assetClass) ||
           !finite(asset.closingPrice) || asset.closingPrice <= 0) ||
         data.holdingsSymbols.some(symbol => !data.assets.some(asset => asset.symbol === symbol)) ||
-        data.caps.cash !== 0.05 || data.caps.bonds !== 0.20 || data.caps.commodities !== 0.08 ||
-        data.caps.international !== 0.08 || data.caps.equities !== 0.59 ||
+        data.caps.cash !== 0.05 || data.caps.bonds !== 0.15 || data.caps.commodities !== 0.08 ||
+        data.caps.international !== 0.08 || data.caps.equities !== 0.64 ||
         !Array.isArray(data.annualCovariance) || data.annualCovariance.length !== n ||
         data.annualCovariance.some(row => !Array.isArray(row) || row.length !== n || row.some(value => !finite(value)))) throw new Error();
     if (data.weeks !== undefined || data.weeklyReturns !== undefined) {
@@ -88,6 +89,7 @@ export function validateBlackLittermanData(input: unknown, portfolio: PortfolioD
 }
 
 export function buildBlackLittermanRequest(portfolio: PortfolioData, view: BlackLittermanView, now = Date.now()) {
+  if (view.months !== modelViewMonths) throw new Error('The model requires a 12-month view.');
   const data = validateBlackLittermanData(portfolio.blackLitterman, portfolio);
   const historyAge = now - Date.parse(`${data.historyAsOf}T00:00:00Z`);
   if (historyAge > 8 * 86_400_000 || data.historyAsOf > new Date(now).toISOString().slice(0, 10) ||
@@ -98,7 +100,8 @@ export function buildBlackLittermanRequest(portfolio: PortfolioData, view: Black
   const chosen = data.assets.find(asset => asset.symbol === ticker);
   if (!chosen) throw new Error('Come on..... Use the correct ticker go to gooogle.com and search it');
   if (!finite(view.targetPrice) || view.targetPrice <= 0 || !finite(view.months) || view.months <= 0 ||
-      !finite(view.confidence) || view.confidence < 0 || view.confidence > 100) throw new Error('Check the target price, horizon, and confidence.');
+      !finite(view.confidence) || view.confidence < 0 || view.confidence > 100 ||
+      !finite(view.expectedAnnualYield ?? 0) || (view.expectedAnnualYield ?? 0) < 0 || (view.expectedAnnualYield ?? 0) > 1) throw new Error('Check the target price, expected annual yield, horizon, and confidence.');
   const assetClass = portfolio.positions.some(position => position.assetType !== 'cash' && position.symbol === ticker) ? chosen.assetClass : view.assetClass;
   if (!modelAssetClasses.includes(assetClass)) throw new Error('Select an asset class.');
   const candidates = new Set(portfolio.positions.filter(position => position.assetType !== 'cash').map(position => position.symbol));

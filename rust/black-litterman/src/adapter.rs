@@ -6,6 +6,8 @@ struct WebView {
     ticker: String,
     asset_class: AssetClass,
     target_price: f64,
+    #[serde(default)]
+    expected_annual_yield: f64,
     months: f64,
     confidence: f64,
 }
@@ -97,18 +99,23 @@ fn rounded_values(weights: &[f64], nav: i64) -> Result<Vec<i64>, String> {
 }
 
 fn calculate_request(mut request: Request) -> Result<serde_json::Value, String> {
+    if request.view.months != 12.0 {
+        return Err("The model requires a 12-month view.".into());
+    }
     let (current, cash, nav) = budget(&request.snapshot)?;
     let invested = nav - cash;
     let ticker = request.view.ticker.trim().to_ascii_uppercase();
     if ticker.is_empty()
         || !request.view.target_price.is_finite()
         || request.view.target_price <= 0.0
+        || !request.view.expected_annual_yield.is_finite()
+        || !(0.0..=1.0).contains(&request.view.expected_annual_yield)
         || !request.view.months.is_finite()
         || request.view.months <= 0.0
         || !request.view.confidence.is_finite()
         || !(0.0..=100.0).contains(&request.view.confidence)
     {
-        return Err("Check the ticker, target price, horizon, and confidence".into());
+        return Err("Check the ticker, target price, expected annual yield, horizon, and confidence".into());
     }
     let mut candidates = 0;
     for asset in &mut request.model.assets {
@@ -157,6 +164,7 @@ fn calculate_request(mut request: Request) -> Result<serde_json::Value, String> 
         asset_class: request.model.assets[k].asset_class,
         candidate_price: None,
         target_price: request.view.target_price,
+        expected_annual_yield: request.view.expected_annual_yield,
         months: request.view.months,
         confidence: request.view.confidence / 100.0,
     };
@@ -282,7 +290,7 @@ pub fn refresh_json(holdings: &[u8], config: &[u8]) -> Result<String, String> {
         "historyAsOf": market.as_of_date, "firstWeek": market.first_week, "lastWeek": market.last_week,
         "observations": market.observation_count, "annualCovariance": market.annual_covariance,
         "weeks": market.weeks, "weeklyReturns": market.weekly_returns,
-        "riskFreeRate": 0.03, "marketExcessReturn": 0.05, "tau": 0.025,
+        "riskFreeRate": RISK_FREE_RATE, "riskFreeRateAsOf": RISK_FREE_RATE_AS_OF, "marketExcessReturn": 0.05, "tau": 0.025,
         "caps": {"cash": ALLOCATION_CAPS.cash, "bonds": ALLOCATION_CAPS.bonds, "commodities": ALLOCATION_CAPS.commodities,
             "international": ALLOCATION_CAPS.international, "equities": ALLOCATION_CAPS.equities},
         "generatedAt": chrono::Utc::now().to_rfc3339(),

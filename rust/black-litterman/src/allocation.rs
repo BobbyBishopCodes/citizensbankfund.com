@@ -1,5 +1,5 @@
 // Port allocation limits & requirements, the Citizens Bank Fund as of October 26, establishes the following allocations:
-// 5% Cash, 20% Bonds, 8% Commodities, 8% International, 59% Equities so yeah
+// 5% Cash, 15% Bonds, 8% Commodities, 8% International, 64% Equities so yeah
 use serde::Deserialize;
 
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq)]
@@ -69,7 +69,7 @@ impl Constraints {
             .any(|v| !v.is_finite() || !(0.0..=1.0).contains(v))
             || (limits.iter().sum::<f64>() - 1.0).abs() > 1e-12
         {
-            return Err("Allocation caps must be finite, nonnegative, and sum to 100%".into());
+            return Err("Allocation targets must be finite, nonnegative, and sum to 100%".into());
         }
         let mut groups = Vec::new();
         for class in AssetClass::ALL {

@@ -1,5 +1,19 @@
 const symbolPattern = /^[A-Z][A-Z0-9.-]{0,14}$/;
 
+export function annualDividendYield(chart, price, now) {
+  const cutoff = now / 1000 - 365 * 86400;
+  if (!Array.isArray(chart.timestamp) || Math.min(...chart.timestamp) > cutoff) return null;
+  const events = chart.events?.dividends ?? {};
+  if (typeof events !== 'object' || events === null || Array.isArray(events)) return null;
+  let cash = 0;
+  for (const dividend of Object.values(events)) {
+    if (!Number.isSafeInteger(dividend?.date) || !Number.isFinite(dividend.amount) || dividend.amount < 0) return null;
+    if (dividend.date > cutoff && dividend.date <= now / 1000) cash += dividend.amount;
+  }
+  const yieldRatio = cash / price;
+  return Number.isFinite(yieldRatio) && yieldRatio >= 0 && yieldRatio <= 1 ? yieldRatio : null;
+}
+
 export function createHandler({ fetchImpl = fetch, now = () => Date.now(), cache = null } = {}) {
   return async function handle(request, env, ctx) {
     const origin = request.headers.get('Origin');
@@ -20,7 +34,7 @@ export function createHandler({ fetchImpl = fetch, now = () => Date.now(), cache
       return respond({ error: 'Come on..... Use the correct ticker go to gooogle.com and search it' }, 400);
     }
     if (!env.FINNHUB_API_KEY) return respond({ error: 'Ticker data service is not configured.' }, 503);
-    const cacheKey = new Request(`${url.origin}/ticker?symbol=${encodeURIComponent(symbol)}`);
+    const cacheKey = new Request(`${url.origin}/ticker-yield-v2?symbol=${encodeURIComponent(symbol)}`);
     const storage = cache ?? globalThis.caches?.default;
     try {
       const cached = await storage?.match(cacheKey);
@@ -30,7 +44,7 @@ export function createHandler({ fetchImpl = fetch, now = () => Date.now(), cache
         fetchImpl(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(symbol)}`, {
           headers: { 'X-Finnhub-Token': env.FINNHUB_API_KEY }, signal: AbortSignal.timeout(15_000), redirect: 'manual'
         }),
-        fetchImpl(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=3y&interval=1d&includeAdjustedClose=true`, {
+        fetchImpl(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=3y&interval=1d&includeAdjustedClose=true&events=div`, {
           headers: { 'User-Agent': 'CBF-Ticker-Data/1.0' }, signal: AbortSignal.timeout(15_000), redirect: 'manual'
         })
       ]);
@@ -57,7 +71,8 @@ export function createHandler({ fetchImpl = fetch, now = () => Date.now(), cache
         return respond({ error: 'This ticker has missing or stale historical data.' }, 422);
       }
       const payload = { schemaVersion: 1, symbol, currency: 'USD', price: quote.c, priceAsOf: new Date(quote.t * 1000).toISOString(),
-        priceSource: 'finnhub', generatedAt: new Date(now()).toISOString(), observations };
+        priceSource: 'finnhub', annualYieldRatio: annualDividendYield(chart, quote.c, now()),
+        yieldSource: 'Yahoo Finance trailing 12-month cash distributions / current price', generatedAt: new Date(now()).toISOString(), observations };
       if (storage) {
         const stored = new Response(JSON.stringify(payload), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=900' } });
         const write = storage.put(cacheKey, stored).catch(() => {});

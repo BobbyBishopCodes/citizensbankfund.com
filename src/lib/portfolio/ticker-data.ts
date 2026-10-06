@@ -24,6 +24,7 @@ function weeklyPrices(observations: [number, number][], now: number) {
 
 export function combineTickerHistory(portfolio: PortfolioData, view: BlackLittermanView, input: unknown, now = Date.now()): PortfolioData {
   const data = validateBlackLittermanData(portfolio.blackLitterman, portfolio);
+  if (view.months !== 12) throw new Error('The model requires a 12-month view.');
   const ticker = view.ticker.trim().toUpperCase();
   const candidate = input as TickerData;
   if (!candidate || candidate.schemaVersion !== 1 || candidate.symbol !== ticker || candidate.currency !== 'USD' ||
@@ -59,13 +60,37 @@ export function combineTickerHistory(portfolio: PortfolioData, view: BlackLitter
   return extended;
 }
 
+export async function fetchTickerYield(ticker: string, {
+  endpoint = '', signal, fetchImpl = fetch, now = Date.now()
+}: { endpoint?: string; signal?: AbortSignal; fetchImpl?: typeof fetch; now?: number } = {}) {
+  if (!endpoint) throw new Error('Yield lookup is unavailable. Enter the expected annual yield.');
+  const symbol = ticker.trim().toUpperCase();
+  if (!/^[A-Z][A-Z0-9.-]{0,14}$/.test(symbol)) throw new Error('Enter a valid ticker.');
+  const url = new URL(endpoint);
+  if (url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname))) throw new Error('The ticker data service URL is invalid.');
+  url.pathname = '/ticker'; url.search = new URLSearchParams({ symbol }).toString(); url.hash = '';
+  const lookupSignal = signal ? AbortSignal.any([signal, AbortSignal.timeout(15_000)]) : AbortSignal.timeout(15_000);
+  const response = await fetchImpl(url, { signal: lookupSignal, credentials: 'omit', redirect: 'error' });
+  if (!response.ok) throw new Error('Yield lookup is unavailable. Enter the expected annual yield.');
+  const data = await response.json();
+  if (data.symbol !== symbol || data.currency !== 'USD' || data.schemaVersion !== 1 ||
+    typeof data.annualYieldRatio !== 'number' || !Number.isFinite(data.annualYieldRatio) || data.annualYieldRatio < 0 || data.annualYieldRatio > 1 ||
+    typeof data.yieldSource !== 'string' || !data.yieldSource.trim() || !Number.isFinite(Date.parse(data.generatedAt)) ||
+    now - Date.parse(data.generatedAt) > 8 * dayMs || Date.parse(data.generatedAt) > now + 300_000) {
+    throw new Error('Yield data is unavailable. Enter the expected annual yield.');
+  }
+  return { ratio: data.annualYieldRatio as number, source: data.yieldSource as string };
+}
+
 export async function prepareTickerAnalysis(portfolio: PortfolioData, view: BlackLittermanView, {
   endpoint = '', signal, fetchImpl = fetch, now = Date.now()
 }: { endpoint?: string; signal?: AbortSignal; fetchImpl?: typeof fetch; now?: number } = {}) {
+  if (view.months !== 12) throw new Error('The model requires a 12-month view.');
   const ticker = view.ticker.trim().toUpperCase();
   if (!/^[A-Z][A-Z0-9.-]{0,14}$/.test(ticker)) throw new Error('Come on..... Use the correct ticker go to gooogle.com and search it');
   if (!modelAssetClasses.includes(view.assetClass) || !Number.isFinite(view.targetPrice) || view.targetPrice <= 0 ||
-    !Number.isFinite(view.months) || view.months <= 0 || !Number.isFinite(view.confidence) || view.confidence < 0 || view.confidence > 100) throw new Error('Check the target price, horizon, confidence, and asset class.');
+    !Number.isFinite(view.months) || view.months <= 0 || !Number.isFinite(view.confidence) || view.confidence < 0 || view.confidence > 100 ||
+    !Number.isFinite(view.expectedAnnualYield ?? 0) || (view.expectedAnnualYield ?? 0) < 0 || (view.expectedAnnualYield ?? 0) > 1) throw new Error('Check the target price, expected annual yield, horizon, confidence, and asset class.');
   let data = portfolio;
   if (!portfolio.positions.some(position => position.assetType !== 'cash' && position.symbol === ticker)) {
     if (!endpoint) throw new Error('The on-demand ticker data service has not been connected yet.');

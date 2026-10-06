@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createHandler } from '../cloudflare/ticker-data/src/index.mjs';
+import { annualDividendYield, createHandler } from '../cloudflare/ticker-data/src/index.mjs';
 
 const now = Date.parse('2026-10-06T05:00:00Z');
 const environment = { ALLOWED_ORIGINS: 'https://citizensbankfund.com', FINNHUB_API_KEY: 'test-private-key' };
@@ -10,6 +10,35 @@ const chart = () => ({ chart: { result: [{ meta: { symbol: 'NU', currency: 'USD'
   indicators: { adjclose: [{ adjclose: timestamps.map((_, i) => 10 + i * 0.1) }] } }] } });
 const quote = { c: 15, t: Math.floor(now / 1000) - 3600 };
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status });
+
+test('yield uses only the trailing year of cash distributions and preserves unavailable versus zero', () => {
+  const seconds = Math.floor(now / 1000);
+  const history = { timestamp: [seconds - 400 * 86400, seconds], events: { dividends: {
+    old: { date: seconds - 370 * 86400, amount: 50 },
+    a: { date: seconds - 300 * 86400, amount: 1 },
+    b: { date: seconds - 50 * 86400, amount: 2 },
+    future: { date: seconds + 86400, amount: 100 },
+  } } };
+  assert.equal(annualDividendYield(history, 100, now), 0.03);
+  assert.equal(annualDividendYield({ timestamp: history.timestamp }, 100, now), 0);
+  assert.equal(annualDividendYield({ timestamp: [seconds - 30 * 86400] }, 100, now), null);
+  history.events.dividends.a.amount = -1;
+  assert.equal(annualDividendYield(history, 100, now), null);
+});
+
+test('Worker includes the distribution yield and requests dividend events', async () => {
+  const history = chart();
+  history.chart.result[0].timestamp[0] = Math.floor(now / 1000) - 400 * 86400;
+  history.chart.result[0].events = { dividends: { payment: { date: Math.floor(now / 1000) - 60 * 86400, amount: 0.45 } } };
+  const handler = createHandler({ now: () => now, fetchImpl: async url => {
+    if (url.includes('finnhub.io')) return json(quote);
+    assert.equal(new URL(url).searchParams.get('events'), 'div');
+    return json(history);
+  } });
+  const payload = await (await handler(request(), environment)).json();
+  assert.ok(Math.abs(payload.annualYieldRatio - 0.03) < 1e-12);
+  assert.match(payload.yieldSource, /trailing 12-month/);
+});
 
 test('Worker protects the key, uses fixed providers, caches successful ticker data, and applies CORS per request', async () => {
   const storage = new Map(), calls = [];

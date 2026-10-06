@@ -592,10 +592,10 @@
     }
   ],
   "caps": {
-    "bonds": 0.2,
+    "bonds": 0.15,
     "cash": 0.05,
     "commodities": 0.08,
-    "equities": 0.59,
+    "equities": 0.64,
     "international": 0.08
   },
   "firstWeek": "2023-10-09",
@@ -627,7 +627,7 @@
   "lastWeek": "2026-09-28",
   "marketExcessReturn": 0.05,
   "observations": 156,
-  "riskFreeRate": 0.03,
+  "riskFreeRate": 0.0446,
   "schemaVersion": 1,
   "source": "Yahoo Finance adjusted-close weekly returns; 52-week annualization; 10% off-diagonal covariance shrinkage",
   "tau": 0.025,
@@ -4109,5 +4109,6 @@
     "2026-09-21",
     "2026-09-28"
   ],
-  "configDigest": "7aa1937328e32282b872dda1a242a0a820571db5fd1a7577a977389a36c09d04"
+  "configDigest": "7aa1937328e32282b872dda1a242a0a820571db5fd1a7577a977389a36c09d04",
+  "riskFreeRateAsOf": "2026-10-06"
 }

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { money, signedMoney, dateLabel, type PortfolioData } from '../lib/portfolio/display';
-import { modelAssetClasses, modelClassLabel, validateBlackLittermanResult, type ModelAssetClass, type BlackLittermanResult } from '../lib/portfolio/black-litterman';
+import { modelViewMonths, modelAssetClasses, modelClassLabel, validateBlackLittermanResult, type ModelAssetClass, type BlackLittermanResult } from '../lib/portfolio/black-litterman';
 import './portfolio-tools.css';
-import { prepareTickerAnalysis } from '../lib/portfolio/ticker-data';
+import { fetchTickerYield, prepareTickerAnalysis } from '../lib/portfolio/ticker-data';
 
-type ToolInputs = { ticker: string; targetPrice: string; horizon: string; confidence: string; assetClass: ModelAssetClass | '' };
+type ToolInputs = { ticker: string; targetPrice: string; expectedYield: string; confidence: string; assetClass: ModelAssetClass | '' };
 type CompletedModel = { inputs: ToolInputs; model: BlackLittermanResult; data: PortfolioData };
 const weightLabel = (weight: number) => `${(weight * 100).toFixed(2)}%`;
 
@@ -42,7 +42,7 @@ function ModelResults({ result, onEdit }: { result: CompletedModel; onEdit: () =
       <h3 id="pf-tool-results-heading" tabIndex={-1} ref={heading}>CBF Modified Black Litterman test</h3>
       <button type="button" className="pf-tool-button pf-tool-secondary" onClick={exportCsv}>Export CSV <span aria-hidden="true">↓</span></button>
     </div>
-    <div className="pf-tool-scenario"><span><strong>{model.ticker}</strong> · {model.assetClass}</span><span>Target {money(Number(inputs.targetPrice) * 100)}</span><span>{inputs.horizon} months</span><span>{inputs.confidence}% confidence</span><button type="button" className="pf-tool-edit" onClick={onEdit}>Edit Inputs</button></div>
+    <div className="pf-tool-scenario"><span><strong>{model.ticker}</strong> · {model.assetClass}</span><span>Target {money(Number(inputs.targetPrice) * 100)}</span><span>{modelViewMonths} months</span><span>{inputs.expectedYield}% annual yield</span><span>{inputs.confidence}% confidence</span><button type="button" className="pf-tool-edit" onClick={onEdit}>Edit Inputs</button></div>
     <p className="sr-only" role="status">{exported ? 'Model CSV downloaded.' : 'Black Litterman calculation complete.'}</p>
     <div className="pf-tool-results-grid">
       <section className="pf-tool-card pf-tool-allocation" aria-labelledby="pf-tool-allocation-heading">
@@ -76,16 +76,17 @@ function ModelResults({ result, onEdit }: { result: CompletedModel; onEdit: () =
     <details className="pf-tool-method"><summary>Model inputs and assumptions</summary>
       <p>Algorithmic math statements, no need to really worry about this, just for review double checking stuff.</p>
       <p>Holdings {dateLabel(data.holdingsAsOfDate)} · portfolio valuation {dateLabel(data.calculatedAt)} · history through {dateLabel(data.blackLitterman!.historyAsOf)}.</p>
-      <p>Eq. proxy: current weights · Rf: 3% · MRP: 5% · τ: 0.025 · Ann. factor: 52 · Cov. shrinkage: 10% (off-diag.)</p>
-      <p>Our Current CAPs: cash 5%, bonds 20%, commodities 8%, international 8%, equities 59%.</p>
-      <p>Annualized target return {weightLabel(model.annualizedTargetReturn)} · posterior excess return {weightLabel(model.posterior[model.positions.findIndex(position => position.ticker === model.ticker)])}.</p>
+      <p>Eq. proxy: current weights · Rf: {weightLabel(model.riskFreeRate)} (1-year Treasury{data.blackLitterman!.riskFreeRateAsOf ? `, ${dateLabel(data.blackLitterman!.riskFreeRateAsOf)}` : ''}) · MRP: 5% · τ: 0.025 · Ann. factor: 52 · Cov. shrinkage: 10% (off-diag.)</p>
+      <p>Our Current Targets: {Object.entries(data.blackLitterman!.caps).map(([assetClass, weight]) => `${assetClass} ${weightLabel(weight)}`).join(', ')}.</p>
+      <p>Expected annual dividend / distribution yield is added to annualized price appreciation without reinvestment. Target price excludes distributions.</p>
+      <p>Annualized total target return {weightLabel(model.annualizedTargetReturn)} · posterior excess return {weightLabel(model.posterior[model.positions.findIndex(position => position.ticker === model.ticker)])}.</p>
     </details>
   </div>;
 }
 
 export function PortfolioTools({ data }: { data: PortfolioData }) {
   const [open, setOpen] = useState(false);
-  const [inputs, setInputs] = useState<ToolInputs>({ ticker: '', targetPrice: '', horizon: '', confidence: '', assetClass: '' });
+  const [inputs, setInputs] = useState<ToolInputs>({ ticker: '', targetPrice: '', expectedYield: '', confidence: '', assetClass: '' });
   const [submitted, setSubmitted] = useState<ToolInputs | null>(null);
   const [result, setResult] = useState<CompletedModel | null>(null);
   const [loading, setLoading] = useState(false);
@@ -94,6 +95,28 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
   const knownClass = data.positions.some(position => position.assetType !== 'cash' && position.symbol === inputs.ticker.trim().toUpperCase()) ? data.blackLitterman?.assets.find(asset => asset.symbol === inputs.ticker.trim().toUpperCase())?.assetClass : undefined;
   const effectiveClass = knownClass ?? inputs.assetClass;
   const currentResult = result?.data.calculatedAt === data.calculatedAt ? result : null;
+
+  useEffect(() => {
+    const ticker = inputs.ticker.trim().toUpperCase();
+    setInputs(previous => ({ ...previous, expectedYield: '' }));
+    if (!ticker || !/^[A-Z][A-Z0-9.-]{0,14}$/.test(ticker)) return;
+    const holding = data.positions.find(position => position.assetType !== 'cash' && position.symbol === ticker);
+    const ratio = holding?.estimatedIncomeYieldRatio;
+    if (typeof ratio === 'number' && Number.isFinite(ratio) && ratio >= 0 && ratio <= 1) {
+      setInputs(previous => ({ ...previous, expectedYield: String(Number((ratio * 100).toFixed(4))) }));
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      void fetchTickerYield(ticker, { endpoint: import.meta.env.VITE_TICKER_DATA_URL, signal: controller.signal })
+        .then(yieldData => {
+          if (controller.signal.aborted) return;
+          setInputs(previous => ({ ...previous, expectedYield: String(Number((yieldData.ratio * 100).toFixed(4))) }));
+        })
+        .catch(() => {});
+    }, 350);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [inputs.ticker, data]);
 
   useEffect(() => {
     if (!submitted) return;
@@ -107,7 +130,7 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
     async function calculate() {
       try {
         const prepared = await prepareTickerAnalysis(data, { ticker: submitted!.ticker, assetClass: submitted!.assetClass as ModelAssetClass,
-          targetPrice: Number(submitted!.targetPrice), months: Number(submitted!.horizon), confidence: Number(submitted!.confidence) }, { endpoint: import.meta.env.VITE_TICKER_DATA_URL, signal: controller.signal });
+          targetPrice: Number(submitted!.targetPrice), expectedAnnualYield: Number(submitted!.expectedYield) / 100, months: modelViewMonths, confidence: Number(submitted!.confidence) }, { endpoint: import.meta.env.VITE_TICKER_DATA_URL, signal: controller.signal });
         if (disposed) return;
         const { request, data: modelData } = prepared;
         worker = new Worker(new URL('../lib/portfolio/black-litterman.worker.ts', import.meta.url), { type: 'module' });
@@ -128,9 +151,11 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
     return () => { disposed = true; controller.abort(); worker?.terminate(); clearTimeout(timeout); };
   }, [submitted, data]);
 
-  function updateInput(key: keyof ToolInputs, value: string) { setInputs(previous => ({ ...previous, [key]: value })); }
+  function updateInput(key: keyof ToolInputs, value: string) {
+    setInputs(previous => ({ ...previous, [key]: value })); }
   function runModel(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (inputs.expectedYield === '') return;
     setSubmitted({ ...inputs, ticker: inputs.ticker.trim().toUpperCase(), assetClass: effectiveClass });
   }
   function editInputs() {
@@ -146,8 +171,8 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
         <form onSubmit={runModel}>
           <div className="pf-tool-fields">
             <div className="pf-tool-field"><label htmlFor="pf-tool-ticker">Enter Ticker</label><input ref={tickerInput} id="pf-tool-ticker" name="ticker" type="text" autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="e.g. MSFT" required maxLength={15} pattern="[A-Za-z][A-Za-z0-9.\-]{0,14}" title="Enter a USD-listed stock or fund ticker." value={inputs.ticker} onChange={event => updateInput('ticker', event.target.value.toUpperCase())} /></div>
-            <div className="pf-tool-field"><label htmlFor="pf-tool-price">Target Price in USD</label><div className="pf-tool-input-unit"><span aria-hidden="true">$</span><input id="pf-tool-price" name="targetPrice" type="number" inputMode="decimal" placeholder="450.00" min="0.01" step="0.01" required value={inputs.targetPrice} onChange={event => updateInput('targetPrice', event.target.value)} /></div></div>
-            <div className="pf-tool-field"><label htmlFor="pf-tool-horizon">Horizon in Months</label><input id="pf-tool-horizon" name="horizon" type="number" inputMode="numeric" placeholder="12" min="1" step="1" required value={inputs.horizon} onChange={event => updateInput('horizon', event.target.value)} /></div>
+            <div className="pf-tool-field"><label htmlFor="pf-tool-price">12-Month Target Price in USD</label><div className="pf-tool-input-unit"><span aria-hidden="true">$</span><input id="pf-tool-price" name="targetPrice" type="number" inputMode="decimal" placeholder="450.00" min="0.01" step="0.01" required value={inputs.targetPrice} onChange={event => updateInput('targetPrice', event.target.value)} /></div></div>
+            <div className="pf-tool-field"><label htmlFor="pf-tool-horizon">Forecast Horizon</label><output id="pf-tool-horizon" className="pf-tool-fixed"><svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M6 8V5a4 4 0 0 1 8 0v3M5 8h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.5" /><path d="M10 12v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span>{modelViewMonths} months</span><span className="pf-tool-fixed-label">Fixed</span></output></div>
             <div className="pf-tool-field"><label htmlFor="pf-tool-confidence">Confidence</label><div className="pf-tool-input-unit pf-tool-unit-end"><input id="pf-tool-confidence" name="confidence" type="number" inputMode="decimal" placeholder="50" min="0" max="100" step="any" required value={inputs.confidence} onChange={event => updateInput('confidence', event.target.value)} /><span aria-hidden="true">%</span></div></div>
           </div>
           <fieldset className="pf-tool-classes"><legend>Asset Class</legend><div>
@@ -156,7 +181,7 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
           </div></fieldset>
           {loading && <p className="pf-tool-status" role="status">Calculating portfolio allocation…</p>}
           {error && <p className="pf-tool-error" role="alert">{error}</p>}
-          <div className="pf-tool-form-footer">{loading && <button className="pf-tool-edit" type="button" onClick={editInputs}>Cancel</button>}<button className="pf-tool-button" type="submit" disabled={loading || !data.blackLitterman}>{loading ? 'Running…' : 'Run'} <span aria-hidden="true">→</span></button></div>
+          <div className="pf-tool-form-footer">{loading && <button className="pf-tool-edit" type="button" onClick={editInputs}>Cancel</button>}<button className="pf-tool-button" type="submit" disabled={loading || !data.blackLitterman || inputs.expectedYield === ''}>{loading ? 'Running…' : 'Run'} <span aria-hidden="true">→</span></button></div>
         </form>
         {!data.blackLitterman && <p className="pf-tool-error" role="status">Model history is unavailable. Wait for the next portfolio refresh.</p>}
       </div>}

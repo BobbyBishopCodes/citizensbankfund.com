@@ -36,11 +36,41 @@ const holdings = JSON.parse(await readFile(new URL('./fixtures/black-litterman/h
 const clock = () => history.generatedAt;
 const view = { ticker: 'MSFT', assetClass: 'bonds', targetPrice: 650, months: 12, confidence: 75 };
 
+test('browser and native calculations reject horizons other than 12 months', async () => {
+  const portfolio = await staticPortfolio(holdings, { blackLittermanHistory: history, clock });
+  for (const months of [0, 4, 11.5, 24, Number.NaN, Number.POSITIVE_INFINITY]) {
+    assert.throws(() => buildBlackLittermanRequest(portfolio, { ...view, months }, Date.parse(clock())), /12-month/);
+    const request = buildBlackLittermanRequest(portfolio, view, Date.parse(clock()));
+    request.view.months = months;
+    assert.equal(wasm(request).ok, false);
+    const native = spawnSync(executable, { input: JSON.stringify(request), encoding: 'utf8', timeout: 30_000 });
+    assert.equal(JSON.parse(native.stdout).ok, false);
+  }
+});
+
+test('Treasury rate reduces the view excess return and the revised targets reconcile to 100%', async () => {
+  const portfolio = await staticPortfolio(holdings, { blackLittermanHistory: history, clock });
+  const targets = { cash: 0.05, bonds: 0.15, commodities: 0.08, international: 0.08, equities: 0.64 };
+  const request = buildBlackLittermanRequest(portfolio, view, Date.parse(clock()));
+  const output = wasm(request);
+  assert.equal(output.ok, true, output.error);
+  const result = output.result;
+  assert.equal(result.riskFreeRate, 0.0446);
+  const annualReturn = (view.targetPrice / result.currentPrice) - 1;
+  assert.ok(Math.abs(result.targetExcessReturn - (annualReturn - 0.0446)) < 1e-12);
+  for (const [assetClass, target] of Object.entries(targets)) {
+    const weight = result.positions.filter(row => row.assetClass.toLowerCase() === assetClass)
+      .reduce((sum, row) => sum + row.suggestedWeight, 0);
+    assert.ok(Math.abs(weight - target) < 1e-9);
+  }
+  validateBlackLittermanResult(result, portfolio, view.ticker);
+});
+
 test('browser Rust and native Rust agree for current holdings and candidate inputs', async () => {
   const portfolio = await staticPortfolio(holdings, { blackLittermanHistory: history, clock });
   for (const ticker of ['MSFT', 'BINC', 'GLD', 'EWJ', 'TTMI']) {
     for (const confidence of [0, 50, 100]) {
-      const request = buildBlackLittermanRequest(portfolio, { ...view, ticker, confidence }, Date.parse(clock()));
+      const request = buildBlackLittermanRequest(portfolio, { ...view, ticker, confidence, expectedAnnualYield: 0.03 }, Date.parse(clock()));
       const output = wasm(request);
       assert.equal(output.ok, true, output.error);
       const native = spawnSync(executable, { input: JSON.stringify(request), encoding: 'utf8', timeout: 30_000 });
@@ -59,6 +89,29 @@ test('browser Rust and native Rust agree for current holdings and candidate inpu
   }
 });
 
+test('annual cash yield increases the 12-month total return and posterior', async () => {
+  const portfolio = await staticPortfolio(holdings, { blackLittermanHistory: history, clock });
+  const request = buildBlackLittermanRequest(portfolio, { ...view, confidence: 100 }, Date.parse(clock()));
+  const price = request.model.assets.find(asset => asset.symbol === view.ticker).currentPrice;
+  request.view.targetPrice = price * 1.1;
+  const baseline = wasm(request).result;
+  request.view.expectedAnnualYield = 0.03;
+  const output = wasm(request);
+  assert.equal(output.ok, true, output.error);
+  const result = output.result;
+  const expectedTotalReturn = 0.13;
+  assert.ok(Math.abs(result.annualizedTargetReturn - expectedTotalReturn) < 1e-12);
+  assert.ok(Math.abs(result.targetExcessReturn - (expectedTotalReturn - result.riskFreeRate)) < 1e-12);
+  const index = request.model.assets.findIndex(asset => asset.symbol === view.ticker);
+  assert.ok(Math.abs(result.posterior[index] - baseline.posterior[index] - 0.03) < 1e-12);
+  validateBlackLittermanResult(result, portfolio, view.ticker);
+  for (const invalid of [-0.01, 1.01, Number.NaN, Number.POSITIVE_INFINITY]) {
+    assert.throws(() => buildBlackLittermanRequest(portfolio, { ...view, expectedAnnualYield: invalid }, Date.parse(clock())), /yield/);
+    request.view.expectedAnnualYield = invalid;
+    assert.equal(wasm(request).ok, false);
+  }
+});
+
 test('posterior follows the independently evaluated single-view formula at confidence endpoints', async () => {
   const portfolio = await staticPortfolio(holdings, { blackLittermanHistory: history, clock });
   for (const confidence of [0, 20, 50, 80, 100]) {
@@ -71,7 +124,7 @@ test('posterior follows the independently evaluated single-view formula at confi
     const lambda = 0.05 / weights.reduce((sum, value, index) => sum + value * sigmaW[index], 0);
     const prior = sigmaW.map(value => lambda * value);
     const k = request.model.assets.findIndex(asset => asset.symbol === 'MSFT');
-    const q = (view.targetPrice / request.model.assets[k].currentPrice) ** (12 / view.months) - 1 - 0.03;
+    const q = (view.targetPrice / request.model.assets[k].currentPrice) ** (12 / view.months) - 1 - request.model.riskFreeRate;
     prior.forEach((value, index) => {
       const posterior = value + confidence / 100 * covariance[index][k] / covariance[k][k] * (q - prior[k]);
       assert.ok(Math.abs(output.posterior[index] - posterior) < 1e-10);

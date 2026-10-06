@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { cargo, manifest } from '../scripts/build-black-litterman.mjs';
 import { staticPortfolio } from '../scripts/portfolio/static.mjs';
-import { prepareTickerAnalysis, combineTickerHistory } from '../src/lib/portfolio/ticker-data.ts';
+import { fetchTickerYield, prepareTickerAnalysis, combineTickerHistory } from '../src/lib/portfolio/ticker-data.ts';
 import { validateBlackLittermanResult } from '../src/lib/portfolio/black-litterman.ts';
 
 const fixture = async name => JSON.parse(await readFile(new URL(`./fixtures/black-litterman/${name}.json`, import.meta.url), 'utf8'));
@@ -14,6 +14,21 @@ const tickerData = { NU: await fixture('nu-ticker'), BBW: await fixture('bbw-tic
 const now = Math.max(...Object.values(tickerData).map(data => Date.parse(data.generatedAt)));
 const portfolio = await staticPortfolio(holdings, { blackLittermanHistory: history, clock: () => new Date(now).toISOString() });
 const view = { ticker: 'NU', assetClass: 'equities', targetPrice: 20, months: 12, confidence: 75 };
+
+test('yield lookup validates the ticker, source, freshness, and missing values without inventing zero', async () => {
+  const payload = { ...tickerData.NU, annualYieldRatio: 0.03, yieldSource: 'Yahoo Finance trailing 12-month distributions' };
+  const options = { now, endpoint: 'https://worker.test', fetchImpl: async () => new Response(JSON.stringify(payload)) };
+  assert.equal((await fetchTickerYield('nu', options)).ratio, 0.03);
+  payload.annualYieldRatio = 0;
+  assert.equal((await fetchTickerYield('NU', options)).ratio, 0);
+  for (const mutate of [value => { delete value.annualYieldRatio; }, value => { value.annualYieldRatio = null; },
+    value => { value.annualYieldRatio = -1; }, value => { value.symbol = 'BBW'; },
+    value => { value.generatedAt = '2020-01-01'; }, value => { value.yieldSource = ''; }]) {
+    const invalid = structuredClone(payload); mutate(invalid);
+    await assert.rejects(fetchTickerYield('NU', { ...options, fetchImpl: async () => new Response(JSON.stringify(invalid)) }), /unavailable/);
+  }
+  await assert.rejects(fetchTickerYield('NU', { now }), /unavailable/);
+});
 
 before(() => {
   for (const args of [['build', '--release', '--target', 'wasm32-unknown-unknown', '--lib'], ['build', '--release', '--bin', 'cbf-model']]) {
@@ -58,6 +73,14 @@ test('published holdings calculate without network access or a configured Worker
   const prepared = await prepareTickerAnalysis(portfolio, { ...view, ticker: 'MSFT', assetClass: 'bonds' }, { now, fetchImpl: () => { throw new Error('Unexpected network access'); } });
   assert.equal(prepared.data, portfolio);
   assert.equal(prepared.request.view.assetClass, 'equities');
+});
+
+test('nonannual views are rejected before requesting outside ticker data', async () => {
+  for (const months of [4, 24]) {
+    await assert.rejects(prepareTickerAnalysis(portfolio, { ...view, months }, {
+      now, endpoint: 'https://worker.test', fetchImpl: () => { throw new Error('Unexpected network access'); },
+    }), /12-month/);
+  }
 });
 
 test('outside tickers fail clearly for missing service, missing published returns, insufficient overlap, and invalid data', async () => {
