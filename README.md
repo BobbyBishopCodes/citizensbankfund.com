@@ -38,6 +38,7 @@ Furthermore to anyone interested in changing this to a non-static page, would be
 CPI & PPI Forecasting
 
 User Logins & Direct Blog Uploads with LinkedIn bot auto-uploads of some sort
+
 Events
 
 Macro based effects on each equity per month or per investing period
@@ -45,9 +46,5 @@ Macro based effects on each equity per month or per investing period
 Macro monthly reports
 
 Excel export of better data from the portfolio's calculations.
-
-3d version of Riley's AI algo stuff & it doesn't matter amount so it doesn't needd to be dynamic maybe everytime we notice a change in positions
-
-
 
 ```
