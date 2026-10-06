@@ -1,0 +1,114 @@
+.pf-tools { margin-top: 20px; }
+.pf-tools > .pf-panel-heading { margin-bottom: 0; }
+#portfolio-tools-content:not([hidden]) { padding-top: 18px; }
+.pf-tool-card { min-width: 0; padding: 20px; border: 1px solid #dfe6ee; border-radius: 4px; background: #fbfcfe; }
+.pf-tool-form-heading, .pf-tool-results-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.pf-tools h3 { color: #173458; font-size: 18px; line-height: 1.4; font-weight: 600; }
+.pf-tool-badge { display: inline-block; flex: none; padding: 5px 8px; border: 1px solid #d3e0ee; border-radius: 4px; color: #3e6085; background: #edf3f9; font-size: 10px; font-weight: 600; line-height: 1.4; }
+.pf-tool-description { margin-top: 9px; color: #607590; font-size: 12px; line-height: 1.7; }
+.pf-tool-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; gap: 18px; margin-top: 24px; }
+.pf-tool-fields label, .pf-tool-classes legend { color: #365272; font-size: 12px; font-weight: 500; }
+.pf-tool-label-hint { display: block; color: #607590; font-size: 10px; line-height: 1.4; }
+.pf-tool-fields label { display: block; margin-bottom: 9px; }
+.pf-tool-fields input { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid #c2cfde; border-radius: 4px; background: #fff; color: #183458; font-size: 14px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.pf-tool-fields input::placeholder { color: #778aa1; opacity: 1; }
+.pf-tool-fields input:hover { border-color: #809fbe; }
+.pf-tool-fields input:focus-visible { outline: 2px solid #0756ad; outline-offset: 2px; }
+.pf-tool-input-unit { position: relative; }
+.pf-tool-input-unit > span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #607590; pointer-events: none; font-weight: 400; }
+.pf-tool-input-unit > input { padding-left: 28px; }
+.pf-tool-unit-end > span { left: auto; right: 13px; }
+.pf-tool-unit-end > input { padding-left: 12px; padding-right: 34px; }
+.pf-tool-unit-end > input::-webkit-inner-spin-button { appearance: none; }
+.pf-tool-classes { min-width: 0; padding: 0; margin: 24px 0 0; border: 0; }
+.pf-tool-classes legend { padding: 0; margin-bottom: 10px; }
+.pf-tool-classes > div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.pf-tool-classes label { display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 10px 12px; border: 1px solid #d5dfe9; border-radius: 4px; background: #fff; color: #526b89; font-size: 12px; cursor: pointer; }
+.pf-tool-classes label:hover { border-color: #809fbe; background: #f4f8fc; }
+.pf-tool-classes label:has(:checked) { border-color: #648db8; background: #eaf2fa; color: #174779; }
+.pf-tool-classes input { flex: none; width: 15px; height: 15px; margin: 0; accent-color: #174779; }
+.pf-tool-classes label:has(:disabled) { cursor: default; }
+.pf-tool-button:disabled { cursor: default; opacity: .65; }
+.pf-tool-status, .pf-tool-error { margin-top: 18px; color: #526b89; font-size: 12px; line-height: 1.7; }
+.pf-tool-error { color: #a8343c; }
+.pf-tool-method { margin-top: 18px; color: #607590; font-size: 11px; line-height: 1.8; }
+.pf-tool-method summary { color: #174779; cursor: pointer; min-height: 44px; padding-block: 12px; }
+.pf-tool-method summary:focus-visible { outline: 2px solid #0756ad; outline-offset: 2px; }
+.pf-tool-method p { margin-top: 8px; }
+.pf-tool-classes input:focus-visible { outline: 2px solid #0756ad; outline-offset: 3px; }
+.pf-tool-form-footer { display: flex; align-items: center; justify-content: flex-end; gap: 16px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #e0e8f0; }
+.pf-tool-caption { color: #607590; font-size: 11px; line-height: 1.7; }
+.pf-tool-button { display: inline-flex; align-items: center; justify-content: center; gap: 20px; min-height: 44px; padding: 10px 18px; border: 1px solid #174779; border-radius: 4px; background: #174779; color: #fff; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pf-tool-button:hover { background: #103a69; border-color: #103a69; }
+.pf-tool-button:focus-visible, .pf-tool-edit:focus-visible, .pf-tool-matrix .pf-table-wrap:focus-visible { outline: 2px solid #0756ad; outline-offset: 3px; }
+.pf-tool-secondary { background: #fff; color: #174779; border-color: #b7cbe0; }
+.pf-tool-secondary:hover { color: #174779; background: #eaf2fa; border-color: #94b3d0; }
+.pf-tool-results-heading h3:focus { outline: none; }
+.pf-tool-scenario { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 20px; margin-block: 14px 18px; padding-block: 8px; border-block: 1px solid #e0e8f0; color: #526b89; font-size: 11px; line-height: 1.7; }
+.pf-tool-scenario strong { color: #173458; }
+.pf-tool-edit { margin-left: auto; min-height: 44px; padding: 8px 0; background: none; color: #0756ad; font-size: 12px; font-weight: 600; }
+.pf-tool-edit:hover { text-decoration: underline; }
+.pf-tool-results-grid { display: grid; grid-template-columns: minmax(0, 1fr) 264px; grid-template-areas: 'chart selected' 'matrix selected'; align-items: start; gap: 14px; }
+.pf-tool-allocation { grid-area: chart; }
+.pf-tools h4 { margin: 0; font-size: 14px; font-weight: 600; color: #173458; line-height: 1.5; }
+.pf-tool-chart-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pf-tool-chart-key { display: flex; gap: 15px; font-size: 10px; color: #607590; }
+.pf-tool-chart-key > span { display: flex; align-items: center; gap: 6px; }
+.pf-tool-chart-key i { width: 10px; height: 7px; border-radius: 1px; background: #9bb1c9; }
+.pf-tool-chart-key > span:last-child i { background: #174779; }
+.pf-tool-caption { margin-top: 6px; }
+.pf-tool-bars { display: grid; gap: 15px; margin-top: 20px; }
+.pf-tool-bar-group { display: grid; grid-template-columns: 100px minmax(0, 1fr); align-items: center; gap: 12px; }
+.pf-tool-bar-group > strong { font-size: 11px; font-weight: 500; color: #425c79; }
+.pf-tool-bar-pair { display: grid; gap: 5px; }
+.pf-tool-bar-row { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; align-items: center; font-size: 10px; color: #526b89; font-variant-numeric: tabular-nums; }
+.pf-tool-bar-row > span:last-child { text-align: right; }
+.pf-tool-bar-track { height: 9px; background: #eaf0f6; border-radius: 2px; overflow: hidden; }
+.pf-tool-bar-track > span { display: block; height: 100%; background: #9bb1c9; border-radius: 2px; }
+.pf-tool-bar-suggested .pf-tool-bar-track > span { background: #174779; }
+.pf-tool-chart-axis { display: flex; justify-content: space-between; margin: 12px 52px 0 112px; color: #607590; font-size: 9px; }
+.pf-tool-selected { grid-area: selected; border-top: 3px solid #174779; }
+.pf-tool-eyebrow { color: #607590; font-size: 10px; line-height: 1.6; }
+.pf-tool-selected h4 { margin-top: 12px; font-size: 26px; overflow-wrap: anywhere; }
+.pf-tool-selected h4 > span { display: block; color: #607590; font-size: 12px; font-weight: 400; margin-top: 3px; }
+.pf-tool-selected dl { margin-top: 20px; }
+.pf-tool-selected dl > div { padding-block: 14px; border-top: 1px solid #e0e8f0; }
+.pf-tool-selected dt { color: #607590; font-size: 11px; line-height: 1.5; }
+.pf-tool-selected dd { margin-top: 5px; color: #173458; font-size: 23px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pf-tool-matrix { grid-area: matrix; padding: 16px 0 0; overflow: hidden; background: #fff; }
+.pf-tool-matrix h4 { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; }
+.pf-tool-matrix h4 > span { color: #607590; font-size: 10px; font-weight: 400; }
+.pf-tool-matrix table { width: 100%; min-width: 750px; border-spacing: 0; font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }
+.pf-tool-matrix th, .pf-tool-matrix td { padding: 12px 10px; white-space: nowrap; border-bottom: 1px solid #e7ecf2; color: #526b89; }
+.pf-tool-matrix thead th { background: #f0f3f7; font-size: 10px; font-weight: 500; color: #405b7c; }
+.pf-tool-matrix th:first-child, .pf-tool-matrix td:nth-child(2), .pf-tool-matrix th:nth-child(2) { text-align: left; }
+.pf-tool-matrix tbody th { color: #173458; font-weight: 600; }
+.pf-tool-selected-row { background: #edf4fb; }
+.pf-tool-matrix tfoot th, .pf-tool-matrix tfoot td { background: #f7f9fb; color: #173458; border-bottom: 0; font-weight: 600; }
+@media (max-width: 1050px) {
+  .pf-tool-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pf-tool-results-grid { grid-template-columns: minmax(0, 1fr) 235px; }
+}
+@media (max-width: 800px) {
+  .pf-tool-results-grid { grid-template-columns: 1fr; grid-template-areas: 'chart' 'selected' 'matrix'; }
+  .pf-tool-selected dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+}
+@media (max-width: 560px) {
+  .pf-tool-card { padding: 16px 12px; }
+  .pf-tool-form-heading { align-items: flex-start; }
+  .pf-tool-fields { grid-template-columns: 1fr; gap: 16px; margin-top: 20px; }
+  .pf-tool-label-hint { display: inline; margin-left: 5px; }
+  .pf-tool-fields input { font-size: 16px; }
+  .pf-tool-classes > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pf-tool-classes label { padding-inline: 10px; font-size: 11px; }
+  .pf-tool-form-footer { align-items: flex-start; }
+  .pf-tool-results-heading { align-items: flex-start; gap: 10px; }
+  .pf-tool-results-heading h3 { font-size: 16px; }
+  .pf-tool-secondary { padding-inline: 10px; gap: 9px; font-size: 11px; }
+  .pf-tool-scenario { gap: 6px 12px; }
+  .pf-tool-bar-group { grid-template-columns: 78px minmax(0, 1fr); gap: 8px; }
+  .pf-tool-bar-group > strong { font-size: 10px; }
+  .pf-tool-chart-axis { margin-left: 86px; }
+  .pf-tool-selected dl { display: block; }
+  .pf-tool-matrix { padding: 14px 0 0; }
+}

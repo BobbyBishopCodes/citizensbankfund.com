@@ -8,6 +8,8 @@ import { parseArticle, sortArticles } from '../src/lib/article-files.ts';
 
 const source = (extra = '', body = 'Article body.') => `---\ntitle: "Market update"\ncategory: "Research"\nsummary: "A summary."\nimage: "/assets/site/campus.webp"\nimageAlt: "Campus"\n${extra}---\n\n${body}`;
 
+// Changed to Research instead of our previous blog posts, to be cool I guess...
+
 test('filename defines the URL; metadata and Markdown are retained', () => {
   const article = parseArticle('market-update.md', source('date: "2026-09-24"\nauthor: "The team"\nfeatured: true\n', '## Research\n\n**Findings**'));
   assert.equal(article.id, 'market-update');

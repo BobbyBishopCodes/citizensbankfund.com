@@ -3,6 +3,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parsePortfolioData } from '../src/lib/portfolio/display.ts';
 import { clusterSymbols, portfolioClusterAnalysis } from './portfolio/cluster.mjs';
+import { validateBlackLittermanData } from '../src/lib/portfolio/black-litterman.ts';
 
 /** Check only the directory that will be uploaded, not the source checkout. */
 export async function checkPagesPreview(directory) {
@@ -23,7 +24,7 @@ export async function checkPagesPreview(directory) {
   for (const file of files) {
     const allowed = file === 'CNAME' || file === '.nojekyll' || file === 'data/portfolio.json' ||
       /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.html$/.test(file) ||
-      /^assets\/.*\.(?:js|css|woff2?|png|jpe?g|webp|svg|ico)$/.test(file) ||
+      /^assets\/.*\.(?:js|css|wasm|woff2?|png|jpe?g|webp|svg|ico)$/.test(file) ||
       file === 'assets/icons/bootstrap-icons-LICENSE.txt';
     if (!allowed) throw new Error(`Unexpected artifact file: ${file}`);
     if (/\.(?:html|js|css|json|svg|txt)$/.test(file)) {
@@ -43,6 +44,14 @@ export async function checkPagesPreview(directory) {
     throw new Error('Invalid static portfolio read model');
   }
   parsePortfolioData(portfolio);
+  if (portfolio.blackLitterman) {
+    validateBlackLittermanData(portfolio.blackLitterman, portfolio);
+    const engine = files.find(file => /^assets\/black-litterman-.*\.wasm$/.test(file));
+    if (!engine) throw new Error('Missing Rust calculation engine in the static artifact');
+    const module = await WebAssembly.compile(await readFile(join(directory, engine)));
+    const exports = WebAssembly.Module.exports(module).map(item => item.name);
+    if (['memory', 'alloc', 'calculate', 'dealloc'].some(name => !exports.includes(name))) throw new Error('Invalid Rust calculation engine');
+  }
   const chartSymbols = clusterSymbols(portfolio.positions);
   if (chartSymbols.length >= 3 && !portfolioClusterAnalysis(portfolio.clusterAnalysis, portfolio.positions)) {
     throw new Error('Static portfolio analysis is missing or does not match current holdings');

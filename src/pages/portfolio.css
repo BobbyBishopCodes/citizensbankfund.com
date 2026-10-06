@@ -52,7 +52,7 @@
 .pf-filters button { background: transparent; padding: 7px 10px; color: #556d89; font-size: 11px; border-radius: 4px; }
 .pf-filters button[aria-pressed=true] { color: #174779; background: #eaf0f8; font-weight: 600; }
 .pf-filters button:hover { background: #f0f4f8; }
-.pf-table-wrap { width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-color: #9fb5cc #edf1f6; scrollbar-width: auto; }
+.pf-table-wrap { position: relative; width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-color: #9fb5cc #edf1f6; scrollbar-width: auto; }
 .pf-table-wrap::-webkit-scrollbar, .pf-allocation-body::-webkit-scrollbar { height: 12px; }
 .pf-table-wrap::-webkit-scrollbar-thumb, .pf-allocation-body::-webkit-scrollbar-thumb { background: #9fb5cc; border: 2px solid #edf1f6; border-radius: 8px; }
 .pf-table-wrap::-webkit-scrollbar-track, .pf-allocation-body::-webkit-scrollbar-track { background: #edf1f6; }

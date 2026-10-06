@@ -37,6 +37,15 @@ jobs:
 
       - name: Install locked dependencies
         run: npm ci
+      - name: Set up Rust
+        run: |
+          rustup toolchain install 1.99.0 --profile minimal --component clippy
+          rustup default 1.99.0
+          rustup target add wasm32-unknown-unknown
+      - name: Test Rust model
+        run: npm run model:test
+      - name: Refresh Black Litterman history
+        run: npm run model:refresh
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'

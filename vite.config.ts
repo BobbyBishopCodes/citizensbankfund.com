@@ -11,6 +11,7 @@ const blogDirectory = fileURLToPath(new URL('./content/blog', import.meta.url));
 const virtualId = '\0virtual:articles';
 const holdingsPath = fileURLToPath(new URL('./content/portfolio/holdings.json', import.meta.url));
 const clusterPath = fileURLToPath(new URL('./content/portfolio/cluster-analysis.json', import.meta.url));
+const modelPath = fileURLToPath(new URL('./content/portfolio/black-litterman-history.json', import.meta.url));
 const figurePath = fileURLToPath(new URL('./public/assets/portfolio/pca-clusters.svg', import.meta.url));
 
 export default defineConfig({
@@ -26,15 +27,16 @@ export default defineConfig({
           const holdings = parseHoldings(readFileSync(holdingsPath, 'utf8'));
           const clusterAnalysis = clusterSymbols(holdings.positions).length >= 3
             ? JSON.parse(readFileSync(clusterPath, 'utf8')) : undefined;
-          response.end(JSON.stringify(await staticPortfolio(holdings, { clusterAnalysis })));
+          const blackLittermanHistory = JSON.parse(readFileSync(modelPath, 'utf8'));
+          response.end(JSON.stringify(await staticPortfolio(holdings, { clusterAnalysis, blackLittermanHistory })));
         } catch {
           response.statusCode = 503;
           response.end(JSON.stringify({ error: 'Prepared portfolio data is unavailable' }));
         }
       });
-      server.watcher.add([holdingsPath, clusterPath, figurePath]);
+      server.watcher.add([holdingsPath, clusterPath, figurePath, modelPath]);
       const update = (path: string) => {
-        if ([holdingsPath, clusterPath, figurePath].includes(resolve(path))) server.ws.send({ type: 'full-reload' });
+        if ([holdingsPath, clusterPath, figurePath, modelPath].includes(resolve(path))) server.ws.send({ type: 'full-reload' });
       };
       server.watcher.on('add', update).on('change', update);
       server.httpServer?.once('close', () => server.watcher.off('add', update).off('change', update));

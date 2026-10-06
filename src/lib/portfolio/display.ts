@@ -1,7 +1,9 @@
 import type { valuePortfolio } from './value.ts';
 import { STARTING_CAPITAL_CENTS } from './value.ts';
+import { validateBlackLittermanData, type BlackLittermanData } from './black-litterman.ts';
 
 export type PortfolioData = ReturnType<typeof valuePortfolio> & {
+  blackLitterman?: BlackLittermanData | null;
   clusterAnalysis: ClusterAnalysis | null;
   publication: { mode: 'snapshot' | 'market'; staleAfterMs: number; oldestQuoteAt: string | null; newestQuoteAt: string | null };
   risk: {
@@ -30,7 +32,7 @@ export const quoteDateLabel = (date: string) => new Intl.DateTimeFormat('en-US',
 export const monthLabel = (month: string) => new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${month}-01T00:00:00Z`));
 export const riskNumber = (value: number | null) => value === null ? 'Unavailable' : value.toFixed(2);
 
-/** Validate before showing money; missing or malformed documents must not appear as zero. */
+/** The missign or misformed documents must not appear 0 */
 export function parsePortfolioData(input: unknown): PortfolioData {
   const data = input as PortfolioData;
   const numeric = (value: unknown) => typeof value === 'number' && Number.isFinite(value);
@@ -88,6 +90,7 @@ export function parsePortfolioData(input: unknown): PortfolioData {
             !numeric(row.riskFreeReturnRatio) || !numeric(row.excessReturnRatio) ||
             Math.abs(row.excessReturnRatio - (row.portfolioReturnRatio - row.riskFreeReturnRatio)) > 1e-12)) throw new Error();
     }
+    if (data.blackLitterman) validateBlackLittermanData(data.blackLitterman, data);
     return data;
   } catch { throw new Error('Portfolio data is unavailable or incomplete.'); }
 }
@@ -103,7 +106,7 @@ export function filterAndSort(positions: DisplayPosition[], query: string, type:
   const search = query.trim().toLowerCase();
   return positions.filter(position => (type === 'all' || position.assetType === type) &&
     `${position.symbol ?? 'cash'} ${position.description}`.toLowerCase().includes(search)).sort((a, b) => {
-      // Keep cash separate, then keep unavailable values last in either direction.
+      // Cash sep then values opposite
       if ((a.assetType === 'cash') !== (b.assetType === 'cash')) return a.assetType === 'cash' ? 1 : -1;
       const av = a[key], bv = b[key];
       if (av === null || bv === null) return av === bv ? 0 : av === null ? 1 : -1;

@@ -12,13 +12,16 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const inputPath = resolve(root, 'content/portfolio/holdings.json');
 const riskInputPath = resolve(root, 'content/portfolio/risk-history.json');
 const clusterInputPath = resolve(root, 'content/portfolio/cluster-analysis.json');
+const modelInputPath = resolve(root, 'content/portfolio/black-litterman-history.json');
+const modelConfigPath = resolve(root, 'content/portfolio/black-litterman-candidates.json');
 const pcaFigurePath = resolve(root, 'public/assets/portfolio/pca-clusters.svg');
 async function verifyPcaFigure(source) {
   const digest = createHash('sha256').update(source).digest('hex');
+  const normalizedDigest = createHash('sha256').update(source.toString('utf8').replace(/\r\n/g, '\n')).digest('hex');
   let svg;
   try { svg = await readFile(pcaFigurePath, 'utf8'); }
   catch { throw new Error(`Missing PCA figure: ${pcaFigurePath}`); }
-  if (!svg.includes(`<!-- portfolio-analysis-sha256:${digest} -->`)) throw new Error(`PCA figure does not match current analysis: ${pcaFigurePath}`);
+  if (!svg.includes(`<!-- portfolio-analysis-sha256:${digest} -->`) && !svg.includes(`<!-- portfolio-analysis-sha256:${normalizedDigest} -->`)) throw new Error(`PCA figure does not match current analysis: ${pcaFigurePath}`);
 }
 const [command, ...args] = process.argv.slice(2);
 try {
@@ -48,6 +51,8 @@ try {
       if (!portfolioClusterAnalysis(cache, holdings.positions)) throw new Error('Holdings were saved, but cluster analysis does not match them. Do not publish until the refresh succeeds.');
       await verifyPcaFigure(source);
     } else console.log('Cluster analysis needs at least three securities; charts will be unavailable.');
+    const modelRefresh = spawnSync(process.execPath, ['scripts/portfolio/refresh-black-litterman.mjs'], { cwd: root, stdio: 'inherit' });
+    if (modelRefresh.error || modelRefresh.status !== 0) throw new Error('Holdings were saved, but Black Litterman history did not refresh. Resolve missing ticker history or classification before publishing.');
   } else if (command === 'check-cluster') {
     const holdings = parseHoldings(await readFile(inputPath, 'utf8'));
     snapshotFromHoldings(holdings);
@@ -84,7 +89,14 @@ try {
       if (!portfolioClusterAnalysis(clusterAnalysis, holdings.positions)) throw new Error('Cluster analysis cache does not match current holdings. Refresh it before exporting.');
       await verifyPcaFigure(source);
     }
-    const view = await staticPortfolio(holdings, { mode, provider, riskPrices, benchmark, treasury, clusterAnalysis });
+    let blackLittermanHistory;
+    try {
+      blackLittermanHistory = JSON.parse(await readFile(modelInputPath, 'utf8'));
+      const config = JSON.parse(await readFile(modelConfigPath, 'utf8'));
+      const digest = createHash('sha256').update(JSON.stringify(config)).digest('hex');
+      if (blackLittermanHistory.configDigest !== digest) throw new Error();
+    } catch { throw new Error('Black Litterman history is missing or does not match its candidate configuration. Run npm run model:refresh.'); }
+    const view = await staticPortfolio(holdings, { mode, provider, riskPrices, benchmark, treasury, clusterAnalysis, blackLittermanHistory });
     await atomicJson(outputPath, view);
     console.log(`Exported ${view.summary.securityCount} securities; mode=${mode}; snapshot=${view.coverage.snapshotPrices}, fresh=${view.coverage.freshQuotes}, stale=${view.coverage.staleQuotes}; risk=${view.risk.status}.`);
   } else throw new Error('Commands: prepare, check-cluster, export');

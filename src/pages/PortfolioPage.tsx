@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PortfolioAllocation } from '../components/PortfolioAllocation';
 import { PortfolioClusterAnalysis } from '../components/PortfolioClusterAnalysis';
+import { PortfolioTools } from '../components/PortfolioTools';
 import { parsePortfolioData, money, percent, signedMoney, signedPercent, dateLabel, quoteDateLabel, monthLabel, riskNumber, quantity, priceState, filterAndSort, type PortfolioData, type DisplayPosition, type SortKey } from '../lib/portfolio/display';
 import './portfolio.css';
 
@@ -129,6 +130,7 @@ export function PortfolioPage() {
         <div className="pf-panel-heading"><h2 id="portfolio-analysis-heading">Portfolio Correlation and Cluster Analysis</h2><button className="pf-analysis-toggle" type="button" aria-expanded={analysisOpen} aria-controls="portfolio-analysis-content" onClick={() => setAnalysisOpen(open => !open)}>{analysisOpen ? 'Hide analysis' : 'View analysis'}<span aria-hidden="true" /></button></div>
         {analysisOpen && <div id="portfolio-analysis-content"><PortfolioClusterAnalysis analysis={data.clusterAnalysis ?? null} /></div>}
       </section>
+      <PortfolioTools data={data} />
     </>}
     <section className="pf-panel pf-reports" aria-labelledby="semester-reports-heading">
       <div className="pf-panel-heading"><h2 id="semester-reports-heading">Semester Reports</h2></div>

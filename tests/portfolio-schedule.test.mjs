@@ -28,12 +28,17 @@ test('publishing requires successful market export and validation before deploym
   assert.equal(workflow.jobs.deploy.environment.name, 'github-pages');
   const steps = workflow.jobs.build.steps;
   const refreshCluster = steps.findIndex(step => step.run === 'python scripts/portfolio/fetch-cluster-analysis.py');
+  const refreshModel = steps.findIndex(step => step.run === 'npm run model:refresh');
+  const buildSite = steps.findIndex(step => step.run === 'npm run build:preview');
   const checkCluster = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs check-cluster');
   const market = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs export market');
   const check = steps.findIndex(step => step.run === 'node scripts/check-pages-preview.mjs');
   const upload = steps.findIndex(step => step.uses?.startsWith('actions/upload-pages-artifact@'));
   assert.ok(market >= 0 && market < check && check < upload);
   assert.ok(refreshCluster >= 0 && refreshCluster < checkCluster && checkCluster < market);
+  assert.ok(refreshModel >= 0 && refreshModel < buildSite && buildSite < market);
+  assert.notEqual(steps[refreshModel]['continue-on-error'], true);
+  assert.ok(steps.some(step => step.run?.includes('git add') && step.run.includes('content/portfolio/black-litterman-history.json')));
   assert.notEqual(steps[refreshCluster]['continue-on-error'], true);
   assert.notEqual(steps[checkCluster]['continue-on-error'], true);
   assert.equal(steps.filter(step => step.env?.FINNHUB_API_KEY).length, 1);
