@@ -28,6 +28,10 @@ So if you are interested in extrapolating on that system, check out that repo as
 
 Oh also entirely uneccesary to utilize Rust, actually substantially more of a headache to implement and jumbles the code a bit more, but I just wanted to. \
 
+10/6/2026 note, basically because of the current accesibility to long-term historical pricing being an issue, we are setting a cloudflare worker which bascially then uses a worker to utilize a API to grab information then run the rust calculations within the browser itself, once again all of this is entirely uneccesary if you are not using a static webpage. But we like to keep things cheap around here.
+
+Furthermore to anyone interested in changing this to a non-static page, would be better off re-writing practically everything....
+
 **Possible Future Editions**
 
 ```
