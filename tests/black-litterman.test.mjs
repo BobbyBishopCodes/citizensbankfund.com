@@ -136,7 +136,7 @@ test('missing, misaligned, stale, malformed, or unsupported data is rejected wit
     const bad = structuredClone(history); mutation(bad);
     assert.throws(() => validateBlackLittermanHistory(bad, holdings.positions));
   }
-  assert.throws(() => buildBlackLittermanRequest(portfolio, { ...view, ticker: 'UNKNOWN' }, Date.parse(clock())), /published universe/);
+  assert.throws(() => buildBlackLittermanRequest(portfolio, { ...view, ticker: 'UNKNOWN' }, Date.parse(clock())), { message: 'Come on..... Use the correct ticker go to gooogle.com and search it' });
   assert.throws(() => buildBlackLittermanRequest(portfolio, view, Date.parse(clock()) + 10 * 86_400_000), /out of date/);
   assert.throws(() => buildBlackLittermanRequest(portfolio, { ...view, confidence: 101 }, Date.parse(clock())));
   const request = buildBlackLittermanRequest(portfolio, view, Date.parse(clock()));
