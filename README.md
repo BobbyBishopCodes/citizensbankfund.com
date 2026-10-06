@@ -26,7 +26,7 @@ As noted within that project's README.md, we use a similair approach to the trad
 
 So if you are interested in extrapolating on that system, check out that repo as we use static data. Here we use dynamic data that follows a pipeline that fuels all of our calculations & analysis in regards to uploading CSV statements from Raymond James. Definetly more efficient ways to do this, so if it looks like a mess in that regards its because of the limited ability to better source data. Still works tho! \
 
-Oh also entirely uneccesary to utilize Rust, actually substantially more of a headache to implement and jumbles the code a bit more, but I just wanted to.
+Oh also entirely uneccesary to utilize Rust, actually substantially more of a headache to implement and jumbles the code a bit more, but I just wanted to. \
 
 **Possible Future Editions**
 
