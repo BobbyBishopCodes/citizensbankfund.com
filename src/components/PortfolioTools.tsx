@@ -13,7 +13,9 @@ function ModelResults({ result, onEdit }: { result: CompletedModel; onEdit: () =
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { heading.current?.focus(); }, []);
   const { inputs, model, data, annualYield } = result;
-  const selected = model.positions.find(position => position.ticker === model.ticker)!;
+  const selectedIndex = model.positions.findIndex(position => position.ticker === model.ticker);
+  const selected = model.positions[selectedIndex];
+  const baselineReturn = model.prior[selectedIndex] + model.riskFreeRate;
   const pricing = data.blackLitterman!.assets.find(asset => asset.symbol === model.ticker)!;
   const allocations = ['Cash', ...modelAssetClasses.map(modelClassLabel)].map(assetClass => ({
     assetClass,
@@ -59,7 +61,8 @@ function ModelResults({ result, onEdit }: { result: CompletedModel; onEdit: () =
       </section>
       <aside className="pf-tool-card pf-tool-selected" aria-labelledby="pf-tool-selected-heading">
         <span className="pf-tool-eyebrow">Selected ticker</span><h4 id="pf-tool-selected-heading">{model.ticker}<span>{model.assetClass}</span></h4>
-        <dl><div><dt>Suggested portfolio weight</dt><dd>{weightLabel(selected.suggestedWeight)}</dd></div><div><dt>Target position value</dt><dd>{money(selected.suggestedValueCents)}</dd></div><div><dt>Modeled increase / decrease</dt><dd className={selected.changeCents > 0 ? 'pf-positive' : selected.changeCents < 0 ? 'pf-negative' : undefined}>{signedMoney(selected.changeCents)}</dd></div></dl>
+        <dl><div><dt>Suggested portfolio weight</dt><dd>{weightLabel(selected.suggestedWeight)}</dd></div><div><dt>Suggested position value</dt><dd>{money(selected.suggestedValueCents)}</dd></div><div><dt>Modeled increase / decrease</dt><dd className={selected.changeCents > 0 ? 'pf-positive' : selected.changeCents < 0 ? 'pf-negative' : undefined}>{signedMoney(selected.changeCents)}</dd></div></dl>
+        {selected.suggestedValueCents === 0 && <p className="pf-tool-caption">No position is suggested at this target and confidence. Your scenario implies a {weightLabel(model.annualizedTargetReturn)} annual return, versus the model’s {weightLabel(baselineReturn)} portfolio-based baseline. The $0 is an allocation, not a valuation of {model.ticker}.</p>}
         <p className="pf-tool-caption">Current position {money(selected.currentValueCents)} · {weightLabel(selected.currentWeight)}</p>
         <p className="pf-tool-caption">Price {money(model.currentPrice * 100)} · {dateLabel(pricing.priceAsOf)} · {pricing.priceSource.startsWith('Yahoo') ? 'Yahoo' : pricing.priceSource}</p>
       </aside>
