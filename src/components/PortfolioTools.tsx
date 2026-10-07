@@ -111,12 +111,12 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
       void fetchTickerYield(ticker, { endpoint: import.meta.env.VITE_TICKER_DATA_URL, signal: controller.signal })
         .then(yieldData => {
           if (controller.signal.aborted) return;
-          setInputs(previous => ({ ...previous, expectedYield: String(Number((yieldData.ratio * 100).toFixed(4))) }));
+          setInputs(previous => previous.expectedYield === '' ? { ...previous, expectedYield: String(Number((yieldData.ratio * 100).toFixed(4))) } : previous);
         })
         .catch(() => {});
     }, 350);
     return () => { clearTimeout(timer); controller.abort(); };
-  }, [inputs.ticker, data]);
+  }, [inputs.ticker, data.calculatedAt]);
 
   useEffect(() => {
     if (!submitted) return;
@@ -174,6 +174,7 @@ export function PortfolioTools({ data }: { data: PortfolioData }) {
             <div className="pf-tool-field"><label htmlFor="pf-tool-price">12-Month Target Price in USD</label><div className="pf-tool-input-unit"><span aria-hidden="true">$</span><input id="pf-tool-price" name="targetPrice" type="number" inputMode="decimal" placeholder="450.00" min="0.01" step="0.01" required value={inputs.targetPrice} onChange={event => updateInput('targetPrice', event.target.value)} /></div></div>
             <div className="pf-tool-field"><label htmlFor="pf-tool-horizon">Forecast Horizon</label><output id="pf-tool-horizon" className="pf-tool-fixed"><svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M6 8V5a4 4 0 0 1 8 0v3M5 8h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.5" /><path d="M10 12v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span>{modelViewMonths} months</span><span className="pf-tool-fixed-label">Fixed</span></output></div>
             <div className="pf-tool-field"><label htmlFor="pf-tool-confidence">Confidence</label><div className="pf-tool-input-unit pf-tool-unit-end"><input id="pf-tool-confidence" name="confidence" type="number" inputMode="decimal" placeholder="50" min="0" max="100" step="any" required value={inputs.confidence} onChange={event => updateInput('confidence', event.target.value)} /><span aria-hidden="true">%</span></div></div>
+            <div className="pf-tool-field"><label htmlFor="pf-tool-yield">Expected Annual Yield <span className="pf-tool-label-hint">(enter 0 if none)</span></label><div className="pf-tool-input-unit pf-tool-unit-end"><input id="pf-tool-yield" name="expectedYield" type="number" inputMode="decimal" placeholder="e.g. 2.5" min="0" max="100" step="any" required value={inputs.expectedYield} onChange={event => updateInput('expectedYield', event.target.value)} /><span aria-hidden="true">%</span></div></div>
           </div>
           <fieldset className="pf-tool-classes"><legend>Asset Class</legend><div>
             {/* Future integration: known ticker classifications should override this selection. */}
