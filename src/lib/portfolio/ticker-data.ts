@@ -2,7 +2,7 @@ import { buildBlackLittermanRequest, validateBlackLittermanData, modelAssetClass
 import type { PortfolioData } from './display.ts';
 
 type TickerData = { schemaVersion: number; symbol: string; currency: string; price: number; priceAsOf: string;
-  priceSource: string; generatedAt: string; observations: [number, number][] };
+  priceSource: string; generatedAt: string; observations: [number, number][]; annualYieldRatio?: number | null };
 const dayMs = 86_400_000;
 
 function weeklyPrices(observations: [number, number][], now: number) {
@@ -92,7 +92,9 @@ export async function prepareTickerAnalysis(portfolio: PortfolioData, view: Blac
     !Number.isFinite(view.months) || view.months <= 0 || !Number.isFinite(view.confidence) || view.confidence < 0 || view.confidence > 100 ||
     !Number.isFinite(view.expectedAnnualYield ?? 0) || (view.expectedAnnualYield ?? 0) < 0 || (view.expectedAnnualYield ?? 0) > 1) throw new Error('Check the target price, expected annual yield, horizon, confidence, and asset class.');
   let data = portfolio;
-  if (!portfolio.positions.some(position => position.assetType !== 'cash' && position.symbol === ticker)) {
+  let annualYield = view.expectedAnnualYield;
+  const holding = portfolio.positions.find(position => position.assetType !== 'cash' && position.symbol === ticker);
+  if (!holding) {
     if (!endpoint) throw new Error('The on-demand ticker data service has not been connected yet.');
     validateBlackLittermanData(portfolio.blackLitterman, portfolio);
     if (!portfolio.blackLitterman?.weeklyReturns) throw new Error('Portfolio history needs its next scheduled refresh before outside tickers can be analyzed.');
@@ -106,8 +108,15 @@ export async function prepareTickerAnalysis(portfolio: PortfolioData, view: Blac
       if (response.status === 422) throw new Error('This ticker has unsupported, missing, or stale USD price history.');
       throw new Error('Ticker data is temporarily unavailable. Please try again.');
     }
-    data = combineTickerHistory(portfolio, { ...view, ticker }, await response.json(), now);
+    const candidate = await response.json() as TickerData;
+    if (candidate.annualYieldRatio != null && (!Number.isFinite(candidate.annualYieldRatio) ||
+      candidate.annualYieldRatio < 0 || candidate.annualYieldRatio > 1)) throw new Error('Ticker yield data is invalid.');
+    data = combineTickerHistory(portfolio, { ...view, ticker }, candidate, now);
+    if (annualYield === undefined) annualYield = candidate.annualYieldRatio ?? undefined;
+  } else if (annualYield === undefined) {
+    const ratio = holding.estimatedIncomeYieldRatio;
+    if (typeof ratio === 'number' && Number.isFinite(ratio) && ratio >= 0 && ratio <= 1) annualYield = ratio;
   }
-  const request = buildBlackLittermanRequest(data, { ...view, ticker }, now);
+  const request = buildBlackLittermanRequest(data, { ...view, ticker, expectedAnnualYield: annualYield }, now);
   return { data, request };
 }
