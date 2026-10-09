@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "asOfDate": "2026-09-26",
+  "asOfDate": "2026-10-09",
   "currency": "USD",
   "positions": [
     {
       "description": "Raymond James Bank Deposit Program",
       "symbol": null,
       "assetType": "cash",
-      "quantity": "12665.020",
+      "quantity": "9645.950",
       "referencePrice": "1.00",
-      "referenceValueCents": 1266502,
-      "amountInvestedCents": 1266502,
-      "estimatedAnnualIncomeCents": 380,
+      "referenceValueCents": 964595,
+      "amountInvestedCents": 964595,
+      "estimatedAnnualIncomeCents": 482,
       "costBasisCents": null
     },
     {
@@ -19,10 +19,21 @@
       "symbol": "BMY",
       "assetType": "stock",
       "quantity": "54.000",
-      "referencePrice": "62.86",
-      "referenceValueCents": 339444,
+      "referencePrice": "59.64",
+      "referenceValueCents": 322029,
       "amountInvestedCents": 332780,
       "estimatedAnnualIncomeCents": 13608,
+      "costBasisCents": null
+    },
+    {
+      "description": "BUILD-A-BEAR WORKSHOP INCORPORATED",
+      "symbol": "BBW",
+      "assetType": "stock",
+      "quantity": "80.000",
+      "referencePrice": "25.72",
+      "referenceValueCents": 205760,
+      "amountInvestedCents": 208160,
+      "estimatedAnnualIncomeCents": 7280,
       "costBasisCents": null
     },
     {
@@ -30,10 +41,21 @@
       "symbol": "COF",
       "assetType": "stock",
       "quantity": "25.000",
-      "referencePrice": "200.20",
-      "referenceValueCents": 500500,
+      "referencePrice": "199.63",
+      "referenceValueCents": 499075,
       "amountInvestedCents": 533534,
       "estimatedAnnualIncomeCents": 8000,
+      "costBasisCents": null
+    },
+    {
+      "description": "CELSIUS HLDGS INCORPORATED COM NEW",
+      "symbol": "CELH",
+      "assetType": "stock",
+      "quantity": "38.000",
+      "referencePrice": "28.25",
+      "referenceValueCents": 107350,
+      "amountInvestedCents": 104174,
+      "estimatedAnnualIncomeCents": 0,
       "costBasisCents": null
     },
     {
@@ -41,8 +63,8 @@
       "symbol": "CI",
       "assetType": "stock",
       "quantity": "12.000",
-      "referencePrice": "272.01",
-      "referenceValueCents": 326412,
+      "referencePrice": "281.97",
+      "referenceValueCents": 338364,
       "amountInvestedCents": 323496,
       "estimatedAnnualIncomeCents": 7488,
       "costBasisCents": null
@@ -52,8 +74,8 @@
       "symbol": "CSCO",
       "assetType": "stock",
       "quantity": "50.000",
-      "referencePrice": "106.70",
-      "referenceValueCents": 533500,
+      "referencePrice": "117.83",
+      "referenceValueCents": 589150,
       "amountInvestedCents": 396675,
       "estimatedAnnualIncomeCents": 8400,
       "costBasisCents": null
@@ -63,8 +85,8 @@
       "symbol": "GE",
       "assetType": "stock",
       "quantity": "8.000",
-      "referencePrice": "327.09",
-      "referenceValueCents": 261672,
+      "referencePrice": "306.73",
+      "referenceValueCents": 245384,
       "amountInvestedCents": 268344,
       "estimatedAnnualIncomeCents": 1504,
       "costBasisCents": null
@@ -74,8 +96,8 @@
       "symbol": "QQQM",
       "assetType": "fund",
       "quantity": "20.000",
-      "referencePrice": "306.54",
-      "referenceValueCents": 613080,
+      "referencePrice": "309.07",
+      "referenceValueCents": 618140,
       "amountInvestedCents": 501230,
       "estimatedAnnualIncomeCents": 2631,
       "costBasisCents": null
@@ -85,8 +107,8 @@
       "symbol": "SPHD",
       "assetType": "fund",
       "quantity": "83.000",
-      "referencePrice": "48.95",
-      "referenceValueCents": 406285,
+      "referencePrice": "48.72",
+      "referenceValueCents": 404335,
       "amountInvestedCents": 404600,
       "estimatedAnnualIncomeCents": 20473,
       "costBasisCents": null
@@ -96,10 +118,10 @@
       "symbol": "BINC",
       "assetType": "fund",
       "quantity": "90.000",
-      "referencePrice": "51.01",
-      "referenceValueCents": 459090,
+      "referencePrice": "50.68",
+      "referenceValueCents": 456075,
       "amountInvestedCents": 469169,
-      "estimatedAnnualIncomeCents": 26163,
+      "estimatedAnnualIncomeCents": 26295,
       "costBasisCents": null
     },
     {
@@ -107,8 +129,8 @@
       "symbol": "EWJ",
       "assetType": "fund",
       "quantity": "60.000",
-      "referencePrice": "97.93",
-      "referenceValueCents": 587580,
+      "referencePrice": "97.68",
+      "referenceValueCents": 586080,
       "amountInvestedCents": 501450,
       "estimatedAnnualIncomeCents": 20432,
       "costBasisCents": null
@@ -118,10 +140,10 @@
       "symbol": "IEF",
       "assetType": "fund",
       "quantity": "50.000",
-      "referencePrice": "90.00",
-      "referenceValueCents": 450000,
+      "referencePrice": "89.34",
+      "referenceValueCents": 446675,
       "amountInvestedCents": 479995,
-      "estimatedAnnualIncomeCents": 18508,
+      "estimatedAnnualIncomeCents": 18571,
       "costBasisCents": null
     },
     {
@@ -129,10 +151,10 @@
       "symbol": "HYG",
       "assetType": "fund",
       "quantity": "30.000",
-      "referencePrice": "77.86",
-      "referenceValueCents": 233580,
+      "referencePrice": "77.20",
+      "referenceValueCents": 231600,
       "amountInvestedCents": 238523,
-      "estimatedAnnualIncomeCents": 14215,
+      "estimatedAnnualIncomeCents": 14096,
       "costBasisCents": null
     },
     {
@@ -140,8 +162,8 @@
       "symbol": "INDA",
       "assetType": "fund",
       "quantity": "60.000",
-      "referencePrice": "47.86",
-      "referenceValueCents": 287160,
+      "referencePrice": "45.97",
+      "referenceValueCents": 275790,
       "amountInvestedCents": 299430,
       "estimatedAnnualIncomeCents": 0,
       "costBasisCents": null
@@ -151,8 +173,8 @@
       "symbol": "MSFT",
       "assetType": "stock",
       "quantity": "7.000",
-      "referencePrice": "516.17",
-      "referenceValueCents": 361319,
+      "referencePrice": "534.00",
+      "referenceValueCents": 373797,
       "amountInvestedCents": 297044,
       "estimatedAnnualIncomeCents": 2744,
       "costBasisCents": null
@@ -162,8 +184,8 @@
       "symbol": "PG",
       "assetType": "stock",
       "quantity": "20.000",
-      "referencePrice": "146.23",
-      "referenceValueCents": 292460,
+      "referencePrice": "151.31",
+      "referenceValueCents": 302620,
       "amountInvestedCents": 286520,
       "estimatedAnnualIncomeCents": 8708,
       "costBasisCents": null
@@ -173,8 +195,8 @@
       "symbol": "GLD",
       "assetType": "fund",
       "quantity": "13.000",
-      "referencePrice": "393.41",
-      "referenceValueCents": 511433,
+      "referencePrice": "384.42",
+      "referenceValueCents": 499740,
       "amountInvestedCents": 491625,
       "estimatedAnnualIncomeCents": 0,
       "costBasisCents": null
@@ -184,8 +206,8 @@
       "symbol": "XLE",
       "assetType": "fund",
       "quantity": "46.000",
-      "referencePrice": "62.04",
-      "referenceValueCents": 285384,
+      "referencePrice": "65.35",
+      "referenceValueCents": 300587,
       "amountInvestedCents": 199491,
       "estimatedAnnualIncomeCents": 7007,
       "costBasisCents": null
@@ -195,8 +217,8 @@
       "symbol": "TTWO",
       "assetType": "stock",
       "quantity": "14.000",
-      "referencePrice": "201.44",
-      "referenceValueCents": 282016,
+      "referencePrice": "213.62",
+      "referenceValueCents": 299068,
       "amountInvestedCents": 316428,
       "estimatedAnnualIncomeCents": 0,
       "costBasisCents": null
@@ -206,8 +228,8 @@
       "symbol": "U",
       "assetType": "stock",
       "quantity": "70.000",
-      "referencePrice": "41.55",
-      "referenceValueCents": 290850,
+      "referencePrice": "46.64",
+      "referenceValueCents": 326480,
       "amountInvestedCents": 209790,
       "estimatedAnnualIncomeCents": 0,
       "costBasisCents": null
@@ -217,8 +239,8 @@
       "symbol": "VDC",
       "assetType": "fund",
       "quantity": "23.000",
-      "referencePrice": "222.17",
-      "referenceValueCents": 510991,
+      "referencePrice": "226.19",
+      "referenceValueCents": 520237,
       "amountInvestedCents": 499812,
       "estimatedAnnualIncomeCents": 11228,
       "costBasisCents": null
@@ -228,8 +250,8 @@
       "symbol": "VOO",
       "assetType": "fund",
       "quantity": "15.000",
-      "referencePrice": "710.79",
-      "referenceValueCents": 1066185,
+      "referencePrice": "715.24",
+      "referenceValueCents": 1072853,
       "amountInvestedCents": 914385,
       "estimatedAnnualIncomeCents": 11142,
       "costBasisCents": null
@@ -239,10 +261,10 @@
       "symbol": "VGSH",
       "assetType": "fund",
       "quantity": "165.000",
-      "referencePrice": "57.59",
-      "referenceValueCents": 950235,
+      "referencePrice": "57.56",
+      "referenceValueCents": 949658,
       "amountInvestedCents": 952888,
-      "estimatedAnnualIncomeCents": 36071,
+      "estimatedAnnualIncomeCents": 35952,
       "costBasisCents": null
     }
   ]
