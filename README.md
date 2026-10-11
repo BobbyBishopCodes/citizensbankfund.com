@@ -10,14 +10,19 @@ Designed and Engineered by Robert Bishop a Accounting & Finance student at ETSU 
 One-time setup:
 
 1. Add `FINNHUB_API_KEY` under Settings → Secrets and variables → Actions → New repository secret.
-2. Push the workflow to `main`, then change Settings → Pages → Source to **GitHub Actions**. Keep the custom domain and HTTPS settings.
+2. Push the workflow to `main`, then change Settings → Pages → Source to **GitHub Actions**.
 3. Run **Publish site and refresh portfolio prices** from the Actions tab. Confirm the build and deploy jobs succeed.
 
 The workflow builds from source on each push and refreshes prices approximately every 15 minutes on weekdays, 9:30 AM–4:30 PM New York time, including daylight saving changes.
 
-For the uhh csv holdings, run `npm run portfolio:prepare -- "path/to/export.csv" --as-of YYYY-MM-DD`, review `content/portfolio/holdings.json`, and commit and push it. The workflow builds the site and prices the new quantities. Rebuilding or committing `docs` is no longer required because I switched from pages to actions.
+**Portfolio Dynamic Data** \
+Basically the site works weird way in which because we are a static website, we have 2 potoccols, basically as stated above the site refreshes about 15 minutes, where a Cronjob runs an action that then runs Github's actions feature and then goes through our price updating procedure.
 
-Check Actions for failed runs. Public repositories can have scheduled workflows disabled after 60 days without repository activity; re-enable the workflow in Actions if that happens.
+And because of the way our portfolio works you have to manually upload the export Raymond James CSV file, which is then parsed through our system and then once you push it everything in the site dynamically updates..
+
+For the uhh csv holdings, run `npm run portfolio:prepare -- "path/to/export.csv" --as-of YYYY-MM-DD`, review `content/portfolio/holdings.json`, and commit and push it. The workflow builds the site and prices the new quantities. Rebuilding or committing `docs` is no longer required because I switched from pages to actions..
+
+Just check to make sure the actions actually went through..
 
 **Black-Litterman Model** \
 Quick note on the Black-Litterman addition, the system implements a dynamic version of my testing repo at "https://github.com/BobbyBishopCodes/Black-Litterman-Model"...
