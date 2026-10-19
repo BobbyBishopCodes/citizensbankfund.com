@@ -481,6 +481,7 @@ main:focus { outline: none; }
 .footer-university > a { display: flex; gap: 20px; }
 .footer-bottom { border-top: 1px solid #ffffff29; display: flex; gap: 20px; justify-content: space-between; align-items: center; padding-block: 19px; font-size: 10px; color: #aebdcb; }
 .footer-bottom a { padding: 8px 0; display: flex; gap: 14px; color: #e1e8ee; }
+.footer-bottom .footer-credit-link { display: inline; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
 .footer a:focus-visible, .footer button:focus-visible { outline-color: var(--gold); }
 
 /* Dialogs and search */

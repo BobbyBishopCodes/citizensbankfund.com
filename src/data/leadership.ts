@@ -6,6 +6,8 @@ export type Leader = {
   linkedin: string;
 };
 
+export const robertBishopLinkedIn = 'https://www.linkedin.com/in/robertbishop08/?isSelfProfile=true';
+
 export const leadership: { id: string; title: string; members: Leader[] }[] = [
   { id: 'fund-leadership', title: 'Fund Leadership', members: [
     {
@@ -26,7 +28,7 @@ export const leadership: { id: string; title: string; members: Leader[] }[] = [
     {
       name: 'Robert Bishop', role: 'Executive Assistant',
       biography: "Robert is a sophomore studying Accounting & Finance. He's aspiring to go into Accounting and focus on systems.",
-      linkedin: 'https://www.linkedin.com/in/robertbishop08/?isSelfProfile=true',
+      linkedin: robertBishopLinkedIn,
     },
   ] },
   { id: 'equities-leadership', title: 'Equities Team', members: [

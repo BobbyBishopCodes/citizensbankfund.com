@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { robertBishopLinkedIn } from '../data/leadership';
 
 export function Footer() {
   return (
@@ -9,7 +10,7 @@ export function Footer() {
         <div className="footer-column"><h3>Explore</h3><Link to="/reports">Reports</Link><Link to="/apply">Apply to join</Link><Link to="/partnerships">Partnerships</Link><Link to="/scholarships">Scholarships</Link></div>
         <div className="footer-column footer-university"><h3>Our University</h3><a href="https://www.etsu.edu/" target="_blank" rel="noreferrer">Visit ETSU.edu <span aria-hidden="true">↗</span></a></div>
       </div>
-      <div className="footer-bottom content-width"><p>© {new Date().getFullYear()} Citizens Bank Fund. Website created by Robert Bishop.</p><a href="#home">Back to top <span aria-hidden="true">↑</span></a></div>
+      <div className="footer-bottom content-width"><p>© {new Date().getFullYear()} Citizens Bank Fund. Website created by <a className="footer-credit-link" href={robertBishopLinkedIn} target="_blank" rel="noopener noreferrer" aria-label="Robert Bishop on LinkedIn (opens in a new tab)">Robert Bishop</a>.</p><a href="#home">Back to top <span aria-hidden="true">↑</span></a></div>
     </footer>
   );
 }
