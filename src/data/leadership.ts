@@ -57,7 +57,7 @@ export const leadership: { id: string; title: string; members: Leader[] }[] = [
       linkedin: 'https://www.linkedin.com/in/amelie-jahncke-16525737a/',
     },
     {
-      name: 'Grey Fisher', role: 'Macro Team Lead',
+      name: 'Grey Fisher', role: 'Macro Team Lead', photo: '/assets/leadership/grey-fisher.jpg',
       biography: "Grey is a junior studying Economics, Philosophy, and Bluegrass. He's aspiring to go into Law.",
       linkedin: 'https://www.linkedin.com/in/grey-fisher-010652312/',
     },
