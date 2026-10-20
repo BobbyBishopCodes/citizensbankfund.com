@@ -46,9 +46,11 @@ Research Paper Display Format
 
 Partnership / event details for homepage
 
-Events
+Signup / Login Accounts
 
-Macro based effects on each equity per month or per investing period
+Macro Tab with dynamic CPI & PPI forecasts, historical accuracy, IRFs, macro event impact research
+
+Events
 
 Macro monthly reports
 
