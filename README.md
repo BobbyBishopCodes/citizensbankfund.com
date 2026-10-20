@@ -40,9 +40,11 @@ Furthermore to anyone interested in changing this to a non-static page, would be
 **Possible Future Editions**
 
 ```
-CPI & PPI Forecasting
+Macro Tab Implementation
 
-User Logins & Direct Blog Uploads with LinkedIn bot auto-uploads of some sort
+Research Paper Display Format
+
+Partnership / event details for homepage
 
 Events
 
