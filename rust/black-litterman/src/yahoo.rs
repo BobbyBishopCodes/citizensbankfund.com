@@ -9,6 +9,13 @@ const MIN_WEEKLY_RETURNS: usize = 104;
 const ANNUAL_WEEKS: f64 = 52.0;
 const OFF_DIAGONAL_SHRINKAGE: f64 = 0.90;
 
+fn yahoo_symbol(symbol: &str) -> &str {
+    match symbol {
+        "MOG.A" => "MOG-A",
+        _ => symbol,
+    }
+}
+
 struct PriceSeries {
     daily: BTreeMap<NaiveDate, (f64, f64)>,
     session_end: Option<i64>,
@@ -89,12 +96,13 @@ fn parse_chart(body: &Value, symbol: &str) -> Result<PriceSeries, String> {
 }
 
 fn fetch_one(client: &Client, symbol: &str) -> Result<PriceSeries, String> {
+    let provider_symbol = yahoo_symbol(symbol);
     let mut url = reqwest::Url::parse("https://query1.finance.yahoo.com/v8/finance/chart/")
         .map_err(|error| error.to_string())?;
     url.path_segments_mut()
         .map_err(|_| "Cannot build Yahoo URL")?
         .pop_if_empty()
-        .push(symbol);
+        .push(provider_symbol);
     url.query_pairs_mut()
         .append_pair("range", "3y")
         .append_pair("interval", "1d")
@@ -108,7 +116,7 @@ fn fetch_one(client: &Client, symbol: &str) -> Result<PriceSeries, String> {
     let body: Value = response
         .json()
         .map_err(|error| format!("Cannot decode Yahoo chart for {symbol}: {error}"))?;
-    parse_chart(&body, symbol)
+    parse_chart(&body, provider_symbol)
 }
 
 fn week_start(date: NaiveDate) -> NaiveDate {
@@ -246,6 +254,12 @@ pub fn fetch(symbols: &[String]) -> Result<MarketData, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn maps_brokerage_class_symbol_to_yahoo() {
+        assert_eq!(yahoo_symbol("MOG.A"), "MOG-A");
+        assert_eq!(yahoo_symbol("BMY"), "BMY");
+    }
 
     #[test]
     fn parses_adjusted_and_raw_closes_separately() {

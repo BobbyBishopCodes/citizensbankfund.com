@@ -12,6 +12,7 @@ import scipy.cluster.hierarchy as hierarchy
 import yfinance as yf
 from sklearn.decomposition import PCA
 from sklearn.cluster import AgglomerativeClustering
+from yahoo_symbols import yahoo_symbol
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -37,11 +38,15 @@ def refresh():
     start = today - timedelta(days=3 * 365 + 6)
     # Riley's calculations use Close and daily percentage returns. Downloading
     # serially avoids the intermittent yfinance cache lock on this symbol set.
-    raw = yf.download(symbols, start=start.isoformat(), end=today.isoformat(),
+    yahoo_symbols = [yahoo_symbol(symbol) for symbol in symbols]
+    if len(set(yahoo_symbols)) != len(symbols):
+        raise ValueError("Two holdings map to the same Yahoo Finance symbol")
+    raw = yf.download(yahoo_symbols, start=start.isoformat(), end=today.isoformat(),
                       auto_adjust=True, threads=False, progress=False)["Close"]
-    if raw.empty or set(raw.columns) != set(symbols):
+    if raw.empty or set(raw.columns) != set(yahoo_symbols):
         raise ValueError(
             "Daily history is missing one or more current holdings")
+    raw = raw.rename(columns={yahoo_symbol(symbol): symbol for symbol in symbols})
     raw = raw[symbols]
     returns = raw.pct_change(fill_method=None).dropna()
     if len(returns) < 120:

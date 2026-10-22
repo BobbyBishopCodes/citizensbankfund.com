@@ -13,6 +13,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import yfinance as yf
+from yahoo_symbols import yahoo_symbol
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -82,10 +83,16 @@ def fetch():
             pass
 
     # Riley's notebook uses yf.download(..., auto_adjust=True)['Close'].
-    history = yf.download(symbols, start=first.isoformat(), end=last_completed.isoformat(),
+    yahoo_symbols = [yahoo_symbol(symbol) for symbol in symbols]
+    if len(set(yahoo_symbols)) != len(symbols):
+        raise ValueError("Two holdings map to the same Yahoo Finance symbol")
+    history = yf.download(yahoo_symbols, start=first.isoformat(), end=last_completed.isoformat(),
                           auto_adjust=True, progress=False, threads=True)["Close"]
     if history.empty:
         raise ValueError("Yahoo Finance returned no adjusted closes")
+    if set(history.columns) != set(yahoo_symbols):
+        raise ValueError("Monthly history is missing one or more current holdings")
+    history = history.rename(columns={yahoo_symbol(symbol): symbol for symbol in symbols})
     months = {}
     for timestamp, prices in history.iterrows():
         day = timestamp.date()
