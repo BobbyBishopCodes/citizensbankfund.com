@@ -1,0 +1,32 @@
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+
+const directory = resolve(process.argv[2] ?? '.local/pages-preview');
+const holdings = JSON.parse(await readFile('content/portfolio/holdings.json', 'utf8'));
+const snapshot = JSON.parse(await readFile('content/macro/snapshot.json', 'utf8'));
+const symbols = holdings.positions.filter(position => position.symbol).map(position => position.symbol);
+const listed = snapshot.positions.map(position => position.ticker);
+
+if (snapshot.holdingsAsOf !== holdings.asOfDate ||
+    symbols.length !== listed.length || symbols.some((symbol, index) => symbol !== listed[index])) {
+  throw new Error('Macro responses do not match the prepared holdings. Refresh the IRF snapshot before publishing.');
+}
+if (!/^\d{4}-\d{2}$/.test(snapshot.targetMonth) ||
+    !/^\d{4}-\d{2}$/.test(snapshot.modelCutoff) ||
+    !Number.isFinite(snapshot.forecast?.cpi) || !Number.isFinite(snapshot.forecast?.ppi)) {
+  throw new Error('Macro forecast or model dates are invalid.');
+}
+for (const position of snapshot.positions) {
+  if (position.status !== 'modeled') continue;
+  for (const response of [position.cpi, position.ppi]) {
+    if (!response || ['estimate', 'lower', 'upper'].some(key =>
+      !Array.isArray(response[key]) || response[key].length !== 13 ||
+      response[key].some(value => !Number.isFinite(value)))) {
+      throw new Error(`Invalid IRF response for ${position.ticker}.`);
+    }
+  }
+}
+
+await mkdir(join(directory, 'data'), { recursive: true });
+await writeFile(join(directory, 'data/macro.json'), JSON.stringify(snapshot) + '\n');
+console.log(`Exported macro snapshot for ${symbols.length} holdings as of ${holdings.asOfDate}.`);

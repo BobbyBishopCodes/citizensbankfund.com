@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import type { InformationKey } from '../data/content';
 
 const sections = ['home', 'information', 'portfolio', 'members', 'reports', 'contact'];
-const links = [ ['portfolio', 'Portfolio'], ['members', 'Members'], ['reports', 'Reports'], ['apply', 'Apply'], ['contact', 'Contact'] ];
+const links = [ ['portfolio', 'Portfolio'], ['macro', 'Macro'], ['members', 'Members'], ['reports', 'Reports'], ['apply', 'Apply'], ['contact', 'Contact'] ];
 
 export function Navigation({ onInformation }: { onInformation: (key: InformationKey) => void }) {
   const location = useLocation();
@@ -16,7 +16,7 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
   const navRef = useRef<HTMLElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships', '/investors'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isReports ? 'reports' : isHome ? active : '';
+  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/macro' ? 'macro' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships', '/investors'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isReports ? 'reports' : isHome ? active : '';
   const highlighted = open ? 'information' : current;
 
   useEffect(() => {

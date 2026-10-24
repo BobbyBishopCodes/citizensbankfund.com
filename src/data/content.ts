@@ -56,6 +56,7 @@ export const searchEntries = [
   { title: 'Scholarships', description: 'A possible future scholarship program for ETSU students.', href: '/scholarships', keywords: 'scholarships eligibility financial aid possible future program' },
   { title: 'Fund History', description: 'How the Citizens Bank Fund began and its first year at ETSU.', href: '/fund-history', keywords: 'history origins 2025 Citizens Bank LaPorte Students of Finance Association' },
   { title: 'Portfolio', description: 'Current holdings, allocation, investment gains, and estimated income.', href: '/portfolio', keywords: 'portfolio returns performance assets holdings kpi' },
+  { title: 'Macro', description: 'CPI and PPI forecasts with portfolio impulse responses.', href: '/macro', keywords: 'macro inflation CPI PPI forecast IRF impulse response' },
   { title: 'Our research teams', description: 'Meet our macroeconomics, equities, FX & commodities, and fixed income teams.', href: '/members', keywords: teams.map(team => `${team.title} ${team.description}`).join(' ') },
   { title: 'Reports', description: 'Research topics and market commentary from the fund.', href: '/reports', keywords: 'reports research updates articles' },
   { title: 'Apply to the fund', description: 'Apply to join Citizens Bank Fund through Google Forms.', href: '/apply', keywords: 'apply join membership application students teams Google Forms' },

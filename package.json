@@ -11,10 +11,10 @@
     "model:build": "node scripts/build-black-litterman.mjs",
     "model:refresh": "node scripts/portfolio/refresh-black-litterman.mjs",
     "model:test": "cargo test --manifest-path rust/black-litterman/Cargo.toml --locked",
-    "build:preview": "npm run model:build && tsc -b && vite build --outDir .local/pages-preview && node scripts/build-pages.mjs .local/pages-preview && node scripts/portfolio-static.mjs export snapshot",
+    "build:preview": "npm run model:build && tsc -b && vite build --outDir .local/pages-preview && node scripts/build-pages.mjs .local/pages-preview && node scripts/portfolio-static.mjs export snapshot && node scripts/macro-static.mjs .local/pages-preview",
     "predev": "npm run model:build",
     "dev": "vite --host 127.0.0.1",
-    "build": "npm run model:build && tsc -b && vite build && node scripts/build-pages.mjs && node scripts/portfolio-static.mjs export snapshot docs/data/portfolio.json",
+    "build": "npm run model:build && tsc -b && vite build && node scripts/build-pages.mjs && node scripts/portfolio-static.mjs export snapshot docs/data/portfolio.json && node scripts/macro-static.mjs docs",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "ticker:deploy": "npm --prefix cloudflare/ticker-data run deploy"

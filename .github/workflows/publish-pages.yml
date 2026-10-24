@@ -34,7 +34,7 @@ jobs:
     needs: schedule
     if: needs.schedule.outputs.refresh == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 75
     permissions:
       contents: write
     steps:
@@ -72,6 +72,33 @@ jobs:
         run: python scripts/portfolio/render-cluster-charts.py
       - name: Verify analysis matches the current holdings
         run: node scripts/portfolio-static.mjs check-cluster
+      - name: Check out IRF model
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          repository: BobbyBishopCodes/CPI_PPI_VAR-Impulse_Response_Functions
+          ref: 3d24a8ee83503123e88dadedf7243f3caff507a6
+          path: .local/irf-model
+          persist-credentials: false
+      - name: Set up R
+        if: github.event_name != 'schedule'
+        uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
+        with:
+          use-public-rspm: true
+      - name: Install macro model packages
+        if: github.event_name != 'schedule'
+        run: Rscript -e 'install.packages(c("quantmod", "zoo", "vars", "tseries", "jsonlite"))'
+      - name: Test macro model
+        if: github.event_name != 'schedule'
+        working-directory: .local/irf-model
+        run: Rscript --vanilla tests/var_irf_checks.R
+      - name: Refresh CPI, PPI and position responses
+        if: github.event_name != 'schedule'
+        id: macro-refresh
+        timeout-minutes: 45
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: Rscript --vanilla scripts/refresh-macro.R .local/irf-model/VAR_IRF_CPI_PPI.R content/macro/snapshot.json
       - name: Run tests
         run: npm test
       - name: Build site
@@ -86,11 +113,11 @@ jobs:
         env:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: node scripts/check-pages-preview.mjs
-      - name: Save refreshed portfolio analysis caches to repository
-        if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success'
+      - name: Save refreshed analysis caches to repository
+        if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success' || steps.macro-refresh.outcome == 'success'
         continue-on-error: true
         run: |
-          git add content/portfolio/risk-history.json content/portfolio/cluster-analysis.json public/assets/portfolio/pca-clusters.svg content/portfolio/black-litterman-history.json
+          git add content/portfolio/risk-history.json content/portfolio/cluster-analysis.json public/assets/portfolio/pca-clusters.svg content/portfolio/black-litterman-history.json content/macro/snapshot.json
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Refresh portfolio analysis caches'
             git push origin HEAD:main

@@ -6,7 +6,7 @@ import { application } from '../src/data/application.ts';
 const root = process.cwd();
 const dist = join(root, process.argv[2] ?? 'docs');
 const template = await readFile(join(dist, 'index.html'), 'utf8');
-const routes = ['reports', 'blog', 'contact', 'apply', 'fund-history', 'scholarships', 'leadership', 'legacy', 'partnerships', 'investors', 'members', 'portfolio'];
+const routes = ['reports', 'blog', 'contact', 'apply', 'fund-history', 'scholarships', 'leadership', 'legacy', 'partnerships', 'investors', 'members', 'portfolio', 'macro'];
 
 for (const filename of await readdir(join(root, 'content', 'blog'))) {
   if (!filename.toLowerCase().endsWith('.md')) continue;

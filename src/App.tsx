@@ -19,6 +19,7 @@ import { PartnershipsPage } from './pages/PartnershipsPage';
 import { InvestorsPage } from './pages/InvestorsPage';
 const MembersPage = lazy(() => import('./pages/MembersPage').then(module => ({ default: module.MembersPage })));
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage').then(module => ({ default: module.PortfolioPage })));
+const MacroPage = lazy(() => import('./pages/MacroPage').then(module => ({ default: module.MacroPage })));
 import { information, type InformationKey } from './data/content';
 
 export function App() {
@@ -35,6 +36,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/portfolio" element={<Suspense fallback={<div className="content-width section-space" role="status">Loading portfolio…</div>}><PortfolioPage /></Suspense>} />
+          <Route path="/macro" element={<Suspense fallback={<div className="content-width section-space" role="status">Loading macro…</div>}><MacroPage /></Suspense>} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/reports/:slug" element={<ArticlePage />} />
           <Route path="/blog/*" element={<LegacyBlogRedirect />} />

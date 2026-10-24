@@ -108,13 +108,17 @@ test('weekend holdings retain CSV values until quotes catch up to the holdings d
 test('artifact checker accepts static output and rejects source archives and hidden secrets', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'cbf-artifact-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  for (const file of ['index.html', '404.html', 'CNAME', '.nojekyll', 'reports/index.html', 'blog/index.html', 'fund-history/index.html', 'members/index.html', 'portfolio/index.html']) {
+  for (const file of ['index.html', '404.html', 'CNAME', '.nojekyll', 'reports/index.html', 'blog/index.html', 'fund-history/index.html', 'members/index.html', 'portfolio/index.html', 'macro/index.html']) {
     const parts = file.split('/'); parts.pop();
     await mkdir(join(directory, ...parts), { recursive: true });
     await writeFile(join(directory, file), 'static');
   }
   await atomicJson(join(directory, 'data/portfolio.json'), await staticPortfolio(holdings(), options));
+  await atomicJson(join(directory, 'data/macro.json'), { holdingsAsOf: '2026-09-24', positions: [{ ticker: 'ABC', status: 'unavailable' }] });
   assert.equal((await checkPagesPreview(directory)).securityCount, 1);
+  await atomicJson(join(directory, 'data/macro.json'), { holdingsAsOf: '2026-09-23', positions: [{ ticker: 'ABC', status: 'unavailable' }] });
+  await assert.rejects(checkPagesPreview(directory), /macro responses do not match/);
+  await atomicJson(join(directory, 'data/macro.json'), { holdingsAsOf: '2026-09-24', positions: [{ ticker: 'ABC', status: 'unavailable' }] });
   await writeFile(join(directory, '.env'), 'SENTINEL');
   await assert.rejects(checkPagesPreview(directory), /Private artifact path/);
   await rm(join(directory, '.env'));

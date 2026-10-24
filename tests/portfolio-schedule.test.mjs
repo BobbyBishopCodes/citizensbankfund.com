@@ -29,6 +29,7 @@ test('publishing requires successful market export and validation before deploym
   const steps = workflow.jobs.build.steps;
   const refreshCluster = steps.findIndex(step => step.run === 'python scripts/portfolio/fetch-cluster-analysis.py');
   const refreshModel = steps.findIndex(step => step.run === 'npm run model:refresh');
+  const refreshMacro = steps.findIndex(step => step.run?.startsWith('Rscript --vanilla scripts/refresh-macro.R'));
   const buildSite = steps.findIndex(step => step.run === 'npm run build:preview');
   const checkCluster = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs check-cluster');
   const market = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs export market');
@@ -37,12 +38,13 @@ test('publishing requires successful market export and validation before deploym
   assert.ok(market >= 0 && market < check && check < upload);
   assert.ok(refreshCluster >= 0 && refreshCluster < checkCluster && checkCluster < market);
   assert.ok(refreshModel >= 0 && refreshModel < buildSite && buildSite < market);
+  assert.ok(refreshMacro >= 0 && refreshMacro < buildSite);
   assert.notEqual(steps[refreshModel]['continue-on-error'], true);
   assert.ok(steps.some(step => step.run?.includes('git add') && step.run.includes('content/portfolio/black-litterman-history.json')));
   assert.notEqual(steps[refreshCluster]['continue-on-error'], true);
   assert.notEqual(steps[checkCluster]['continue-on-error'], true);
   assert.deepEqual(steps.filter(step => step.env?.FINNHUB_API_KEY).map(step => step.run), ['node scripts/portfolio-static.mjs export market', 'node scripts/check-pages-preview.mjs']);
-  assert.equal(steps.filter(step => step.env?.FRED_API_KEY).length, 0);
+  assert.deepEqual(steps.filter(step => step.env?.FRED_API_KEY).map(step => step.id), ['macro-refresh']);
   assert.equal(steps.find(step => step.id === 'risk-history')['continue-on-error'], true);
   assert.deepEqual(workflow.jobs.build.permissions, { contents: 'write' });
   assert.equal(steps[upload].with.path, '.local/pages-preview');

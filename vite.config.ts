@@ -13,6 +13,7 @@ const holdingsPath = fileURLToPath(new URL('./content/portfolio/holdings.json', 
 const clusterPath = fileURLToPath(new URL('./content/portfolio/cluster-analysis.json', import.meta.url));
 const modelPath = fileURLToPath(new URL('./content/portfolio/black-litterman-history.json', import.meta.url));
 const figurePath = fileURLToPath(new URL('./public/assets/portfolio/pca-clusters.svg', import.meta.url));
+const macroPath = fileURLToPath(new URL('./content/macro/snapshot.json', import.meta.url));
 
 export default defineConfig({
   build: { outDir: 'docs' },
@@ -34,9 +35,16 @@ export default defineConfig({
           response.end(JSON.stringify({ error: 'Prepared portfolio data is unavailable' }));
         }
       });
-      server.watcher.add([holdingsPath, clusterPath, figurePath, modelPath]);
+      server.middlewares.use('/data/macro.json', (request, response) => {
+        if (request.method !== 'GET') { response.statusCode = 405; response.end(); return; }
+        response.setHeader('Content-Type', 'application/json; charset=utf-8');
+        response.setHeader('Cache-Control', 'no-store');
+        try { response.end(readFileSync(macroPath)); }
+        catch { response.statusCode = 503; response.end(JSON.stringify({ error: 'Macro data is unavailable' })); }
+      });
+      server.watcher.add([holdingsPath, clusterPath, figurePath, modelPath, macroPath]);
       const update = (path: string) => {
-        if ([holdingsPath, clusterPath, figurePath, modelPath].includes(resolve(path))) server.ws.send({ type: 'full-reload' });
+        if ([holdingsPath, clusterPath, figurePath, modelPath, macroPath].includes(resolve(path))) server.ws.send({ type: 'full-reload' });
       };
       server.watcher.on('add', update).on('change', update);
       server.httpServer?.once('close', () => server.watcher.off('add', update).off('change', update));

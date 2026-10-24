@@ -22,7 +22,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 75
     steps:
       - name: Check out source
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -56,6 +56,30 @@ jobs:
       - name: Refresh cached monthly risk history
         continue-on-error: true
         run: python scripts/portfolio/fetch-risk-history.py
+
+      - name: Check out IRF model
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          repository: BobbyBishopCodes/CPI_PPI_VAR-Impulse_Response_Functions
+          ref: 3d24a8ee83503123e88dadedf7243f3caff507a6
+          path: .local/irf-model
+          persist-credentials: false
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
+        with:
+          use-public-rspm: true
+
+      - name: Install macro model packages
+        run: Rscript -e 'install.packages(c("quantmod", "zoo", "vars", "tseries", "jsonlite"))'
+
+      - name: Test macro model
+        working-directory: .local/irf-model
+        run: Rscript --vanilla tests/var_irf_checks.R
+
+      - name: Refresh CPI, PPI and position responses
+        timeout-minutes: 45
+        run: Rscript --vanilla scripts/refresh-macro.R .local/irf-model/VAR_IRF_CPI_PPI.R content/macro/snapshot.json
 
       - name: Run tests
         run: npm test

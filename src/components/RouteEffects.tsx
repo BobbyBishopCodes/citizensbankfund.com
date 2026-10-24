@@ -9,7 +9,7 @@ export function RouteEffects() {
 
   useLayoutEffect(() => {
     const article = articles.find(item => pathname === `/reports/${item.id}`);
-    const title = pathname === '/' ? 'East Tennessee State University' : pathname === '/reports' ? 'Reports' : pathname === '/contact' ? 'Contact' : pathname === '/apply' ? 'Apply' : pathname === '/fund-history' ? 'Fund History' : pathname === '/scholarships' ? 'Scholarships' : pathname === '/leadership' ? 'Leadership' : pathname === '/legacy' ? 'Legacy' : pathname === '/partnerships' ? 'Partnerships' : pathname === '/investors' ? 'Investors' : pathname === '/members' ? 'Members' : pathname === '/portfolio' ? 'Portfolio' : article?.title ?? 'Page not found';
+    const title = pathname === '/' ? 'East Tennessee State University' : pathname === '/reports' ? 'Reports' : pathname === '/contact' ? 'Contact' : pathname === '/apply' ? 'Apply' : pathname === '/fund-history' ? 'Fund History' : pathname === '/scholarships' ? 'Scholarships' : pathname === '/leadership' ? 'Leadership' : pathname === '/legacy' ? 'Legacy' : pathname === '/partnerships' ? 'Partnerships' : pathname === '/investors' ? 'Investors' : pathname === '/members' ? 'Members' : pathname === '/portfolio' ? 'Portfolio' : pathname === '/macro' ? 'Macro' : article?.title ?? 'Page not found';
     document.title = pathname === '/apply' ? application.title : `${title} | Citizens Bank Fund`;
     document.querySelector('meta[name="description"]')?.setAttribute('content', pathname === '/apply'
       ? application.description

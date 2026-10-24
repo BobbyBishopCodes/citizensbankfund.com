@@ -24,7 +24,7 @@ export async function checkPagesPreview(directory) {
   }
   await walk();
   for (const file of files) {
-    const allowed = file === 'CNAME' || file === '.nojekyll' || file === 'data/portfolio.json' ||
+    const allowed = file === 'CNAME' || file === '.nojekyll' || file === 'data/portfolio.json' || file === 'data/macro.json' ||
       /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.html$/.test(file) ||
       /^assets\/.*\.(?:js|css|wasm|woff2?|png|jpe?g|webp|svg|ico)$/.test(file) ||
       file === 'assets/icons/bootstrap-icons-LICENSE.txt';
@@ -36,7 +36,7 @@ export async function checkPagesPreview(directory) {
       }
     }
   }
-  for (const required of ['index.html', '404.html', 'CNAME', '.nojekyll', 'data/portfolio.json', 'reports/index.html', 'blog/index.html', 'fund-history/index.html', 'members/index.html', 'portfolio/index.html']) {
+  for (const required of ['index.html', '404.html', 'CNAME', '.nojekyll', 'data/portfolio.json', 'data/macro.json', 'reports/index.html', 'blog/index.html', 'fund-history/index.html', 'members/index.html', 'portfolio/index.html', 'macro/index.html']) {
     if (!files.includes(required)) throw new Error(`Missing static artifact file: ${required}`);
   }
   const portfolio = JSON.parse(await readFile(join(directory, 'data/portfolio.json'), 'utf8'));
@@ -46,6 +46,13 @@ export async function checkPagesPreview(directory) {
     throw new Error('Invalid static portfolio read model');
   }
   parsePortfolioData(portfolio);
+  const macro = JSON.parse(await readFile(join(directory, 'data/macro.json'), 'utf8'));
+  const portfolioSymbols = portfolio.positions.filter(position => position.symbol).map(position => position.symbol);
+  if (macro.holdingsAsOf !== portfolio.holdingsAsOfDate ||
+      !Array.isArray(macro.positions) || macro.positions.length !== portfolioSymbols.length ||
+      portfolioSymbols.some((symbol, index) => macro.positions[index]?.ticker !== symbol)) {
+    throw new Error('Published macro responses do not match portfolio holdings');
+  }
   if (portfolio.blackLitterman) {
     validateBlackLittermanData(portfolio.blackLitterman, portfolio);
     const engine = files.find(file => /^assets\/black-litterman-.*\.wasm$/.test(file));
