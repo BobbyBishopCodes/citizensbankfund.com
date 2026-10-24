@@ -32,7 +32,11 @@ for (const [range, point] of [[snapshot.forecast.cpiRange80, snapshot.forecast.c
   }
 }
 for (const position of snapshot.positions) {
-  if (position.status !== 'modeled') continue;
+  if (!['modeled', 'exploratory'].includes(position.status)) continue;
+  if (position.status === 'exploratory' &&
+      (!Number.isInteger(position.historyMonths) || position.historyMonths < 24 || position.historyMonths >= 60)) {
+    throw new Error(`Invalid exploratory history for ${position.ticker}.`);
+  }
   for (const response of [position.cpi, position.ppi]) {
     if (!response || ['estimate', 'lower', 'upper'].some(key =>
       !Array.isArray(response[key]) || response[key].length !== 13 ||

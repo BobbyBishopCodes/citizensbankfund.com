@@ -4,14 +4,14 @@ import { parsePortfolioData, type PortfolioData } from '../lib/portfolio/display
 import './macro.css';
 
 type Response = { estimate: number[]; lower: number[]; upper: number[] };
-type PositionResponse = { ticker: string; status: string; reason?: string; cpi?: Response; ppi?: Response };
+type PositionResponse = { ticker: string; status: string; historyMonths?: number; reason?: string; cpi?: Response; ppi?: Response };
 type MacroSnapshot = { targetMonth: string; forecastCutoff: string; forecastStatus: 'current' | 'historical'; forecast: { cpi: number; ppi: number; cpiRange80?: number[]; ppiRange80?: number[] }; modelCutoff: string; holdingsAsOf: string; positions: PositionResponse[] };
 const monthName = (month: string) => new Date(`${month}-01T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 const pct = (value: number) => `${value.toFixed(2)}%`;
 const range = (values?: number[]) => values ? `${pct(values[0])} to ${pct(values[1])}` : '—';
 const signed = (value: number) => `${value > 0 ? '+' : value < 0 ? '−' : ''}${Math.abs(value).toFixed(2)}`;
 const responseAt = (response: Response, month: number) => `${signed(response.estimate[month])} pp`;
-const unavailable = (position: { result?: PositionResponse }) => position.result?.reason?.startsWith('Insufficient history') ? position.result.reason : position.result ? 'No modeled response' : 'Not in research snapshot';
+const unavailable = (position: { result?: PositionResponse }) => position.result?.reason ?? (position.result ? 'No modeled response' : 'Not in research snapshot');
 
 function ResponseChart({ response, label, color }: { response: Response; label: string; color: string }) {
   const width = 500, height = 205, left = 42, right = 12, top = 14, bottom = 28;
@@ -86,6 +86,7 @@ export function MacroPage() {
     </section>
 
     <section className="macro-panel macro-irf" aria-labelledby="macro-irf-heading"><div className="macro-panel-heading"><div><h2 id="macro-irf-heading">Impulse response functions</h2><p>One standard-deviation inflation shock</p></div><label className="macro-select">Position <select value={activeTicker} onChange={event => setSelected(event.target.value)}>{modeled.map(position => <option key={position.ticker} value={position.ticker}>{position.ticker}</option>)}</select></label></div>
+      {active?.status === 'exploratory' && <p className="macro-chart-note">Exploratory · {active.historyMonths} months of history</p>}
       {active?.cpi && active.ppi && <div className="macro-irf-grid"><figure><figcaption><span className="macro-key macro-cpi-key" />CPI response</figcaption><ResponseChart response={active.cpi} label={`${activeTicker} CPI`} color="#1768c3" /></figure><figure><figcaption><span className="macro-key macro-ppi-key" />PPI response</figcaption><ResponseChart response={active.ppi} label={`${activeTicker} PPI`} color="#db8420" /></figure></div>}
     </section>
 
@@ -93,7 +94,7 @@ export function MacroPage() {
       <div className="macro-table-wrap" role="region" tabIndex={0} aria-label="Scrollable position responses"><table><thead><tr><th scope="col">Ticker</th><th scope="col">Position</th><th scope="col">CPI shock</th><th scope="col">PPI shock</th><th scope="col">Status</th></tr></thead><tbody>{positions.map(position => {
         const result = position.result;
         const available = !!result?.cpi && !!result.ppi;
-        return <tr key={position.ticker} className={activeTicker === position.ticker ? 'is-selected' : ''}><th scope="row">{available ? <button type="button" onClick={() => { setSelected(position.ticker); document.getElementById('macro-irf-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} aria-label={`Show ${position.ticker} impulse response charts`}>{position.ticker}</button> : position.ticker}</th><td className="macro-position-name" title={position.name}>{position.name}</td><td className={available && result.cpi!.estimate[1] < 0 ? 'macro-negative' : ''}>{available ? responseAt(result.cpi!, 1) : '—'}</td><td className={available && result.ppi!.estimate[1] < 0 ? 'macro-negative' : ''}>{available ? responseAt(result.ppi!, 1) : '—'}</td><td>{available ? 'Modeled' : unavailable(position)}</td></tr>;
+        return <tr key={position.ticker} className={activeTicker === position.ticker ? 'is-selected' : ''}><th scope="row">{available ? <button type="button" onClick={() => { setSelected(position.ticker); document.getElementById('macro-irf-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} aria-label={`Show ${position.ticker} impulse response charts`}>{position.ticker}</button> : position.ticker}</th><td className="macro-position-name" title={position.name}>{position.name}</td><td className={available && result.cpi!.estimate[1] < 0 ? 'macro-negative' : ''}>{available ? responseAt(result.cpi!, 1) : '—'}</td><td className={available && result.ppi!.estimate[1] < 0 ? 'macro-negative' : ''}>{available ? responseAt(result.ppi!, 1) : '—'}</td><td>{available ? result.status === 'exploratory' ? `Exploratory · ${result.historyMonths} mo` : 'Modeled' : unavailable(position)}</td></tr>;
       })}</tbody></table></div>
       <p className="macro-table-note">IRF holdings: {snapshot.holdingsAsOf} · current holdings: {portfolio.holdingsAsOfDate}</p>
     </section>

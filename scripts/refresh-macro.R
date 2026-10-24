@@ -34,9 +34,17 @@ position = function(holding) {
     returns = model$fetch_returns(yahoo_ticker, settings$start_date, cutoff)
     history = model$aligned_history(macro, returns)
     y = as.matrix(history[, c("PPI", "CPI", "Return")])
-    fit = model$fit_var(y)
+    months = nrow(y)
+    if (months < 24L) stop(paste("Insufficient history:", months, "months; need 24 for an exploratory response."))
+    short_history = months < 60L
+    fit = if (short_history) {
+      candidate = vars::VAR(y, p = 1L, type = "const")
+      model$model_checks(candidate)
+      candidate
+    } else model$fit_var(y)
     irfs = model$holding_irfs(fit, settings$irf_runs, settings$seed)
-    result$status = "modeled"
+    result$status = if (short_history) "exploratory" else "modeled"
+    result$historyMonths = months
     result$cpi = series(irfs$CPI_first, "CPI")
     result$ppi = series(irfs$PPI_first, "PPI")
     cat(ticker, "modeled\n")
@@ -48,7 +56,7 @@ position = function(holding) {
   })
 }
 positions = Filter(Negate(is.null), lapply(holdings$positions, position))
-if (!any(vapply(positions, function(item) item$status == "modeled", logical(1))))
+if (!any(vapply(positions, function(item) item$status %in% c("modeled", "exploratory"), logical(1))))
   stop("No current positions passed the IRF model checks.")
 
 snapshot = list(targetMonth = forecast_result$targetMonth,
@@ -61,8 +69,9 @@ snapshot = list(targetMonth = forecast_result$targetMonth,
 same_position = function(old, current) {
   if (!identical(old$ticker, current$ticker) ||
       !identical(old$status, current$status) ||
+      (current$status == "exploratory" && !identical(old$historyMonths, current$historyMonths)) ||
       !identical(old$reason, current$reason)) return(FALSE)
-  if (current$status != "modeled") return(TRUE)
+  if (!current$status %in% c("modeled", "exploratory")) return(TRUE)
   all(vapply(c("cpi", "ppi"), function(shock) {
     all(vapply(c("estimate", "lower", "upper"), function(field) {
       old_values = as.numeric(unlist(old[[shock]][[field]]))
@@ -78,5 +87,5 @@ if (identical(previous$modelCutoff, snapshot$modelCutoff) &&
   snapshot$positions = previous$positions
 }
 jsonlite::write_json(snapshot, args[2], pretty = TRUE, auto_unbox = TRUE, digits = 8, na = "null")
-cat("Refreshed", sum(vapply(positions, function(item) item$status == "modeled", logical(1))),
+cat("Refreshed", sum(vapply(positions, function(item) item$status %in% c("modeled", "exploratory"), logical(1))),
     "of", length(positions), "positions through", snapshot$modelCutoff, "\n")

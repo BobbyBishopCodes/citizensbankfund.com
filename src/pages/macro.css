@@ -31,6 +31,7 @@
 .macro-select select { min-height: 38px; padding: 7px 27px 7px 10px; border: 1px solid #c7d5e3; border-radius: 5px; background: #fff; color: #173e6b; font: inherit; font-weight: 600; cursor: pointer; }
 .macro-select select:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 .macro-irf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.macro-chart-note { margin: -5px 0 12px; color: #657e9b; font-size: 11px; }
 .macro-irf-grid figure + figure { border-left: 1px solid #e0e8f0; padding-left: 24px; }
 .macro-irf-grid figcaption { display: flex; align-items: center; gap: 8px; color: #24486d; font-size: 12px; font-weight: 600; }
 .macro-key { width: 18px; height: 3px; border-radius: 5px; }
