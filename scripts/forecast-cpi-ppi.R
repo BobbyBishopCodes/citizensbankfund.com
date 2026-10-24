@@ -1,4 +1,5 @@
 month_start = function(month) as.Date(paste0(month, "-01"))
+forecast_refresh_day = function() format(Sys.time(), "%Y-%m-%d", tz = "America/New_York")
 
 monthly_change = function(levels, start_month, end_month) {
   months = seq(month_start(start_month), month_start(end_month), by = "month")
@@ -25,12 +26,16 @@ forecast_change = function(series, order, target_month) {
   list(point = point, range80 = c(point - margin, point + margin))
 }
 
-forecast_inflation = function(start_month = "2010-01", cutoff_month = "2026-08",
-                               target_month = "2026-09") {
-  if (format(seq(month_start(cutoff_month), by = "month", length.out = 2)[2], "%Y-%m") != target_month)
-    stop("The historical forecast must be one month after its data cutoff.")
-  cpi = quantmod::getSymbols("CPIAUCSL", src = "FRED", auto.assign = FALSE)
-  ppi = quantmod::getSymbols("PPIFIS", src = "FRED", auto.assign = FALSE)
+forecast_inflation = function(start_month = "2010-01", cpi = NULL, ppi = NULL) {
+  if (is.null(cpi)) cpi = quantmod::getSymbols("CPIAUCSL", src = "FRED", auto.assign = FALSE)
+  if (is.null(ppi)) ppi = quantmod::getSymbols("PPIFIS", src = "FRED", auto.assign = FALSE)
+  cpi_months = as.Date(zoo::index(cpi))[is.finite(as.numeric(cpi)) & as.numeric(cpi) > 0]
+  ppi_months = as.Date(zoo::index(ppi))[is.finite(as.numeric(ppi)) & as.numeric(ppi) > 0]
+  available = intersect(cpi_months, ppi_months)
+  available = available[available >= month_start(start_month)]
+  if (!length(available)) stop("No common CPI/PPI month is available from FRED.")
+  cutoff_month = format(max(available), "%Y-%m")
+  target_month = format(seq(month_start(cutoff_month), by = "month", length.out = 2)[2], "%Y-%m")
   cpi_change = monthly_change(cpi, start_month, cutoff_month)
   ppi_change = monthly_change(ppi, start_month, cutoff_month)
   cpi_result = forecast_change(cpi_change, c(1, 0, 2), target_month)

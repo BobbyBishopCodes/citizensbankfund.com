@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { parseDocument } from 'yaml';
-import { shouldRefresh } from '../scripts/portfolio/schedule.mjs';
+import { shouldRefresh, shouldRefreshForecast } from '../scripts/portfolio/schedule.mjs';
 
 test('scheduled window follows New York time in summer and winter, including closing quotes', () => {
   for (const [date, expected] of [
@@ -15,6 +15,14 @@ test('scheduled window follows New York time in summer and winter, including clo
   assert.equal(shouldRefresh('push', new Date('2026-09-26T03:00:00Z')), true);
   assert.equal(shouldRefresh('workflow_dispatch', new Date('2026-09-26T03:00:00Z')), true);
   assert.equal(shouldRefresh('pull_request'), false);
+});
+
+test('forecast refresh runs once per New York market day', () => {
+  assert.equal(shouldRefreshForecast('schedule', '2026-10-23', new Date('2026-10-26T13:33:00Z')), true);
+  assert.equal(shouldRefreshForecast('schedule', '2026-10-26', new Date('2026-10-26T14:03:00Z')), false);
+  assert.equal(shouldRefreshForecast('schedule', '2026-12-04', new Date('2026-12-07T14:33:00Z')), true);
+  assert.equal(shouldRefreshForecast('schedule', '2026-10-23', new Date('2026-10-24T14:03:00Z')), false);
+  assert.equal(shouldRefreshForecast('push', '2026-10-23', new Date('2026-10-26T14:03:00Z')), false);
 });
 
 test('publishing requires successful market export and validation before deployment', async () => {
@@ -30,6 +38,7 @@ test('publishing requires successful market export and validation before deploym
   const refreshCluster = steps.findIndex(step => step.run === 'python scripts/portfolio/fetch-cluster-analysis.py');
   const refreshModel = steps.findIndex(step => step.run === 'npm run model:refresh');
   const refreshMacro = steps.findIndex(step => step.run?.startsWith('Rscript --vanilla scripts/refresh-macro.R'));
+  const refreshForecast = steps.findIndex(step => step.run === 'Rscript --vanilla scripts/refresh-forecast.R content/macro/snapshot.json');
   const buildSite = steps.findIndex(step => step.run === 'npm run build:preview');
   const checkCluster = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs check-cluster');
   const market = steps.findIndex(step => step.run === 'node scripts/portfolio-static.mjs export market');
@@ -39,12 +48,14 @@ test('publishing requires successful market export and validation before deploym
   assert.ok(refreshCluster >= 0 && refreshCluster < checkCluster && checkCluster < market);
   assert.ok(refreshModel >= 0 && refreshModel < buildSite && buildSite < market);
   assert.ok(refreshMacro >= 0 && refreshMacro < buildSite);
+  assert.ok(refreshForecast >= 0 && refreshForecast < buildSite);
+  assert.equal(workflow.jobs.schedule.outputs.forecast, '${{ steps.window.outputs.forecast }}');
   assert.notEqual(steps[refreshModel]['continue-on-error'], true);
   assert.ok(steps.some(step => step.run?.includes('git add') && step.run.includes('content/portfolio/black-litterman-history.json')));
   assert.notEqual(steps[refreshCluster]['continue-on-error'], true);
   assert.notEqual(steps[checkCluster]['continue-on-error'], true);
   assert.deepEqual(steps.filter(step => step.env?.FINNHUB_API_KEY).map(step => step.run), ['node scripts/portfolio-static.mjs export market', 'node scripts/check-pages-preview.mjs']);
-  assert.deepEqual(steps.filter(step => step.env?.FRED_API_KEY).map(step => step.id), ['macro-refresh']);
+  assert.deepEqual(steps.filter(step => step.env?.FRED_API_KEY).map(step => step.id), ['forecast-refresh', 'macro-refresh']);
   assert.equal(steps.find(step => step.id === 'risk-history')['continue-on-error'], true);
   assert.deepEqual(workflow.jobs.build.permissions, { contents: 'write' });
   assert.equal(steps[upload].with.path, '.local/pages-preview');

@@ -23,6 +23,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       refresh: ${{ steps.window.outputs.refresh }}
+      forecast: ${{ steps.window.outputs.forecast }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -81,16 +82,22 @@ jobs:
           path: .local/irf-model
           persist-credentials: false
       - name: Set up R
-        if: github.event_name != 'schedule'
+        if: github.event_name != 'schedule' || needs.schedule.outputs.forecast == 'true'
         uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
         with:
           use-public-rspm: true
       - name: Install macro model packages
-        if: github.event_name != 'schedule'
+        if: github.event_name != 'schedule' || needs.schedule.outputs.forecast == 'true'
         run: Rscript -e 'install.packages(c("quantmod", "zoo", "vars", "tseries", "jsonlite"))'
       - name: Check forecast calendar
-        if: github.event_name != 'schedule'
+        if: github.event_name != 'schedule' || needs.schedule.outputs.forecast == 'true'
         run: Rscript --vanilla tests/forecast-cpi-ppi.R
+      - name: Refresh CPI and PPI forecast
+        if: github.event_name == 'schedule' && needs.schedule.outputs.forecast == 'true'
+        id: forecast-refresh
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: Rscript --vanilla scripts/refresh-forecast.R content/macro/snapshot.json
       - name: Test macro model
         if: github.event_name != 'schedule'
         working-directory: .local/irf-model
@@ -117,7 +124,7 @@ jobs:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: node scripts/check-pages-preview.mjs
       - name: Save refreshed analysis caches to repository
-        if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success' || steps.macro-refresh.outcome == 'success'
+        if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success' || steps.macro-refresh.outcome == 'success' || steps.forecast-refresh.outcome == 'success'
         continue-on-error: true
         run: |
           git add content/portfolio/risk-history.json content/portfolio/cluster-analysis.json public/assets/portfolio/pca-clusters.svg content/portfolio/black-litterman-history.json content/macro/snapshot.json

@@ -53,7 +53,8 @@ if (!any(vapply(positions, function(item) item$status == "modeled", logical(1)))
 
 snapshot = list(targetMonth = forecast_result$targetMonth,
                 forecastCutoff = forecast_result$forecastCutoff,
-                forecastStatus = "historical",
+                forecastStatus = "current",
+                forecastRefreshedOn = forecast_model$forecast_refresh_day(),
                 forecast = forecast_result$forecast,
                 modelCutoff = format(cutoff, "%Y-%m"),
                 holdingsAsOf = holdings$asOfDate, positions = positions)

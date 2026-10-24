@@ -13,8 +13,9 @@ if (snapshot.holdingsAsOf !== holdings.asOfDate ||
 }
 if (!/^\d{4}-\d{2}$/.test(snapshot.targetMonth) ||
     !/^\d{4}-\d{2}$/.test(snapshot.modelCutoff) ||
-    snapshot.forecastStatus !== 'historical' ||
+    snapshot.forecastStatus !== 'current' ||
     !/^\d{4}-\d{2}$/.test(snapshot.forecastCutoff) ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(snapshot.forecastRefreshedOn) ||
     !Number.isFinite(snapshot.forecast?.cpi) || !Number.isFinite(snapshot.forecast?.ppi)) {
   throw new Error('Macro forecast or model dates are invalid.');
 }
