@@ -1,16 +1,12 @@
 {
-  "targetMonth": "2026-10",
+  "targetMonth": "2026-09",
+  "forecastCutoff": "2026-08",
+  "forecastStatus": "historical",
   "forecast": {
-    "cpi": 0.24693962,
-    "ppi": 0.26762676,
-    "cpiRange80": [
-      -0.07293206,
-      0.56681129
-    ],
-    "ppiRange80": [
-      -0.14784645,
-      0.68309998
-    ]
+    "cpi": 0.28252625,
+    "cpiRange80": [0.00225581, 0.56279669],
+    "ppi": 0.31062053,
+    "ppiRange80": [-0.08921327, 0.71045433]
   },
   "modelCutoff": "2025-09",
   "holdingsAsOf": "2026-10-23",

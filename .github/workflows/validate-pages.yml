@@ -73,6 +73,9 @@ jobs:
       - name: Install macro model packages
         run: Rscript -e 'install.packages(c("quantmod", "zoo", "vars", "tseries", "jsonlite"))'
 
+      - name: Check forecast calendar
+        run: Rscript --vanilla tests/forecast-cpi-ppi.R
+
       - name: Test macro model
         working-directory: .local/irf-model
         run: Rscript --vanilla tests/var_irf_checks.R

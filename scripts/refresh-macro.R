@@ -9,21 +9,15 @@ sys.source(args[1], envir = model)
 holdings = jsonlite::fromJSON("content/portfolio/holdings.json", simplifyVector = FALSE)
 previous = jsonlite::fromJSON("content/macro/snapshot.json", simplifyVector = FALSE)
 settings = model$settings
-reference = model$forecast_reference
 fred_key = Sys.getenv("FRED_API_KEY")
 if (nzchar(fred_key)) quantmod::setDefaults(quantmod::getSymbols.FRED, api.key = fred_key)
-forecast_row = reference[reference$month == settings$target_month, ]
-if (nrow(forecast_row) != 1L ||
-    any(!is.finite(c(forecast_row$CPI, forecast_row$PPI))) ||
-    abs(forecast_row$CPI - settings$cpi_mom_pct) > 1e-8 ||
-    abs(forecast_row$PPI - settings$ppi_mom_pct) > 1e-8) {
-  stop("The model forecast reference and scenario settings do not match.")
-}
+forecast_model = new.env(parent = globalenv())
+sys.source("scripts/forecast-cpi-ppi.R", envir = forecast_model)
+forecast_result = forecast_model$forecast_inflation()
 
 macro = model$fetch_macro(settings$start_date, settings$estimation_end_month)
 model$check_months(macro$month)
 cutoff = max(macro$month)
-if (model$month_date(settings$target_month) <= cutoff) stop("The forecast target is not after the model cutoff.")
 
 series = function(irf, impulse) {
   list(estimate = as.numeric(irf$irf[[impulse]]),
@@ -57,14 +51,10 @@ positions = Filter(Negate(is.null), lapply(holdings$positions, position))
 if (!any(vapply(positions, function(item) item$status == "modeled", logical(1))))
   stop("No current positions passed the IRF model checks.")
 
-forecast = list(cpi = forecast_row$CPI, ppi = forecast_row$PPI)
-if (identical(previous$targetMonth, settings$target_month) &&
-    abs(previous$forecast$cpi - forecast$cpi) < 1e-8 &&
-    abs(previous$forecast$ppi - forecast$ppi) < 1e-8) {
-  forecast$cpiRange80 = previous$forecast$cpiRange80
-  forecast$ppiRange80 = previous$forecast$ppiRange80
-}
-snapshot = list(targetMonth = settings$target_month, forecast = forecast,
+snapshot = list(targetMonth = forecast_result$targetMonth,
+                forecastCutoff = forecast_result$forecastCutoff,
+                forecastStatus = "historical",
+                forecast = forecast_result$forecast,
                 modelCutoff = format(cutoff, "%Y-%m"),
                 holdingsAsOf = holdings$asOfDate, positions = positions)
 same_position = function(old, current) {
@@ -80,8 +70,7 @@ same_position = function(old, current) {
     }, logical(1)))
   }, logical(1)))
 }
-if (identical(previous$targetMonth, snapshot$targetMonth) &&
-    identical(previous$modelCutoff, snapshot$modelCutoff) &&
+if (identical(previous$modelCutoff, snapshot$modelCutoff) &&
     identical(previous$holdingsAsOf, snapshot$holdingsAsOf) &&
     length(previous$positions) == length(positions) &&
     all(mapply(same_position, previous$positions, positions))) {

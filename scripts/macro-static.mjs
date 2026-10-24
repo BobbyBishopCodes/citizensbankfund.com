@@ -13,8 +13,22 @@ if (snapshot.holdingsAsOf !== holdings.asOfDate ||
 }
 if (!/^\d{4}-\d{2}$/.test(snapshot.targetMonth) ||
     !/^\d{4}-\d{2}$/.test(snapshot.modelCutoff) ||
+    snapshot.forecastStatus !== 'historical' ||
+    !/^\d{4}-\d{2}$/.test(snapshot.forecastCutoff) ||
     !Number.isFinite(snapshot.forecast?.cpi) || !Number.isFinite(snapshot.forecast?.ppi)) {
   throw new Error('Macro forecast or model dates are invalid.');
+}
+const targetDate = new Date(`${snapshot.forecastCutoff}-01T00:00:00Z`);
+targetDate.setUTCMonth(targetDate.getUTCMonth() + 1);
+if (targetDate.toISOString().slice(0, 7) !== snapshot.targetMonth) {
+  throw new Error('Macro forecast month does not follow its data cutoff.');
+}
+for (const [range, point] of [[snapshot.forecast.cpiRange80, snapshot.forecast.cpi],
+                              [snapshot.forecast.ppiRange80, snapshot.forecast.ppi]]) {
+  if (!Array.isArray(range) || range.length !== 2 ||
+      range.some(value => !Number.isFinite(value)) || range[0] > point || point > range[1]) {
+    throw new Error('Macro forecast range is invalid.');
+  }
 }
 for (const position of snapshot.positions) {
   if (position.status !== 'modeled') continue;

@@ -5,7 +5,7 @@ import './macro.css';
 
 type Response = { estimate: number[]; lower: number[]; upper: number[] };
 type PositionResponse = { ticker: string; status: string; reason?: string; cpi?: Response; ppi?: Response };
-type MacroSnapshot = { targetMonth: string; forecast: { cpi: number; ppi: number; cpiRange80?: number[]; ppiRange80?: number[] }; modelCutoff: string; holdingsAsOf: string; positions: PositionResponse[] };
+type MacroSnapshot = { targetMonth: string; forecastCutoff?: string; forecastStatus?: 'historical'; forecast: { cpi: number; ppi: number; cpiRange80?: number[]; ppiRange80?: number[] }; modelCutoff: string; holdingsAsOf: string; positions: PositionResponse[] };
 const monthName = (month: string) => new Date(`${month}-01T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 const pct = (value: number) => `${value.toFixed(2)}%`;
 const range = (values?: number[]) => values ? `${pct(values[0])} to ${pct(values[1])}` : '—';
@@ -77,11 +77,11 @@ export function MacroPage() {
     <header className="macro-heading"><div><h1>Macro</h1><p>CPI, PPI, and portfolio responses.</p></div><span>IRF estimation through {snapshot.modelCutoff}</span></header>
 
     <div className="macro-forecast-grid" aria-label="Inflation forecasts">
-      <section className="macro-panel macro-forecast"><div className="macro-panel-heading"><h2>CPI forecast</h2><span>{target}</span></div><strong>{pct(snapshot.forecast.cpi)}</strong><p>{snapshot.forecast.cpiRange80 ? `Approx. 80% range · ${range(snapshot.forecast.cpiRange80)}` : 'Month-over-month change'}</p></section>
-      <section className="macro-panel macro-forecast macro-ppi"><div className="macro-panel-heading"><h2>PPI forecast</h2><span>{target}</span></div><strong>{pct(snapshot.forecast.ppi)}</strong><p>{snapshot.forecast.ppiRange80 ? `Approx. 80% range · ${range(snapshot.forecast.ppiRange80)}` : 'Month-over-month change'}</p></section>
+      <section className="macro-panel macro-forecast"><div className="macro-panel-heading"><h2>CPI {snapshot.forecastStatus === 'historical' ? 'historical forecast' : 'forecast'}</h2><span>{target}</span></div><strong>{pct(snapshot.forecast.cpi)}</strong><p>{snapshot.forecast.cpiRange80 ? `Approx. 80% range · ${range(snapshot.forecast.cpiRange80)}` : 'Month-over-month change'}</p></section>
+      <section className="macro-panel macro-forecast macro-ppi"><div className="macro-panel-heading"><h2>PPI {snapshot.forecastStatus === 'historical' ? 'historical forecast' : 'forecast'}</h2><span>{target}</span></div><strong>{pct(snapshot.forecast.ppi)}</strong><p>{snapshot.forecast.ppiRange80 ? `Approx. 80% range · ${range(snapshot.forecast.ppiRange80)}` : 'Month-over-month change'}</p></section>
     </div>
 
-    <section className="macro-panel macro-data" aria-labelledby="macro-forecast-heading"><div className="macro-panel-heading"><h2 id="macro-forecast-heading">Forecast data</h2><span>Research snapshot</span></div>
+    <section className="macro-panel macro-data" aria-labelledby="macro-forecast-heading"><div className="macro-panel-heading"><h2 id="macro-forecast-heading">Forecast data</h2><span>{snapshot.forecastStatus === 'historical' ? `Historical · data through ${snapshot.forecastCutoff}` : 'Research snapshot'}</span></div>
       <div className="macro-table-wrap" role="region" tabIndex={0} aria-label="Scrollable forecast data"><table><thead><tr><th scope="col">Target month</th><th scope="col">CPI</th>{snapshot.forecast.cpiRange80 && <th scope="col">CPI 80% range</th>}<th scope="col">PPI</th>{snapshot.forecast.ppiRange80 && <th scope="col">PPI 80% range</th>}</tr></thead><tbody><tr><th scope="row">{target}</th><td>{pct(snapshot.forecast.cpi)}</td>{snapshot.forecast.cpiRange80 && <td>{range(snapshot.forecast.cpiRange80)}</td>}<td>{pct(snapshot.forecast.ppi)}</td>{snapshot.forecast.ppiRange80 && <td>{range(snapshot.forecast.ppiRange80)}</td>}</tr></tbody></table></div>
     </section>
 
