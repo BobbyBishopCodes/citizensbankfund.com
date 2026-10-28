@@ -26,7 +26,7 @@ export const leadership: { id: string; title: string; members: Leader[] }[] = [
       linkedin: 'https://www.linkedin.com/in/matthias-hall-341b7b358/',
     },
     {
-      name: 'Robert Bishop', role: 'Executive Assistant',
+      name: 'Robert Bishop', role: 'Macroeconomic Analyst & Executive Assistant',
       biography: "Robert is a sophomore studying Accounting & Finance. He's aspiring to go into Accounting and focus on systems.",
       linkedin: robertBishopLinkedIn,
     },
