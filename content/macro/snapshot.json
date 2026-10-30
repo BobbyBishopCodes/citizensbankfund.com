@@ -2,7 +2,7 @@
   "targetMonth": "2026-10",
   "forecastCutoff": "2026-09",
   "forecastStatus": "current",
-  "forecastRefreshedOn": "2026-10-29",
+  "forecastRefreshedOn": "2026-10-30",
   "forecast": {
     "cpi": 0.44833772,
     "cpiRange80": [0.16682965, 0.72984579],
