@@ -18,7 +18,23 @@
 .macro-forecast strong { display: block; margin-top: 23px; color: #1768c3; font-size: clamp(36px, 4vw, 54px); line-height: 1; font-weight: 600; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
 .macro-forecast.macro-ppi strong { color: #bf7116; }
 .macro-forecast > p { margin-top: 12px; color: #60799b; font-size: 11px; }
-.macro-data, .macro-irf { margin-bottom: 20px; }
+.macro-data, .macro-fed, .macro-irf { margin-bottom: 20px; }
+.macro-fed-layout { display: grid; grid-template-columns: minmax(250px, .75fr) minmax(0, 1.25fr); gap: 24px; }
+.macro-fed-current { display: flex; flex-direction: column; justify-content: center; min-height: 220px; padding: 24px; background: #f4f8fc; border-left: 3px solid #1768c3; }
+.macro-fed-current > span { color: #526b89; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.macro-fed-current strong { margin: 14px 0 10px; color: #1768c3; font-size: clamp(28px, 3vw, 40px); line-height: 1.15; letter-spacing: -1px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.macro-fed-current p { color: #60799b; font-size: 11px; line-height: 1.5; }
+.macro-fed-history { min-width: 0; }
+.macro-fed-history-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.macro-fed-history-heading h3 { color: #24486d; font-size: 12px; font-weight: 600; }
+.macro-fed-history-heading span { color: #637b99; font-size: 11px; }
+.macro-fed .macro-table-wrap th, .macro-fed .macro-table-wrap td { padding: 9px 12px; }
+.macro-fed .macro-table-wrap th:nth-child(2), .macro-fed .macro-table-wrap td:nth-child(2) { text-align: center; }
+.macro-fed-change { display: inline-block; min-width: 78px; padding: 4px 7px; border-radius: 3px; font-size: 11px; font-weight: 600; text-align: center; }
+.macro-fed-hike { color: #a65c13; background: #fff2df; }
+.macro-fed-cut { color: #1768a5; background: #eaf4fc; }
+.macro-fed-more { margin-top: 10px; padding: 4px 0; color: #0756ad; background: transparent; font-size: 11px; font-weight: 600; cursor: pointer; }
+.macro-fed-more:hover { text-decoration: underline; text-underline-offset: 3px; }
 .macro-table-wrap { overflow-x: auto; scrollbar-color: #9fb5cc #edf1f6; }
 .macro-table-wrap:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 .macro-table-wrap table { width: 100%; border-collapse: collapse; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; }
@@ -51,5 +67,5 @@
 .macro-position-name { max-width: 250px; overflow: hidden; text-overflow: ellipsis; }
 .macro-positions .macro-negative { color: #ad5055; }
 .macro-positions td:last-child { color: #667b93; font-size: 11px; }
-@media (max-width: 800px) { .macro-content { width: calc(100% - 56px); } .macro-irf-grid { gap: 12px; } .macro-irf-grid figure + figure { padding-left: 12px; } }
-@media (max-width: 600px) { .macro-content { width: calc(100% - 32px); } .macro-heading { display: block; } .macro-heading > span { display: block; margin-top: 10px; } .macro-forecast-grid, .macro-irf-grid { grid-template-columns: 1fr; } .macro-forecast { min-height: 154px; } .macro-forecast strong { margin-top: 15px; } .macro-panel { padding: 16px 13px; } .macro-panel h2 { font-size: 19px; } .macro-irf .macro-panel-heading { flex-wrap: wrap; } .macro-irf-grid figure + figure { border-left: 0; border-top: 1px solid #e0e8f0; padding: 14px 0 0; } }
+@media (max-width: 800px) { .macro-content { width: calc(100% - 56px); } .macro-fed-layout { grid-template-columns: 1fr; gap: 20px; } .macro-fed-current { min-height: 150px; } .macro-irf-grid { gap: 12px; } .macro-irf-grid figure + figure { padding-left: 12px; } }
+@media (max-width: 600px) { .macro-content { width: calc(100% - 32px); } .macro-heading { display: block; } .macro-heading > span { display: block; margin-top: 10px; } .macro-forecast-grid, .macro-irf-grid { grid-template-columns: 1fr; } .macro-forecast { min-height: 154px; } .macro-forecast strong { margin-top: 15px; } .macro-panel { padding: 16px 13px; } .macro-panel h2 { font-size: 19px; } .macro-fed .macro-panel-heading { flex-wrap: wrap; } .macro-fed-current { padding: 18px; } .macro-fed .macro-table-wrap table { min-width: 410px; } .macro-irf .macro-panel-heading { flex-wrap: wrap; } .macro-irf-grid figure + figure { border-left: 0; border-top: 1px solid #e0e8f0; padding: 14px 0 0; } }

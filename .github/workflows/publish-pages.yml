@@ -109,6 +109,11 @@ jobs:
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: Rscript --vanilla scripts/refresh-macro.R .local/irf-model/VAR_IRF_CPI_PPI.R content/macro/snapshot.json
+
+      - name: Refresh Fed target range
+        id: fed-refresh
+        continue-on-error: true
+        run: npm run fed:refresh
       - name: Run tests
         run: npm test
       - name: Build site
@@ -124,10 +129,10 @@ jobs:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: node scripts/check-pages-preview.mjs
       - name: Save refreshed analysis caches to repository
-        if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success' || steps.macro-refresh.outcome == 'success' || steps.forecast-refresh.outcome == 'success'
+        if: steps.risk-history.outcome == 'success' || steps.cluster-analysis.outcome == 'success' || steps.macro-refresh.outcome == 'success' || steps.forecast-refresh.outcome == 'success' || steps.fed-refresh.outcome == 'success'
         continue-on-error: true
         run: |
-          git add content/portfolio/risk-history.json content/portfolio/cluster-analysis.json public/assets/portfolio/pca-clusters.svg content/portfolio/black-litterman-history.json content/macro/snapshot.json
+          git add content/portfolio/risk-history.json content/portfolio/cluster-analysis.json public/assets/portfolio/pca-clusters.svg content/portfolio/black-litterman-history.json content/macro/snapshot.json content/macro/fed-rates.json
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Refresh portfolio analysis caches'
             git push origin HEAD:main

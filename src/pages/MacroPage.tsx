@@ -5,9 +5,13 @@ import './macro.css';
 
 type Response = { estimate: number[]; lower: number[]; upper: number[] };
 type PositionResponse = { ticker: string; status: string; historyMonths?: number; reason?: string; cpi?: Response; ppi?: Response };
-type MacroSnapshot = { targetMonth: string; forecastCutoff: string; forecastStatus: 'current' | 'historical'; forecast: { cpi: number; ppi: number; cpiRange80?: number[]; ppiRange80?: number[] }; modelCutoff: string; holdingsAsOf: string; positions: PositionResponse[] };
+type FedChange = { date: string; lower: number; upper: number; changeBps: number };
+type FedRates = { asOf: string; current: { lower: number; upper: number }; changes: FedChange[] };
+type MacroSnapshot = { targetMonth: string; forecastCutoff: string; forecastStatus: 'current' | 'historical'; forecast: { cpi: number; ppi: number; cpiRange80?: number[]; ppiRange80?: number[] }; modelCutoff: string; holdingsAsOf: string; positions: PositionResponse[]; fedRates: FedRates };
 const monthName = (month: string) => new Date(`${month}-01T12:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const dayName = (day: string) => new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 const pct = (value: number) => `${value.toFixed(2)}%`;
+const rateRange = (lower: number, upper: number) => `${lower.toFixed(2)}–${upper.toFixed(2)}%`;
 const range = (values?: number[]) => values ? `${pct(values[0])} to ${pct(values[1])}` : '—';
 const signed = (value: number) => `${value > 0 ? '+' : value < 0 ? '−' : ''}${Math.abs(value).toFixed(2)}`;
 const responseAt = (response: Response, month: number) => `${signed(response.estimate[month])} pp`;
@@ -36,6 +40,7 @@ export function MacroPage() {
   const [failed, setFailed] = useState(false);
   const [retry, setRetry] = useState(0);
   const [selected, setSelected] = useState('VOO');
+  const [showAllFedChanges, setShowAllFedChanges] = useState(false);
   useEffect(() => {
     let disposed = false;
     let active: AbortController | null = null;
@@ -74,7 +79,7 @@ export function MacroPage() {
   const target = monthName(snapshot.targetMonth);
   return <div className="macro-page"><div className="macro-content">
     <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">Macro</span></nav>
-    <header className="macro-heading"><div><h1>Macro</h1><p>CPI, PPI, and portfolio responses.</p></div><span>IRF estimation through {snapshot.modelCutoff}</span></header>
+    <header className="macro-heading"><div><h1>Macro</h1><p>Inflation, Fed policy, and portfolio responses.</p></div><span>IRF estimation through {snapshot.modelCutoff}</span></header>
 
     <div className="macro-forecast-grid" aria-label="Inflation forecasts">
       <section className="macro-panel macro-forecast"><div className="macro-panel-heading"><h2>CPI {snapshot.forecastStatus === 'historical' ? 'historical forecast' : 'forecast'}</h2><span>{target}</span></div><strong>{pct(snapshot.forecast.cpi)}</strong><p>{snapshot.forecast.cpiRange80 ? `Approx. 80% range · ${range(snapshot.forecast.cpiRange80)}` : 'Month-over-month change'}</p></section>
@@ -83,6 +88,17 @@ export function MacroPage() {
 
     <section className="macro-panel macro-data" aria-labelledby="macro-forecast-heading"><div className="macro-panel-heading"><h2 id="macro-forecast-heading">Forecast data</h2><span>{snapshot.forecastStatus === 'historical' ? 'Historical · ' : ''}Data through {snapshot.forecastCutoff}</span></div>
       <div className="macro-table-wrap" role="region" tabIndex={0} aria-label="Scrollable forecast data"><table><thead><tr><th scope="col">Target month</th><th scope="col">CPI</th>{snapshot.forecast.cpiRange80 && <th scope="col">CPI 80% range</th>}<th scope="col">PPI</th>{snapshot.forecast.ppiRange80 && <th scope="col">PPI 80% range</th>}</tr></thead><tbody><tr><th scope="row">{target}</th><td>{pct(snapshot.forecast.cpi)}</td>{snapshot.forecast.cpiRange80 && <td>{range(snapshot.forecast.cpiRange80)}</td>}<td>{pct(snapshot.forecast.ppi)}</td>{snapshot.forecast.ppiRange80 && <td>{range(snapshot.forecast.ppiRange80)}</td>}</tr></tbody></table></div>
+    </section>
+
+    <section className="macro-panel macro-fed" aria-labelledby="macro-fed-heading">
+      <div className="macro-panel-heading"><h2 id="macro-fed-heading">Fed rate hikes &amp; cuts</h2><span>As of {dayName(snapshot.fedRates.asOf)}</span></div>
+      <div className="macro-fed-layout">
+        <div className="macro-fed-current"><span>Current target range</span><strong>{rateRange(snapshot.fedRates.current.lower, snapshot.fedRates.current.upper)}</strong><p>Set by the Federal Open Market Committee</p></div>
+        <div className="macro-fed-history"><div className="macro-fed-history-heading"><h3>Rate changes since 2022</h3><span>{snapshot.fedRates.changes.length} changes</span></div>
+          <div className="macro-table-wrap" role="region" tabIndex={0} aria-label="Scrollable Fed rate changes"><table><thead><tr><th scope="col">Effective</th><th scope="col">Decision</th><th scope="col">Target range</th></tr></thead><tbody>{snapshot.fedRates.changes.slice(0, showAllFedChanges ? undefined : 6).map(change => <tr key={change.date}><th scope="row">{dayName(change.date)}</th><td><span className={`macro-fed-change ${change.changeBps > 0 ? 'macro-fed-hike' : 'macro-fed-cut'}`}>{change.changeBps > 0 ? 'Hike' : 'Cut'} {Math.abs(change.changeBps)} bps</span></td><td>{rateRange(change.lower, change.upper)}</td></tr>)}</tbody></table></div>
+          {snapshot.fedRates.changes.length > 6 && <button className="macro-fed-more" type="button" onClick={() => setShowAllFedChanges(value => !value)} aria-expanded={showAllFedChanges}>{showAllFedChanges ? 'Show recent changes' : `Show all ${snapshot.fedRates.changes.length} changes`}</button>}
+        </div>
+      </div>
     </section>
 
     <section className="macro-panel macro-irf" aria-labelledby="macro-irf-heading"><div className="macro-panel-heading"><div><h2 id="macro-irf-heading">Impulse response functions</h2><p>One standard-deviation inflation shock</p></div><label className="macro-select">Position <select value={activeTicker} onChange={event => setSelected(event.target.value)}>{modeled.map(position => <option key={position.ticker} value={position.ticker}>{position.ticker}</option>)}</select></label></div>

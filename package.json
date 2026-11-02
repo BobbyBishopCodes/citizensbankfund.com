@@ -11,6 +11,7 @@
     "model:build": "node scripts/build-black-litterman.mjs",
     "model:refresh": "node scripts/portfolio/refresh-black-litterman.mjs",
     "model:test": "cargo test --manifest-path rust/black-litterman/Cargo.toml --locked",
+    "fed:refresh": "node scripts/refresh-fed-rates.mjs",
     "build:preview": "npm run model:build && tsc -b && vite build --outDir .local/pages-preview && node scripts/build-pages.mjs .local/pages-preview && node scripts/portfolio-static.mjs export snapshot && node scripts/macro-static.mjs .local/pages-preview",
     "predev": "npm run model:build",
     "dev": "vite --host 127.0.0.1",

@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 const directory = resolve(process.argv[2] ?? '.local/pages-preview');
 const holdings = JSON.parse(await readFile('content/portfolio/holdings.json', 'utf8'));
 const snapshot = JSON.parse(await readFile('content/macro/snapshot.json', 'utf8'));
+const fedRates = JSON.parse(await readFile('content/macro/fed-rates.json', 'utf8'));
 const symbols = holdings.positions.filter(position => position.symbol).map(position => position.symbol);
 const listed = snapshot.positions.map(position => position.ticker);
 
@@ -45,6 +46,20 @@ for (const position of snapshot.positions) {
     }
   }
 }
+if (!/^\d{4}-\d{2}-\d{2}$/.test(fedRates.asOf) ||
+    !Number.isFinite(fedRates.current?.lower) || !Number.isFinite(fedRates.current?.upper) ||
+    fedRates.current.lower > fedRates.current.upper ||
+    !Array.isArray(fedRates.changes) || !fedRates.changes.length ||
+    fedRates.changes.some((change, index) =>
+      !/^\d{4}-\d{2}-\d{2}$/.test(change.date) || change.date > fedRates.asOf ||
+      (index > 0 && change.date >= fedRates.changes[index - 1].date) ||
+      !Number.isFinite(change.lower) || !Number.isFinite(change.upper) ||
+      change.lower > change.upper || !Number.isInteger(change.changeBps) || change.changeBps === 0) ||
+    (fedRates.changes[0].date === fedRates.asOf &&
+      (fedRates.current.lower !== fedRates.changes[0].lower || fedRates.current.upper !== fedRates.changes[0].upper))) {
+  throw new Error('Fed target-range snapshot is invalid.');
+}
+snapshot.fedRates = fedRates;
 
 await mkdir(join(directory, 'data'), { recursive: true });
 await writeFile(join(directory, 'data/macro.json'), JSON.stringify(snapshot) + '\n');

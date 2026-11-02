@@ -1,0 +1,117 @@
+{
+  "asOf": "2026-11-01",
+  "current": {
+    "lower": 3.75,
+    "upper": 4
+  },
+  "changes": [
+    {
+      "date": "2026-09-17",
+      "lower": 3.75,
+      "upper": 4,
+      "changeBps": 25
+    },
+    {
+      "date": "2025-12-11",
+      "lower": 3.5,
+      "upper": 3.75,
+      "changeBps": -25
+    },
+    {
+      "date": "2025-10-30",
+      "lower": 3.75,
+      "upper": 4,
+      "changeBps": -25
+    },
+    {
+      "date": "2025-09-18",
+      "lower": 4,
+      "upper": 4.25,
+      "changeBps": -25
+    },
+    {
+      "date": "2024-12-19",
+      "lower": 4.25,
+      "upper": 4.5,
+      "changeBps": -25
+    },
+    {
+      "date": "2024-11-08",
+      "lower": 4.5,
+      "upper": 4.75,
+      "changeBps": -25
+    },
+    {
+      "date": "2024-09-19",
+      "lower": 4.75,
+      "upper": 5,
+      "changeBps": -50
+    },
+    {
+      "date": "2023-07-27",
+      "lower": 5.25,
+      "upper": 5.5,
+      "changeBps": 25
+    },
+    {
+      "date": "2023-05-04",
+      "lower": 5,
+      "upper": 5.25,
+      "changeBps": 25
+    },
+    {
+      "date": "2023-03-23",
+      "lower": 4.75,
+      "upper": 5,
+      "changeBps": 25
+    },
+    {
+      "date": "2023-02-02",
+      "lower": 4.5,
+      "upper": 4.75,
+      "changeBps": 25
+    },
+    {
+      "date": "2022-12-15",
+      "lower": 4.25,
+      "upper": 4.5,
+      "changeBps": 50
+    },
+    {
+      "date": "2022-11-03",
+      "lower": 3.75,
+      "upper": 4,
+      "changeBps": 75
+    },
+    {
+      "date": "2022-09-22",
+      "lower": 3,
+      "upper": 3.25,
+      "changeBps": 75
+    },
+    {
+      "date": "2022-07-28",
+      "lower": 2.25,
+      "upper": 2.5,
+      "changeBps": 75
+    },
+    {
+      "date": "2022-06-16",
+      "lower": 1.5,
+      "upper": 1.75,
+      "changeBps": 75
+    },
+    {
+      "date": "2022-05-05",
+      "lower": 0.75,
+      "upper": 1,
+      "changeBps": 50
+    },
+    {
+      "date": "2022-03-17",
+      "lower": 0.25,
+      "upper": 0.5,
+      "changeBps": 25
+    }
+  ]
+}
