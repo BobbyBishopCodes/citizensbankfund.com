@@ -16,7 +16,7 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
   const navRef = useRef<HTMLElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/macro' ? 'macro' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/legacy', '/partnerships', '/investors'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isReports ? 'reports' : isHome ? active : '';
+  const current = pathname === '/portfolio' ? 'portfolio' : pathname === '/macro' ? 'macro' : pathname === '/members' ? 'members' : ['/fund-history', '/scholarships', '/leadership', '/governance', '/legacy', '/partnerships', '/investors'].includes(pathname) ? 'information' : pathname === '/apply' ? 'apply' : pathname === '/contact' ? 'contact' : isReports ? 'reports' : isHome ? active : '';
   const highlighted = open ? 'information' : current;
 
   useEffect(() => {
@@ -89,6 +89,7 @@ export function Navigation({ onInformation }: { onInformation: (key: Information
             <div className={`dropdown ${open ? 'is-open' : ''}`} id="information-dropdown" inert={!open}>
               <Link to="/fund-history" aria-current={pathname === '/fund-history' ? 'page' : undefined} onClick={close}>Fund History<span aria-hidden="true">→</span></Link>
               <Link to="/leadership" aria-current={pathname === '/leadership' ? 'page' : undefined} onClick={close}>Leadership<span aria-hidden="true">→</span></Link>
+              <Link to="/governance" aria-current={pathname === '/governance' ? 'page' : undefined} onClick={close}>Governance<span aria-hidden="true">→</span></Link>
               <Link to="/legacy" aria-current={pathname === '/legacy' ? 'page' : undefined} onClick={close}>Legacy<span aria-hidden="true">→</span></Link>
               {/* Set to true when Achievements is ready to return to the menu. */}
               {false && <button onClick={() => showInformation('achievements')}>Achievements<span aria-hidden="true">→</span></button>}

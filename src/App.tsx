@@ -13,6 +13,7 @@ const ContactPage = lazy(() => import('./pages/ContactPage').then(module => ({ d
 import { ApplyPage } from './pages/ApplyPage';
 import { ScholarshipsPage } from './pages/ScholarshipsPage';
 import { LeadershipPage } from './pages/LeadershipPage';
+import { GovernancePage } from './pages/GovernancePage';
 import { LegacyPage } from './pages/LegacyPage';
 import { FundHistoryPage } from './pages/FundHistoryPage';
 import { PartnershipsPage } from './pages/PartnershipsPage';
@@ -44,6 +45,7 @@ export function App() {
           <Route path="/apply" element={<ApplyPage />} />
           <Route path="/scholarships" element={<ScholarshipsPage />} />
           <Route path="/leadership" element={<LeadershipPage />} />
+          <Route path="/governance" element={<GovernancePage />} />
           <Route path="/legacy" element={<LegacyPage />} />
           <Route path="/fund-history" element={<FundHistoryPage />} />
           <Route path="/partnerships" element={<PartnershipsPage />} />

@@ -8,14 +8,6 @@ const partners = [
     href: 'https://www.wallstreetoasis.com/',
     theme: 'light',
   },
-  {
-    name: 'Godel Terminal',
-    logo: '/assets/partners/godel-terminal.svg',
-    description: 'Market data and research tools in a browser-based terminal.',
-    href: 'https://godelterminal.com/',
-    theme: 'dark',
-    comingSoon: true,
-  },
 ];
 
 export function PartnershipsPage() {
@@ -29,7 +21,6 @@ export function PartnershipsPage() {
       {partners.map(partner => <article className="partner-card" key={partner.name}>
         <div className={`partner-media partner-media-${partner.theme}`}>
           <img src={partner.logo} alt={`${partner.name} logo`} />
-          {partner.comingSoon && <span className="partner-coming-soon">Coming soon</span>}
         </div>
         <div className="partner-copy">
           <h2>{partner.name}</h2>
