@@ -9,6 +9,7 @@ import { validateBlackLittermanData } from '../src/lib/portfolio/black-litterman
 /** Check only the directory that will be uploaded, not the source checkout. */
 export async function checkPagesPreview(directory) {
   await checkPublicSecrets(directory);
+  const governanceDocuments = ['documents/CBFBylawsV1.pdf', 'documents/CBFConstitution.pdf'];
   const files = [];
   async function walk(relative = '') {
     for (const entry of await readdir(join(directory, relative), { withFileTypes: true })) {
@@ -24,7 +25,7 @@ export async function checkPagesPreview(directory) {
   }
   await walk();
   for (const file of files) {
-    const allowed = file === 'CNAME' || file === '.nojekyll' || file === 'data/portfolio.json' || file === 'data/macro.json' ||
+    const allowed = file === 'CNAME' || file === '.nojekyll' || file === 'data/portfolio.json' || file === 'data/macro.json' || governanceDocuments.includes(file) ||
       /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.html$/.test(file) ||
       /^assets\/.*\.(?:js|css|wasm|woff2?|png|jpe?g|webp|svg|ico)$/.test(file) ||
       file === 'assets/icons/bootstrap-icons-LICENSE.txt';
@@ -36,7 +37,7 @@ export async function checkPagesPreview(directory) {
       }
     }
   }
-  for (const required of ['index.html', '404.html', 'CNAME', '.nojekyll', 'data/portfolio.json', 'data/macro.json', 'reports/index.html', 'blog/index.html', 'fund-history/index.html', 'members/index.html', 'portfolio/index.html', 'macro/index.html']) {
+  for (const required of ['index.html', '404.html', 'CNAME', '.nojekyll', 'data/portfolio.json', 'data/macro.json', 'reports/index.html', 'blog/index.html', 'fund-history/index.html', 'governance/index.html', 'members/index.html', 'portfolio/index.html', 'macro/index.html', ...governanceDocuments]) {
     if (!files.includes(required)) throw new Error(`Missing static artifact file: ${required}`);
   }
   const portfolio = JSON.parse(await readFile(join(directory, 'data/portfolio.json'), 'utf8'));
