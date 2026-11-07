@@ -1,3 +1,10 @@
 {
-  "classes": {}
+  "classes": {
+    "BBW": "equities",
+    "CELH": "equities",
+    "MOG.A": "equities",
+    "NVDA": "equities",
+    "UUP": "commodities",
+    "VGK": "international"
+  }
 }
