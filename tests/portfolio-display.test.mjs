@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { prepareHoldings, staticPortfolio } from '../scripts/portfolio/static.mjs';
 import { parsePortfolioData, priceState, filterAndSort, money, percent } from '../src/lib/portfolio/display.ts';
+import { portfolioPositionsCsv } from '../src/lib/portfolio/export.ts';
+import { csvRecords } from '../src/lib/portfolio/import.ts';
 
 const clock = () => '2026-09-25T15:00:00Z';
 const csv = 'Description,SYMBOL/CUSIP,Quantity,Delayed Price,Current Value,Product Type,Amount Invested (†),Estimated Annual Income\nExample fund,VOO,100,600,60000,Funds,50000,1000\nExample stock,MSFT,100,400,40000,Stock,42000,500\nCash,,10000,1,10000,Cash & Cash Alternatives,10000,0\n';
@@ -56,4 +58,20 @@ test('quote freshness expires while a static page stays open, independent of bui
   assert.equal(money(null), 'Unavailable');
   assert.equal(money(0), '$0.00');
   assert.equal(percent(0), '0.00%');
+});
+
+test('positions CSV exports every holding and calculated totals as spreadsheet values', () => {
+  const records = csvRecords(portfolioPositionsCsv(data));
+  const [headers, ...rows] = records;
+  const column = label => headers.indexOf(label);
+  assert.equal(rows.length, data.positions.length + 1);
+  assert.equal(rows.find(row => row[column('Ticker')] === 'VOO')[column('Position Value (USD)')], '60000.00');
+  assert.equal(rows.find(row => row[column('Ticker')] === 'MSFT')[column('Investment Gain / Loss (USD)')], '-2000.00');
+  assert.equal(rows.find(row => row[column('Ticker')] === 'Cash')[column('Shares / Units')], '');
+  assert.equal(rows.at(-1)[column('Position Value (USD)')], '110000.00');
+  assert.equal(rows.at(-1)[column('Portfolio Weight (%)')], '100.000000');
+  assert.equal(rows.at(-1)[column('Gain vs Starting Capital (USD)')], '10000.00');
+  const withFormula = structuredClone(data);
+  withFormula.positions[0].description = '=HYPERLINK("https://example.com")';
+  assert.equal(csvRecords(portfolioPositionsCsv(withFormula))[1][column('Company / Fund')], "'=HYPERLINK(\"https://example.com\")");
 });

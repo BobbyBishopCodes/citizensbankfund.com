@@ -4,6 +4,7 @@ import { PortfolioAllocation } from '../components/PortfolioAllocation';
 import { PortfolioClusterAnalysis } from '../components/PortfolioClusterAnalysis';
 import { PortfolioTools } from '../components/PortfolioTools';
 import { parsePortfolioData, money, percent, signedMoney, signedPercent, dateLabel, quoteDateLabel, monthLabel, riskNumber, quantity, priceState, filterAndSort, type PortfolioData, type DisplayPosition, type SortKey } from '../lib/portfolio/display';
+import { portfolioPositionsCsv } from '../lib/portfolio/export';
 import './portfolio.css';
 
 const names: Record<string, string> = { BMY: 'Bristol Myers Squibb', COF: 'Capital One', CSCO: 'Cisco Systems', FSLR: 'First Solar', GE: 'GE Aerospace', QQQM: 'Invesco Nasdaq 100 ETF', SPHD: 'Invesco S&P 500 High Dividend Low Volatility ETF', BINC: 'iShares Flexible Income Active ETF', EWJ: 'iShares MSCI Japan ETF', IEF: 'iShares 7–10 Year Treasury Bond ETF', HYG: 'iShares High Yield Corporate Bond ETF', LQD: 'iShares Investment Grade Corporate Bond ETF', INDA: 'iShares MSCI India ETF', MSFT: 'Microsoft', PG: 'Procter & Gamble', GLD: 'SPDR Gold Shares', XLE: 'Energy Select Sector SPDR ETF', TTWO: 'Take-Two Interactive', U: 'Unity Software', VDC: 'Vanguard Consumer Staples ETF', VOO: 'Vanguard S&P 500 ETF', VGSH: 'Vanguard Short-Term Treasury ETF' };
@@ -82,6 +83,14 @@ export function PortfolioPage() {
   const barMax = Math.max(...top.map(position => position.marketValueCents), otherValue, 1);
   const showHoldings = () => { setFilter('all'); setQuery(''); document.getElementById('all-holdings')?.scrollIntoView({ behavior: 'smooth' }); search.current?.focus({ preventScroll: true }); };
   function changeSort(key: SortKey) { setSort(previous => ({ key, direction: previous.key === key && previous.direction === 'desc' ? 'asc' : 'desc' })); }
+  function downloadPositions(data: PortfolioData) {
+    const url = URL.createObjectURL(new Blob(['\uFEFF', portfolioPositionsCsv(data)], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `cbf-portfolio-positions-${data.holdingsAsOfDate}.csv`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
 
   return <div className="portfolio-page"><div className="pf-content">
     <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">Portfolio</span></nav>
@@ -107,7 +116,7 @@ export function PortfolioPage() {
         </section>
       </div>
       <section className="pf-panel pf-holdings" id="all-holdings" aria-labelledby="holdings-heading">
-        <div className="pf-panel-heading"><h2 id="holdings-heading">All Holdings <span>({data.summary.securityCount})</span></h2><label className="pf-search"><img src="/assets/icons/search.svg" alt="" /><span className="sr-only">Search holdings by ticker or company</span><input ref={search} type="search" placeholder="Search by ticker or company…" value={query} onChange={event => setQuery(event.target.value)} /></label></div>
+        <div className="pf-panel-heading"><h2 id="holdings-heading">All Holdings <span>({data.summary.securityCount})</span></h2><div className="pf-holdings-actions"><label className="pf-search"><img src="/assets/icons/search.svg" alt="" /><span className="sr-only">Search holdings by ticker or company</span><input ref={search} type="search" placeholder="Search by ticker or company…" value={query} onChange={event => setQuery(event.target.value)} /></label><button type="button" className="pf-download" onClick={() => downloadPositions(data)}>Download CSV <span aria-hidden="true">↓</span></button></div></div>
         <div className="pf-table-tools"><div className="pf-filters" role="group" aria-label="Filter holdings">{[['all', 'All positions'], ['stock', 'Stocks'], ['fund', 'Funds'], ['cash', 'Cash']].map(([value, label]) => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}</div><span role="status">{query || filter !== 'all' ? `${visible.length} matching ${visible.length === 1 ? 'position' : 'positions'}` : `${data.summary.securityCount} securities + cash`}</span></div>
         <div className="pf-table-wrap" role="region" aria-label="Scrollable portfolio positions" tabIndex={0}><table><caption className="sr-only">Portfolio positions. Scroll horizontally for all columns, select a heading to sort, or select a ticker for details. Gain is measured against reported invested capital.</caption><thead><tr>{columns.map(column => <th scope="col" key={column.key} className={column.className} aria-sort={sort.key === column.key ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}><button onClick={() => changeSort(column.key)}>{column.label}{sort.key === column.key && <img className={sort.direction === 'asc' ? 'pf-sort-up' : ''} src="/assets/icons/chevron-down.svg" alt="" />}</button></th>)}<th scope="col"><span className="sr-only">Details</span></th></tr></thead>
           <tbody>{visible.map(position => {
