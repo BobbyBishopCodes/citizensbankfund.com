@@ -51,7 +51,7 @@ export const information: Record<InformationKey, { title: string; paragraphs: st
 export const searchEntries = [
   { title: 'Leadership', description: 'Fund leadership and team leads.', href: '/leadership', keywords: leadership.flatMap(group => group.members.map(member => member.name + ' ' + member.role)).join(' ') },
   { title: 'Governance', description: 'Read the fund bylaws and constitution PDFs.', href: '/governance', keywords: 'governance bylaws constitution foundation agreement investment guidelines' },
-  { title: 'Legacy', description: 'Past presidents and alumni destinations.', href: '/legacy', keywords: `${pastPresidents.map(president => president.name).join(' ')} ${alumniDestinations.join(' ')} ${alumniUniversities.map(university => university.fullName).join(' ')} alumni history universities` },
+  { title: 'Legacy', description: 'Past presidents and alumni destinations.', href: '/legacy', keywords: `${pastPresidents.map(president => president.name).join(' ')} ${alumniDestinations.join(' ')} ${alumniUniversities.map(university => university.name).join(' ')} alumni history universities` },
   { title: 'Partnerships', description: 'Wall Street Oasis.', href: '/partnerships', keywords: 'partners Wall Street Oasis WSO finance' },
   { title: 'Investors', description: 'Our thanks to the LaPorte brothers for supporting student investing.', href: '/investors', keywords: 'LaPorte brothers investor supporter' },
   { title: 'Scholarships', description: 'A possible future scholarship program for ETSU students.', href: '/scholarships', keywords: 'scholarships eligibility financial aid possible future program' },

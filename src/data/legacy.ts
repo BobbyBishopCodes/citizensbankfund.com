@@ -11,8 +11,7 @@ export const alumniDestinations = [
 ];
 
 export const alumniUniversities = [
-  { name: 'NYU', fullName: 'New York University', logo: '/assets/legacy/nyu.svg' },
-  { name: 'Michigan', fullName: 'University of Michigan', logo: '/assets/legacy/michigan.png' },
-  { name: 'Ross', fullName: 'University of Michigan Ross School of Business', logo: '/assets/legacy/ross.png' },
-  { name: 'Emory', fullName: 'Emory University', logo: '/assets/legacy/emory.png' },
+  { name: 'New York University', logo: '/assets/legacy/nyu.svg' },
+  { name: 'Michigan Ross School of Business', logo: '/assets/legacy/ross.png' },
+  { name: 'Emory University', logo: '/assets/legacy/emory.png' },
 ];
