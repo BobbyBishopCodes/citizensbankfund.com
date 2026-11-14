@@ -9,3 +9,10 @@ export const alumniDestinations = [
   'AB',
   'Cambridge Associates',
 ];
+
+export const alumniUniversities = [
+  { name: 'NYU', fullName: 'New York University' },
+  { name: 'Michigan', fullName: 'University of Michigan' },
+  { name: 'Ross', fullName: 'University of Michigan Ross School of Business' },
+  { name: 'Emory', fullName: 'Emory University' },
+];

@@ -409,6 +409,12 @@ main:focus { outline: none; }
 .legacy-alumni-logo { display: grid; place-items: center; width: 100%; height: 75px; }
 .legacy-alumni-logo img { display: block; max-width: min(100%, 220px); max-height: 65px; object-fit: contain; transition: transform .25s ease; }
 .legacy-alumni li:hover .legacy-alumni-logo img { transform: translateY(-3px); }
+.legacy-alumni-universities { margin-top: 46px; }
+.legacy-alumni-universities h3 { color: var(--navy); font-size: 22px; font-weight: 600; }
+.legacy-alumni-universities ul { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.legacy-alumni-universities li { gap: 8px; }
+.legacy-alumni-universities strong { color: var(--blue); font-size: clamp(22px, 2.6vw, 32px); font-weight: 700; letter-spacing: -.04em; }
+.legacy-alumni-universities li span { color: #536579; font-size: 13px; font-weight: 400; line-height: 1.4; }
 @media (prefers-reduced-motion: no-preference) {
   .legacy-timeline-item { animation: legacy-rise .5s ease-out both; }
   .legacy-timeline-item:nth-child(2) { animation-delay: .1s; }
@@ -555,6 +561,7 @@ main:focus { outline: none; }
   .legacy-alumni ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .legacy-alumni li:nth-child(3) { border-left: 0; }
   .legacy-alumni li:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .legacy-alumni-universities ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .scholarships-page { padding-block: 22px 52px; }
   .scholarships-grid { grid-template-columns: 1fr; gap: 30px; }
   .scholarships-copy h1 { font-size: 30px; }
@@ -709,6 +716,11 @@ main:focus { outline: none; }
   .legacy-timeline-kicker { font-size: 9px; }
   .legacy-timeline-position { font-size: 11px; }
   .legacy-alumni h2 { font-size: 22px; }
+  .legacy-alumni-universities { margin-top: 36px; }
+  .legacy-alumni-universities ul { grid-template-columns: 1fr; }
+  .legacy-alumni-universities li { min-height: 110px; }
+  .legacy-alumni-universities li + li { border-left: 0; }
+  .legacy-alumni-universities li:nth-child(n+2), .legacy-alumni-universities li:nth-child(3) { border-top: 1px solid var(--line); }
   .members-content { padding-block: 22px 48px; }
   .member-verification-inner { align-items: flex-start; flex-direction: column; gap: 18px; padding-block: 22px; }
   .member-verification h2 { font-size: 21px; }

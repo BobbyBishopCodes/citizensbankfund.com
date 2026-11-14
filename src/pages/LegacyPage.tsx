@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { alumniDestinations, pastPresidents } from '../data/legacy';
+import { alumniDestinations, alumniUniversities, pastPresidents } from '../data/legacy';
 
 const destinationLogos: Record<string, string> = {
   BofA: '/assets/legacy/bofa.png',
@@ -38,6 +38,14 @@ export function LegacyPage() {
         <div className="legacy-alumni-logo"><img src={destinationLogos[destination]} alt={`${destination} logo`} loading="lazy" /></div>
         <span>{destination}</span>
       </li>)}</ul>
+      <div className="legacy-alumni-universities">
+        <h3>Universities</h3>
+        <p>Alumni have also continued their education at:</p>
+        <ul>{alumniUniversities.map(university => <li key={university.name}>
+          <strong>{university.name}</strong>
+          <span>{university.fullName}</span>
+        </li>)}</ul>
+      </div>
     </section>
   </div>;
 }
