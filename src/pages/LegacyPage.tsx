@@ -42,6 +42,7 @@ export function LegacyPage() {
         <h3>Universities</h3>
         <p>Alumni have also continued their education at:</p>
         <ul>{alumniUniversities.map(university => <li key={university.name}>
+          <div className="legacy-alumni-logo"><img src={university.logo} alt="" loading="lazy" /></div>
           <strong>{university.name}</strong>
           <span>{university.fullName}</span>
         </li>)}</ul>

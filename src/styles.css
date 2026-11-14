@@ -412,9 +412,9 @@ main:focus { outline: none; }
 .legacy-alumni-universities { margin-top: 46px; }
 .legacy-alumni-universities h3 { color: var(--navy); font-size: 22px; font-weight: 600; }
 .legacy-alumni-universities ul { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.legacy-alumni-universities li { gap: 8px; }
-.legacy-alumni-universities strong { color: var(--blue); font-size: clamp(22px, 2.6vw, 32px); font-weight: 700; letter-spacing: -.04em; }
-.legacy-alumni-universities li span { color: #536579; font-size: 13px; font-weight: 400; line-height: 1.4; }
+.legacy-alumni-universities li { gap: 8px; min-height: 174px; }
+.legacy-alumni-universities strong { color: var(--navy); font-size: 13px; font-weight: 600; }
+.legacy-alumni-universities li span { color: #536579; font-size: 12px; font-weight: 400; line-height: 1.4; }
 @media (prefers-reduced-motion: no-preference) {
   .legacy-timeline-item { animation: legacy-rise .5s ease-out both; }
   .legacy-timeline-item:nth-child(2) { animation-delay: .1s; }
@@ -718,7 +718,7 @@ main:focus { outline: none; }
   .legacy-alumni h2 { font-size: 22px; }
   .legacy-alumni-universities { margin-top: 36px; }
   .legacy-alumni-universities ul { grid-template-columns: 1fr; }
-  .legacy-alumni-universities li { min-height: 110px; }
+  .legacy-alumni-universities li { min-height: 150px; }
   .legacy-alumni-universities li + li { border-left: 0; }
   .legacy-alumni-universities li:nth-child(n+2), .legacy-alumni-universities li:nth-child(3) { border-top: 1px solid var(--line); }
   .members-content { padding-block: 22px 48px; }
